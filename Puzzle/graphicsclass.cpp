@@ -6,10 +6,10 @@
 
 GraphicsClass::GraphicsClass()
 {
-	m_Direct3D = 0;
-	m_Camera = 0;
-	m_Model = 0;
-	m_ColorShader = 0;
+	m_Direct3D = nullptr;
+	m_Camera = nullptr;
+	m_Model = nullptr;
+	m_ColorShader = nullptr;
 }
 
 

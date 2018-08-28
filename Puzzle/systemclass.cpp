@@ -6,8 +6,8 @@
 
 SystemClass::SystemClass()
 {
-	m_Input = 0;
-	m_Graphics = 0;
+	m_Input = nullptr;
+	m_Graphics = nullptr;
 }
 
 
@@ -69,14 +69,14 @@ void SystemClass::Shutdown()
 	{
 		m_Graphics->Shutdown();
 		delete m_Graphics;
-		m_Graphics = 0;
+		m_Graphics = nullptr;
 	}
 
 	// Release the input object.
 	if (m_Input)
 	{
 		delete m_Input;
-		m_Input = 0;
+		m_Input = nullptr;
 	}
 
 	// Shutdown the window.

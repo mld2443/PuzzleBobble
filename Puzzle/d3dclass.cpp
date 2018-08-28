@@ -6,14 +6,14 @@
 
 D3DClass::D3DClass()
 {
-	m_swapChain = 0;
-	m_device = 0;
-	m_deviceContext = 0;
-	m_renderTargetView = 0;
-	m_depthStencilBuffer = 0;
-	m_depthStencilState = 0;
-	m_depthStencilView = 0;
-	m_rasterState = 0;
+	m_swapChain = nullptr;
+	m_device = nullptr;
+	m_deviceContext = nullptr;
+	m_renderTargetView = nullptr;
+	m_depthStencilBuffer = nullptr;
+	m_depthStencilState = nullptr;
+	m_depthStencilView = nullptr;
+	m_rasterState = nullptr;
 }
 
 
@@ -132,15 +132,15 @@ bool D3DClass::Initialize(int screenWidth, int screenHeight, bool vsync, HWND hw
 
 	// Release the adapter output.
 	adapterOutput->Release();
-	adapterOutput = 0;
+	adapterOutput = nullptr;
 
 	// Release the adapter.
 	adapter->Release();
-	adapter = 0;
+	adapter = nullptr;
 
 	// Release the factory.
 	factory->Release();
-	factory = 0;
+	factory = nullptr;
 
 	// Initialize the swap chain description.
 	ZeroMemory(&swapChainDesc, sizeof(swapChainDesc));
@@ -362,49 +362,49 @@ void D3DClass::Shutdown()
 	if (m_rasterState)
 	{
 		m_rasterState->Release();
-		m_rasterState = 0;
+		m_rasterState = nullptr;
 	}
 
 	if (m_depthStencilView)
 	{
 		m_depthStencilView->Release();
-		m_depthStencilView = 0;
+		m_depthStencilView = nullptr;
 	}
 
 	if (m_depthStencilState)
 	{
 		m_depthStencilState->Release();
-		m_depthStencilState = 0;
+		m_depthStencilState = nullptr;
 	}
 
 	if (m_depthStencilBuffer)
 	{
 		m_depthStencilBuffer->Release();
-		m_depthStencilBuffer = 0;
+		m_depthStencilBuffer = nullptr;
 	}
 
 	if (m_renderTargetView)
 	{
 		m_renderTargetView->Release();
-		m_renderTargetView = 0;
+		m_renderTargetView = nullptr;
 	}
 
 	if (m_deviceContext)
 	{
 		m_deviceContext->Release();
-		m_deviceContext = 0;
+		m_deviceContext = nullptr;
 	}
 
 	if (m_device)
 	{
 		m_device->Release();
-		m_device = 0;
+		m_device = nullptr;
 	}
 
 	if (m_swapChain)
 	{
 		m_swapChain->Release();
-		m_swapChain = 0;
+		m_swapChain = nullptr;
 	}
 
 	return;

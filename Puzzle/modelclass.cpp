@@ -6,8 +6,8 @@
 
 ModelClass::ModelClass()
 {
-	m_vertexBuffer = 0;
-	m_indexBuffer = 0;
+	m_vertexBuffer = nullptr;
+	m_indexBuffer = nullptr;
 }
 
 
@@ -147,10 +147,10 @@ bool ModelClass::InitializeBuffers(ID3D11Device* device)
 
 	// Release the arrays now that the vertex and index buffers have been created and loaded.
 	delete[] vertices;
-	vertices = 0;
+	vertices = nullptr;
 
 	delete[] indices;
-	indices = 0;
+	indices = nullptr;
 
 	return true;
 }
@@ -162,14 +162,14 @@ void ModelClass::ShutdownBuffers()
 	if (m_indexBuffer)
 	{
 		m_indexBuffer->Release();
-		m_indexBuffer = 0;
+		m_indexBuffer = nullptr;
 	}
 
 	// Release the vertex buffer.
 	if (m_vertexBuffer)
 	{
 		m_vertexBuffer->Release();
-		m_vertexBuffer = 0;
+		m_vertexBuffer = nullptr;
 	}
 
 	return;
