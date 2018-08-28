@@ -330,3 +330,5 @@ ASALocalRun/
 
 # Local History for Visual Studio
 .localhistory/
+/Puzzle/VertexShader.h
+/Puzzle/PixelShader.h
