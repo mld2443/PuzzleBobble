@@ -94,7 +94,7 @@ void GraphicsClass::Shutdown()
 	{
 		m_ColorShader->Shutdown();
 		delete m_ColorShader;
-		m_ColorShader = 0;
+		m_ColorShader = nullptr;
 	}
 
 	// Release the model object.
@@ -102,14 +102,14 @@ void GraphicsClass::Shutdown()
 	{
 		m_Model->Shutdown();
 		delete m_Model;
-		m_Model = 0;
+		m_Model = nullptr;
 	}
 
 	// Release the camera object.
 	if (m_Camera)
 	{
 		delete m_Camera;
-		m_Camera = 0;
+		m_Camera = nullptr;
 	}
 
 	// Release the D3D object.
@@ -117,7 +117,7 @@ void GraphicsClass::Shutdown()
 	{
 		m_Direct3D->Shutdown();
 		delete m_Direct3D;
-		m_Direct3D = 0;
+		m_Direct3D = nullptr;
 	}
 
 	return;
