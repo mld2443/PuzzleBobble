@@ -87,7 +87,7 @@
     <VCProjectVersion>15.0</VCProjectVersion>
     <ProjectGuid>{2831A385-0416-4423-B800-359FD354E2A0}</ProjectGuid>
     <RootNamespace>DisplayShapes</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.16299.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.17134.0</WindowsTargetPlatformVersion>
     <ProjectName>Puzzle</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
