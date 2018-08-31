@@ -43,7 +43,7 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 		return false;
 	}
 
-	// Create thttps://www.youtube.com/watch?v=MfW1WcuEI8Yhe camera object.
+	// Create the camera object.
 	m_Camera = new CameraClass;
 	if (!m_Camera)
 	{
