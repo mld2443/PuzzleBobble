@@ -11,6 +11,8 @@
 #include "cameraclass.h"
 #include "modelclass.h"
 #include "colorshaderclass.h"
+#include "d2dclass.h"
+#include "textclass.h"
 
 
 /////////////
@@ -44,4 +46,6 @@ private:
 	CameraClass* m_Camera;
 	ModelClass* m_Model;
 	ColorShaderClass* m_ColorShader;
+	D2DClass * m_Direct2D;
+	TextClass * m_Text;
 };

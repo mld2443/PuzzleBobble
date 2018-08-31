@@ -19,5 +19,8 @@ public:
 	TextClass();
 	TextClass(const TextClass&);
 	~TextClass();
+
+	bool Initialize();
+	void Shutdown();
 };
 

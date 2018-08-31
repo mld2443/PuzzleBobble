@@ -1,32 +1,31 @@
 ////////////////////////////////////////////////////////////////////////////////
-// Filename: textclass.cpp
+// Filename: d2dclass.cpp
 ////////////////////////////////////////////////////////////////////////////////
-#include "textclass.h"
+#include "d2dclass.h"
 
 
-
-TextClass::TextClass()
+D2DClass::D2DClass()
 {
 }
 
 
-TextClass::TextClass(const TextClass&)
+D2DClass::D2DClass(const D2DClass&)
 {
 }
 
 
-TextClass::~TextClass()
+D2DClass::~D2DClass()
 {
 }
 
 
-bool TextClass::Initialize()
+bool D2DClass::Initialize()
 {
 	return true;
 }
 
 
-void TextClass::Shutdown()
+void D2DClass::Shutdown()
 {
 	return;
 }

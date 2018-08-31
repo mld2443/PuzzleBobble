@@ -10,6 +10,8 @@ GraphicsClass::GraphicsClass()
 	m_Camera = nullptr;
 	m_Model = nullptr;
 	m_ColorShader = nullptr;
+	m_Direct2D = nullptr;
+	m_Text = nullptr;
 }
 
 
@@ -26,7 +28,7 @@ GraphicsClass::~GraphicsClass()
 bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 {
 	bool result;
-
+	
 
 	// Create the Direct3D object.
 	m_Direct3D = new D3DClass;
@@ -43,7 +45,22 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 		return false;
 	}
 
-	// Create thttps://www.youtube.com/watch?v=MfW1WcuEI8Yhe camera object.
+	// Create the Direct2D object.
+	m_Direct2D = new D2DClass;
+	if (!m_Direct2D)
+	{
+		return false;
+	}
+
+	// Initialize the Direct2D object.
+	result = m_Direct2D->Initialize();
+	if (!result)
+	{
+		MessageBox(hwnd, L"Could not initialize Direct2D.", L"Error", MB_OK);
+		return false;
+	}
+
+	// Create the camera object.
 	m_Camera = new CameraClass;
 	if (!m_Camera)
 	{
@@ -83,12 +100,35 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 		return false;
 	}
 
+	// Create the text object.
+	m_Text = new TextClass;
+	if (!m_Text)
+	{
+		return false;
+	}
+
+	// Initialize the text object.
+	result = m_Text->Initialize();
+	if (!result)
+	{
+		MessageBox(hwnd, L"Could not initialize the text object.", L"Error", MB_OK);
+		return false;
+	}
+
 	return true;
 }
 
 
 void GraphicsClass::Shutdown()
 {
+	// Release the text object.
+	if (m_Text)
+	{
+		//m_Text->Shutdown();
+		delete m_Text;
+		m_Text = nullptr;
+	}
+
 	// Release the color shader object.
 	if (m_ColorShader)
 	{
@@ -110,6 +150,14 @@ void GraphicsClass::Shutdown()
 	{
 		delete m_Camera;
 		m_Camera = nullptr;
+	}
+
+	// Release the D2D object.
+	if (m_Direct2D)
+	{
+		//m_Direct2D->Shutdown();
+		delete m_Direct2D;
+		m_Direct2D = nullptr;
 	}
 
 	// Release the D3D object.

@@ -21,6 +21,7 @@
   <ItemGroup>
     <ClCompile Include="cameraclass.cpp" />
     <ClCompile Include="colorshaderclass.cpp" />
+    <ClCompile Include="d2dclass.cpp" />
     <ClCompile Include="d3dclass.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="inputclass.cpp" />
@@ -31,6 +32,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="cameraclass.h" />
+    <ClInclude Include="d2dclass.h" />
     <ClInclude Include="d3dclass.h" />
     <ClInclude Include="graphicsclass.h" />
     <ClInclude Include="colorshaderclass.h" />
