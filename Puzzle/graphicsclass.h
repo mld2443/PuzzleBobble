@@ -7,11 +7,11 @@
 ///////////////////////
 // MY CLASS INCLUDES //
 ///////////////////////
-#include "d3dclass.h"
+#include "resourcesclass.h"
 #include "cameraclass.h"
 #include "modelclass.h"
 #include "colorshaderclass.h"
-#include "d2dclass.h"
+//#include "d2dclass.h"
 #include "textclass.h"
 
 
@@ -42,8 +42,8 @@ private:
 	bool Render();
 
 private:
-	D3DClass * m_Direct3D;
-	D2DClass * m_Direct2D;
+	ResourcesClass * m_Resources;
+	//D2DClass * m_Direct2D;
 	TextClass * m_Text;
 	CameraClass* m_Camera;
 	ModelClass* m_Model;
