@@ -43,9 +43,9 @@ private:
 
 private:
 	D3DClass * m_Direct3D;
+	D2DClass * m_Direct2D;
+	TextClass * m_Text;
 	CameraClass* m_Camera;
 	ModelClass* m_Model;
 	ColorShaderClass* m_ColorShader;
-	D2DClass * m_Direct2D;
-	TextClass * m_Text;
 };

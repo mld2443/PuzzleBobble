@@ -8,6 +8,7 @@
 // LINKING //
 /////////////
 #pragma comment(lib, "d2d1.lib")
+#pragma comment(lib, "dwrite.lib")
 
 
 //////////////
@@ -15,6 +16,7 @@
 //////////////
 #include <d2d1_3.h>
 #include <d3d11.h>
+#include <dwrite_3.h>
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -30,8 +32,13 @@ public:
 	bool Initialize(ID3D11Device*);
 	void Shutdown();
 
+	ID2D1Device4* GetDevice();
+	ID2D1DeviceContext4* GetDeviceContext();
+	IDWriteFactory* GetDwriteFactory();
+
 private:
 	ID2D1Device4* m_device;
 	ID2D1DeviceContext4* m_deviceContext;
+	IDWriteFactory* m_dwriteFactory;
 };
 

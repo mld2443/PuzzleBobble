@@ -6,6 +6,9 @@
 
 D2DClass::D2DClass()
 {
+	m_device = nullptr;
+	m_deviceContext = nullptr;
+	m_dwriteFactory = nullptr;
 }
 
 
@@ -34,7 +37,11 @@ bool D2DClass::Initialize(ID3D11Device* d3dDevice)
 	}
 
 	// Retrieve a pointer to our device as a DXGI device.
-	d3dDevice->QueryInterface(__uuidof(IDXGIDevice1), (void**)&dxgiDevice);
+	result = d3dDevice->QueryInterface(__uuidof(IDXGIDevice1), (void**)&dxgiDevice);
+	if (FAILED(result))
+	{
+		return false;
+	}
 
 	// Store a reference to our device.
 	result = factory->CreateDevice(dxgiDevice, &m_device);
@@ -58,12 +65,25 @@ bool D2DClass::Initialize(ID3D11Device* d3dDevice)
 		return false;
 	}
 
+	// Create a DirectWrite Factory to create layouts and formats with.
+	result = DWriteCreateFactory(DWRITE_FACTORY_TYPE_SHARED, __uuidof(IDWriteFactory4), (IUnknown **)&m_dwriteFactory);
+	if (FAILED(result))
+	{
+		return false;
+	}
+
 	return true;
 }
 
 
 void D2DClass::Shutdown()
 {
+	if (m_dwriteFactory)
+	{
+		m_dwriteFactory->Release();
+		m_dwriteFactory = nullptr;
+	}
+
 	if (m_deviceContext)
 	{
 		m_deviceContext->Release();
@@ -78,3 +98,22 @@ void D2DClass::Shutdown()
 
 	return;
 }
+
+
+ID2D1Device4* D2DClass::GetDevice()
+{
+	return m_device;
+}
+
+
+ID2D1DeviceContext4* D2DClass::GetDeviceContext()
+{
+	return m_deviceContext;
+}
+
+
+IDWriteFactory* D2DClass::GetDwriteFactory()
+{
+	return m_dwriteFactory;
+}
+

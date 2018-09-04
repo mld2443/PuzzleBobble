@@ -8,6 +8,7 @@
 // INCLUDES //
 //////////////
 #include <d2d1_3.h>
+#include <dwrite.h>
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -20,7 +21,12 @@ public:
 	TextClass(const TextClass&);
 	~TextClass();
 
-	bool Initialize();
+	bool Initialize(IDWriteFactory*, WCHAR*);
 	void Shutdown();
+
+private:
+	ID2D1SolidColorBrush* m_brush;
+	IDWriteTextFormat* m_format;
+	IDWriteTextLayout* m_layout;
 };
 
