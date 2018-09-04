@@ -53,7 +53,7 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	}
 
 	// Initialize the Direct2D object.
-	result = m_Direct2D->Initialize();
+	result = m_Direct2D->Initialize(m_Direct3D->GetDevice());
 	if (!result)
 	{
 		MessageBox(hwnd, L"Could not initialize Direct2D.", L"Error", MB_OK);
@@ -124,7 +124,7 @@ void GraphicsClass::Shutdown()
 	// Release the text object.
 	if (m_Text)
 	{
-		//m_Text->Shutdown();
+		m_Text->Shutdown();
 		delete m_Text;
 		m_Text = nullptr;
 	}
@@ -155,7 +155,7 @@ void GraphicsClass::Shutdown()
 	// Release the D2D object.
 	if (m_Direct2D)
 	{
-		//m_Direct2D->Shutdown();
+		m_Direct2D->Shutdown();
 		delete m_Direct2D;
 		m_Direct2D = nullptr;
 	}

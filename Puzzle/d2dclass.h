@@ -4,10 +4,22 @@
 #pragma once
 
 
+/////////////
+// LINKING //
+/////////////
+#pragma comment(lib, "d2d1.lib")
+
+
 //////////////
 // INCLUDES //
 //////////////
+#include <d2d1_3.h>
+#include <d3d11.h>
 
+
+////////////////////////////////////////////////////////////////////////////////
+// Class name: D2DClass
+////////////////////////////////////////////////////////////////////////////////
 class D2DClass
 {
 public:
@@ -15,7 +27,11 @@ public:
 	D2DClass(const D2DClass&);
 	~D2DClass();
 
-	bool Initialize();
+	bool Initialize(ID3D11Device*);
 	void Shutdown();
+
+private:
+	ID2D1Device4* m_device;
+	ID2D1DeviceContext4* m_deviceContext;
 };
 

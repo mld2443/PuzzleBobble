@@ -40,6 +40,7 @@ bool D3DClass::Initialize(int screenWidth, int screenHeight, bool vsync, HWND hw
 	DXGI_ADAPTER_DESC adapterDesc;
 	int error;
 	DXGI_SWAP_CHAIN_DESC swapChainDesc;
+	UINT creationFlags;
 	D3D_FEATURE_LEVEL featureLevel;
 	ID3D11Texture2D* backBufferPtr;
 	D3D11_TEXTURE2D_DESC depthBufferDesc;
@@ -197,11 +198,15 @@ bool D3DClass::Initialize(int screenWidth, int screenHeight, bool vsync, HWND hw
 	// Don't set the advanced flags.
 	swapChainDesc.Flags = 0;
 
-	// Set the feature level to DirectX 11.
-	featureLevel = D3D_FEATURE_LEVEL_11_0;
+	// This flag adds support for surfaces with a different color channel ordering
+	// than the API default. It is required for compatibility with Direct2D.
+	creationFlags = D3D11_CREATE_DEVICE_BGRA_SUPPORT;
+
+	// Set the feature level to DirectX 11.1.
+	featureLevel = D3D_FEATURE_LEVEL_11_1;
 
 	// Create the swap chain, Direct3D device, and Direct3D device context.
-	result = D3D11CreateDeviceAndSwapChain(NULL, D3D_DRIVER_TYPE_HARDWARE, NULL, 0, &featureLevel, 1,
+	result = D3D11CreateDeviceAndSwapChain(NULL, D3D_DRIVER_TYPE_HARDWARE, NULL, creationFlags, &featureLevel, 1,
 		D3D11_SDK_VERSION, &swapChainDesc, &m_swapChain, &m_device, NULL, &m_deviceContext);
 	if (FAILED(result))
 	{
