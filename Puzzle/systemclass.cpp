@@ -8,6 +8,7 @@ SystemClass::SystemClass()
 {
 	m_Input = nullptr;
 	m_Graphics = nullptr;
+	m_Timer = nullptr;
 }
 
 
@@ -42,7 +43,12 @@ bool SystemClass::Initialize()
 	}
 
 	// Initialize the input object.
-	m_Input->Initialize();
+	result = m_Input->Initialize(m_hinstance, m_hwnd, screenWidth, screenHeight);
+	if (!result)
+	{
+		MessageBox(m_hwnd, L"Could not initialize the input object.", L"Error", MB_OK);
+		return false;
+	}
 
 	// Create the graphics object.  This object will handle rendering all the graphics for this application.
 	m_Graphics = new GraphicsClass;
@@ -58,12 +64,34 @@ bool SystemClass::Initialize()
 		return false;
 	}
 
+	// Create the timer object.
+	m_Timer = new TimerClass;
+	if (!m_Timer)
+	{
+		return false;
+	}
+
+	// Initialize the timer object.
+	result = m_Timer->Initialize();
+	if (!result)
+	{
+		MessageBox(m_hwnd, L"Could not initialize the Timer object.", L"Error", MB_OK);
+		return false;
+	}
+
 	return true;
 }
 
 
 void SystemClass::Shutdown()
 {
+	// Release the timer object.
+	if (m_Timer)
+	{
+		delete m_Timer;
+		m_Timer = 0;
+	}
+
 	// Release the graphics object.
 	if (m_Graphics)
 	{
@@ -75,6 +103,7 @@ void SystemClass::Shutdown()
 	// Release the input object.
 	if (m_Input)
 	{
+		m_Input->Shutdown();
 		delete m_Input;
 		m_Input = nullptr;
 	}
@@ -129,14 +158,28 @@ void SystemClass::Run()
 
 bool SystemClass::Frame()
 {
-	bool result;
+	bool result, clicked;
+	int mouseX, mouseY;
 
+	// Update the system stats.
+	m_Timer->Frame();
+
+	// Do the input frame processing.
+	result = m_Input->Frame();
+	if (!result)
+	{
+		return false;
+	}
 
 	// Check if the user pressed escape and wants to exit the application.
 	if (m_Input->IsKeyDown(VK_ESCAPE))
 	{
 		return false;
 	}
+
+	// Get the location of the mouse from the input object,
+	m_Input->GetMouseLocation(mouseX, mouseY);
+	clicked = m_Input->IsLeftMouseButtonDown();
 
 	// Do the frame processing for the graphics object.
 	result = m_Graphics->Frame();
