@@ -68,7 +68,7 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	}
 
 	// Initialize the text object.
-	result = m_Text->Initialize(m_Direct2D->GetDwriteFactory(), L"Hello, World!");
+	result = m_Text->Initialize(m_Direct2D->GetDwriteFactory(), m_Direct2D->GetDeviceContext(), L"Hello, World!");
 	if (!result)
 	{
 		MessageBox(hwnd, L"Could not initialize the text object.", L"Error", MB_OK);

@@ -21,7 +21,7 @@ public:
 	TextClass(const TextClass&);
 	~TextClass();
 
-	bool Initialize(IDWriteFactory*, WCHAR*);
+	bool Initialize(IDWriteFactory*, ID2D1DeviceContext*, WCHAR*);
 	void Shutdown();
 
 private:

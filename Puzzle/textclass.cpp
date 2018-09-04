@@ -23,10 +23,17 @@ TextClass::~TextClass()
 }
 
 
-bool TextClass::Initialize(IDWriteFactory* dwriteFactory, WCHAR* text)
+bool TextClass::Initialize(IDWriteFactory* dwriteFactory, ID2D1DeviceContext* deviceContext, WCHAR* text)
 {
 	HRESULT result;
 
+
+	// Create our solid white brush.
+	result = deviceContext->CreateSolidColorBrush(D2D1::ColorF(D2D1::ColorF::White), &m_brush);
+	if (FAILED(result))
+	{
+		return false;
+	}
 
 	// Create our text format with specified parameters.
 	result = dwriteFactory->CreateTextFormat(L"Segoe UI", nullptr, DWRITE_FONT_WEIGHT_LIGHT,
