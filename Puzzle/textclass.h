@@ -23,6 +23,7 @@ public:
 
 	bool Initialize(IDWriteFactory*, ID2D1DeviceContext*, WCHAR*);
 	void Shutdown();
+	void Render(ID2D1DeviceContext*);
 
 private:
 	ID2D1SolidColorBrush* m_brush;

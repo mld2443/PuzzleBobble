@@ -215,6 +215,8 @@ bool GraphicsClass::Render()
 		return false;
 	}
 
+	m_Text->Render(m_Direct2D->GetDeviceContext());
+
 	// Present the rendered scene to the screen.
 	m_Direct3D->EndScene();
 

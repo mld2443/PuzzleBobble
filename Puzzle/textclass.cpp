@@ -80,3 +80,12 @@ void TextClass::Shutdown()
 
 	return;
 }
+
+
+void TextClass::Render(ID2D1DeviceContext* deviceContext)
+{
+	deviceContext->BeginDraw();
+	deviceContext->DrawTextLayout(D2D1::Point2F(0.0f, 0.0f), m_layout, m_brush);
+	deviceContext->EndDraw();
+	return;
+}
