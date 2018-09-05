@@ -23,10 +23,9 @@ TextClass::~TextClass()
 }
 
 
-bool TextClass::Initialize(IDWriteFactory* dwriteFactory, ID2D1DeviceContext* deviceContext, WCHAR* text)
+bool TextClass::Initialize(IDWriteFactory* dwriteFactory, ID2D1DeviceContext* deviceContext, const std::wstring& text)
 {
 	HRESULT result;
-
 
 	// Create our solid white brush.
 	result = deviceContext->CreateSolidColorBrush(D2D1::ColorF(D2D1::ColorF::White), &m_brush);
@@ -44,7 +43,7 @@ bool TextClass::Initialize(IDWriteFactory* dwriteFactory, ID2D1DeviceContext* de
 	}
 
 	// Create the text layout for our sample text.
-	result = dwriteFactory->CreateTextLayout(text, static_cast<UINT32>(sizeof(text)),
+	result = dwriteFactory->CreateTextLayout(text.c_str(), (UINT32)text.size(),
 		m_format, 4096.0f, 4096.0f, &m_layout);
 	if (FAILED(result))
 	{
@@ -78,5 +77,14 @@ void TextClass::Shutdown()
 		m_brush = nullptr;
 	}
 
+	return;
+}
+
+
+void TextClass::Render(ID2D1DeviceContext* deviceContext)
+{
+	deviceContext->BeginDraw();
+	deviceContext->DrawTextLayout(D2D1::Point2F(200.0f, 200.0f), m_layout, m_brush);
+	deviceContext->EndDraw();
 	return;
 }

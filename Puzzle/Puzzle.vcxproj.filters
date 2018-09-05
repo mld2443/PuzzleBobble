@@ -26,9 +26,6 @@
     <ClCompile Include="graphicsclass.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="d3dclass.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="cameraclass.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -41,10 +38,10 @@
     <ClCompile Include="textclass.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="d2dclass.cpp">
+    <ClCompile Include="timerclass.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="timerclass.cpp">
+    <ClCompile Include="resourcesclass.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -56,9 +53,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="graphicsclass.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="d3dclass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="cameraclass.h">
@@ -73,10 +67,10 @@
     <ClInclude Include="textclass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="d2dclass.h">
+    <ClInclude Include="timerclass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="timerclass.h">
+    <ClInclude Include="resourcesclass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
