@@ -81,7 +81,6 @@ private:
 	// Direct2D
 	ID2D1Device4*			m_direct2DDevice;
 	ID2D1DeviceContext4*	m_direct2DDeviceContext;
-	IDXGISurface*			m_dxgiSurface;
 	ID2D1Bitmap1*			m_bitmap;
 
 	// DirectWrite

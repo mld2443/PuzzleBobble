@@ -17,7 +17,6 @@ ResourcesClass::ResourcesClass()
 
 	m_direct2DDevice = nullptr;
 	m_direct2DDeviceContext = nullptr;
-	m_dxgiSurface = nullptr;
 	m_bitmap = nullptr;
 
 	m_directWriteFactory = nullptr;
@@ -516,10 +515,11 @@ bool ResourcesClass::InitializeDirect3D(int screenWidth, int screenHeight, bool 
 bool ResourcesClass::InitializeDirect2D()
 {
 	HRESULT result;
-	ID2D1Factory5* factory;
-	D2D1_FACTORY_OPTIONS options;
 	FLOAT dpiX, dpiY;
-	IDXGIDevice *dxgiDevice;
+	D2D1_FACTORY_OPTIONS options;
+	ID2D1Factory5* factory;
+	IDXGISurface* dxgiSurface;
+	IDXGIDevice* dxgiDevice;
 
 
 	// Set the default options for the D2DFactory.
@@ -551,6 +551,10 @@ bool ResourcesClass::InitializeDirect2D()
 		return false;
 	}
 
+	// Release the DXGI device.
+	dxgiDevice->Release();
+	dxgiDevice = nullptr;
+
 	// Create a device context to draw with.
 	result = m_direct2DDevice->CreateDeviceContext(D2D1_DEVICE_CONTEXT_OPTIONS_NONE, &m_direct2DDeviceContext);
 	if (FAILED(result))
@@ -559,7 +563,7 @@ bool ResourcesClass::InitializeDirect2D()
 	}
 
 	// Get the back buffer from the swap chain to use as a DXGI Surface.
-	result = m_swapChain->GetBuffer(0, __uuidof(m_dxgiSurface), (void**)&m_dxgiSurface);
+	result = m_swapChain->GetBuffer(0, __uuidof(IDXGISurface), (void**)&dxgiSurface);
 	if (FAILED(result))
 	{
 		return false;
@@ -568,28 +572,28 @@ bool ResourcesClass::InitializeDirect2D()
 	// Retrieve the device context DPI to match the text DPI with.
 	factory->GetDesktopDpi(&dpiX, &dpiY);
 
+	// Release the factory.
+	factory->Release();
+	factory = nullptr;
+
 	// Define Properties for our bitmap object.
 	//FIXME: currently unused.
 	D2D1_PIXEL_FORMAT pixelFormat = D2D1::PixelFormat(DXGI_FORMAT_B8G8R8A8_UNORM, D2D1_ALPHA_MODE_IGNORE);
 	D2D1_BITMAP_PROPERTIES1 bitmapProperties = D2D1::BitmapProperties1(D2D1_BITMAP_OPTIONS_TARGET | D2D1_BITMAP_OPTIONS_CANNOT_DRAW, pixelFormat, dpiX, dpiY);
 
 	// Create a bitmap to draw text on using the DXGI Surface backbuffer.
-	result = m_direct2DDeviceContext->CreateBitmapFromDxgiSurface(m_dxgiSurface, nullptr, &m_bitmap);
+	result = m_direct2DDeviceContext->CreateBitmapFromDxgiSurface(dxgiSurface, nullptr, &m_bitmap);
 	if (FAILED(result))
 	{
 		return false;
 	}
 
+	// Release the DXGI surface device.
+	dxgiSurface->Release();
+	dxgiSurface = nullptr;
+
 	// Set our bitmap as the drawing target for our device context.
 	m_direct2DDeviceContext->SetTarget(m_bitmap);
-
-	// Release the factory.
-	factory->Release();
-	factory = nullptr;
-
-	// Release the DXGI device.
-	dxgiDevice->Release();
-	dxgiDevice = nullptr;
 
 	return true;
 }
@@ -670,12 +674,6 @@ void ResourcesClass::ShutdownDirect2D()
 	{
 		m_bitmap->Release();
 		m_bitmap = nullptr;
-	}
-
-	if (m_dxgiSurface)
-	{
-		m_dxgiSurface->Release();
-		m_dxgiSurface = nullptr;
 	}
 
 	if (m_direct2DDeviceContext)
