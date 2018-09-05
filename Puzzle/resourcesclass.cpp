@@ -14,6 +14,7 @@ ResourcesClass::ResourcesClass()
 	m_depthStencilState = nullptr;
 	m_depthStencilView = nullptr;
 	m_rasterState = nullptr;
+	m_Bitmap = nullptr;
 }
 
 
@@ -571,8 +572,16 @@ bool ResourcesClass::InitializeDirect2D()
 	ID2D1Factory5* factory;
 	IDXGIDevice *dxgiDevice;
 
+	D2D1_FACTORY_OPTIONS options;
+	ZeroMemory(&options, sizeof(D2D1_FACTORY_OPTIONS));
+
+#if defined(_DEBUG)
+	// If the project is in a debug build, enable Direct2D debugging via SDK Layers.
+	options.debugLevel = D2D1_DEBUG_LEVEL_INFORMATION;
+#endif
+
 	// Create D2DFactory to get our device.
-	result = D2D1CreateFactory(D2D1_FACTORY_TYPE_SINGLE_THREADED, &factory);
+	result = D2D1CreateFactory(D2D1_FACTORY_TYPE_SINGLE_THREADED, options, &factory);
 	if (FAILED(result))
 	{
 		return false;
@@ -606,11 +615,15 @@ bool ResourcesClass::InitializeDirect2D()
 		return false;
 	}
 
+	//Set the device context dpi to match the desktop
+	FLOAT dpiX, dpiY;
+	factory->GetDesktopDpi(&dpiX, &dpiY);
+
 	//Create Bitmap to draw text on using m_dxgiSurface
 	D2D1_PIXEL_FORMAT pixelFormat = D2D1::PixelFormat(DXGI_FORMAT_B8G8R8A8_UNORM, D2D1_ALPHA_MODE_IGNORE);
-	D2D1_BITMAP_PROPERTIES1 bitmapProperties = D2D1::BitmapProperties1(D2D1_BITMAP_OPTIONS_TARGET | D2D1_BITMAP_OPTIONS_CANNOT_DRAW, pixelFormat);
+	D2D1_BITMAP_PROPERTIES1 bitmapProperties = D2D1::BitmapProperties1(D2D1_BITMAP_OPTIONS_TARGET | D2D1_BITMAP_OPTIONS_CANNOT_DRAW, pixelFormat, dpiX, dpiY);
 
-	result = m_direct2DDeviceContext->CreateBitmapFromDxgiSurface(m_dxgiSurface, &bitmapProperties, &m_Bitmap);
+	result = m_direct2DDeviceContext->CreateBitmapFromDxgiSurface(m_dxgiSurface, nullptr, &m_Bitmap);
 	if (FAILED(result))
 	{
 		return false;
@@ -618,11 +631,6 @@ bool ResourcesClass::InitializeDirect2D()
 
 	//Set m_Bitmap as the drawing target for m_direct2DDeviceContext
 	m_direct2DDeviceContext->SetTarget(m_Bitmap);
-
-	//Set the device context dpi to match the desktop
-	FLOAT dpiX, dpiY;
-	factory->GetDesktopDpi(&dpiX, &dpiY);
-	m_direct2DDeviceContext->SetDpi(dpiX, dpiY);
 
 	// Release the factory.
 	factory->Release();
