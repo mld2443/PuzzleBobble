@@ -20,6 +20,7 @@
 //////////////
 #include <d3d11.h>
 #include <d2d1_3.h>
+#include <d2d1_1helper.h>
 #include <dwrite_3.h>
 #include <DirectXMath.h>
 
@@ -72,6 +73,8 @@ private:
 	ID3D11RasterizerState* m_rasterState;
 	ID2D1Device4* m_direct2DDevice;
 	ID2D1DeviceContext4* m_direct2DDeviceContext;
+	IDXGISurface* m_dxgiSurface;
+	ID2D1Bitmap1* m_Bitmap;
 	IDWriteFactory* m_directWriteFactory;
 	XMMATRIX m_projectionMatrix;
 	XMMATRIX m_worldMatrix;

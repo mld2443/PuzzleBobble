@@ -439,7 +439,7 @@ bool ResourcesClass::InitializeDirect3D(int screenWidth, int screenHeight, bool 
 
 	// Release pointer to the back buffer as we no longer need it.
 	backBufferPtr->Release();
-	backBufferPtr = 0;
+	backBufferPtr = nullptr;
 
 	// Initialize the description of the depth buffer.
 	ZeroMemory(&depthBufferDesc, sizeof(depthBufferDesc));
@@ -592,6 +592,38 @@ bool ResourcesClass::InitializeDirect2D()
 		return false;
 	}
 
+	// Create a device context to draw with.
+	result = m_direct2DDevice->CreateDeviceContext(D2D1_DEVICE_CONTEXT_OPTIONS_NONE, &m_direct2DDeviceContext);
+	if (FAILED(result))
+	{
+		return false;
+	}
+
+	//Get back buffer from swap chain to use as a DXGI Surface
+	result = m_swapChain->GetBuffer(0, __uuidof(m_dxgiSurface), (void**)&m_dxgiSurface);
+	if (FAILED(result))
+	{
+		return false;
+	}
+
+	//Create Bitmap to draw text on using m_dxgiSurface
+	D2D1_PIXEL_FORMAT pixelFormat = D2D1::PixelFormat(DXGI_FORMAT_B8G8R8A8_UNORM, D2D1_ALPHA_MODE_IGNORE);
+	D2D1_BITMAP_PROPERTIES1 bitmapProperties = D2D1::BitmapProperties1(D2D1_BITMAP_OPTIONS_TARGET | D2D1_BITMAP_OPTIONS_CANNOT_DRAW, pixelFormat);
+
+	result = m_direct2DDeviceContext->CreateBitmapFromDxgiSurface(m_dxgiSurface, &bitmapProperties, &m_Bitmap);
+	if (FAILED(result))
+	{
+		return false;
+	}
+
+	//Set m_Bitmap as the drawing target for m_direct2DDeviceContext
+	m_direct2DDeviceContext->SetTarget(m_Bitmap);
+
+	//Set the device context dpi to match the desktop
+	FLOAT dpiX, dpiY;
+	factory->GetDesktopDpi(&dpiX, &dpiY);
+	m_direct2DDeviceContext->SetDpi(dpiX, dpiY);
+
 	// Release the factory.
 	factory->Release();
 	factory = nullptr;
@@ -599,13 +631,6 @@ bool ResourcesClass::InitializeDirect2D()
 	// Release the DXGI device.
 	dxgiDevice->Release();
 	dxgiDevice = nullptr;
-
-	// Create a device context to draw with.
-	result = m_direct2DDevice->CreateDeviceContext(D2D1_DEVICE_CONTEXT_OPTIONS_NONE, &m_direct2DDeviceContext);
-	if (FAILED(result))
-	{
-		return false;
-	}
 
 	return true;
 }
