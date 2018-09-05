@@ -42,10 +42,9 @@ private:
 	bool Render();
 
 private:
-	ResourcesClass * m_Resources;
-	//D2DClass * m_Direct2D;
-	TextClass * m_Text;
-	CameraClass* m_Camera;
-	ModelClass* m_Model;
-	ColorShaderClass* m_ColorShader;
+	ResourcesClass*		m_Resources;
+	TextClass*			m_Text;
+	CameraClass*		m_Camera;
+	ModelClass*			m_Model;
+	ColorShaderClass*	m_ColorShader;
 };

@@ -26,8 +26,8 @@ public:
 	void Render(ID2D1DeviceContext*);
 
 private:
-	ID2D1SolidColorBrush* m_brush;
-	IDWriteTextFormat* m_format;
-	IDWriteTextLayout* m_layout;
+	ID2D1SolidColorBrush*	m_brush;
+	IDWriteTextFormat*		m_format;
+	IDWriteTextLayout*		m_layout;
 };
 

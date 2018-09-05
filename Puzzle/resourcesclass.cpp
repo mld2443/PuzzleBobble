@@ -14,7 +14,13 @@ ResourcesClass::ResourcesClass()
 	m_depthStencilState = nullptr;
 	m_depthStencilView = nullptr;
 	m_rasterState = nullptr;
-	m_Bitmap = nullptr;
+
+	m_direct2DDevice = nullptr;
+	m_direct2DDeviceContext = nullptr;
+	m_dxgiSurface = nullptr;
+	m_bitmap = nullptr;
+
+	m_directWriteFactory = nullptr;
 }
 
 
@@ -66,71 +72,11 @@ void ResourcesClass::Shutdown()
 		m_swapChain->SetFullscreenState(false, NULL);
 	}
 
-	if (m_directWriteFactory)
-	{
-		m_directWriteFactory->Release();
-		m_directWriteFactory = nullptr;
-	}
+	ShutdownDirectWrite();
 
-	if (m_direct2DDeviceContext)
-	{
-		m_direct2DDeviceContext->Release();
-		m_direct2DDeviceContext = nullptr;
-	}
+	ShutdownDirect2D();
 
-	if (m_direct2DDevice)
-	{
-		m_direct2DDevice->Release();
-		m_direct2DDevice = nullptr;
-	}
-
-	if (m_rasterState)
-	{
-		m_rasterState->Release();
-		m_rasterState = nullptr;
-	}
-
-	if (m_depthStencilView)
-	{
-		m_depthStencilView->Release();
-		m_depthStencilView = nullptr;
-	}
-
-	if (m_depthStencilState)
-	{
-		m_depthStencilState->Release();
-		m_depthStencilState = nullptr;
-	}
-
-	if (m_depthStencilBuffer)
-	{
-		m_depthStencilBuffer->Release();
-		m_depthStencilBuffer = nullptr;
-	}
-
-	if (m_renderTargetView)
-	{
-		m_renderTargetView->Release();
-		m_renderTargetView = nullptr;
-	}
-
-	if (m_direct3DDeviceContext)
-	{
-		m_direct3DDeviceContext->Release();
-		m_direct3DDeviceContext = nullptr;
-	}
-
-	if (m_direct3DDevice)
-	{
-		m_direct3DDevice->Release();
-		m_direct3DDevice = nullptr;
-	}
-
-	if (m_swapChain)
-	{
-		m_swapChain->Release();
-		m_swapChain = nullptr;
-	}
+	ShutdownDirect3D();
 
 	return;
 }
@@ -248,7 +194,6 @@ bool ResourcesClass::InitializeDirect3D(int screenWidth, int screenHeight, bool 
 	int error;
 	DXGI_SWAP_CHAIN_DESC swapChainDesc;
 	UINT creationFlags;
-	//D3D_FEATURE_LEVEL* featureLevels;
 	ID3D11Texture2D* backBufferPtr;
 	D3D11_TEXTURE2D_DESC depthBufferDesc;
 	D3D11_DEPTH_STENCIL_DESC depthStencilDesc;
@@ -311,7 +256,7 @@ bool ResourcesClass::InitializeDirect3D(int screenWidth, int screenHeight, bool 
 		{
 			if (displayModeList[i].Height == (unsigned int)screenHeight)
 			{
-				numerator = displayModeList[i].RefreshRate.Numerator;
+				numerator =   displayModeList[i].RefreshRate.Numerator;
 				denominator = displayModeList[i].RefreshRate.Denominator;
 			}
 		}
@@ -357,7 +302,7 @@ bool ResourcesClass::InitializeDirect3D(int screenWidth, int screenHeight, bool 
 	swapChainDesc.BufferCount = 1;
 
 	// Set the width and height of the back buffer.
-	swapChainDesc.BufferDesc.Width = screenWidth;
+	swapChainDesc.BufferDesc.Width =  screenWidth;
 	swapChainDesc.BufferDesc.Height = screenHeight;
 
 	// Set regular 32-bit surface for the back buffer.
@@ -366,12 +311,12 @@ bool ResourcesClass::InitializeDirect3D(int screenWidth, int screenHeight, bool 
 	// Set the refresh rate of the back buffer.
 	if (m_vsync_enabled)
 	{
-		swapChainDesc.BufferDesc.RefreshRate.Numerator = numerator;
+		swapChainDesc.BufferDesc.RefreshRate.Numerator =   numerator;
 		swapChainDesc.BufferDesc.RefreshRate.Denominator = denominator;
 	}
 	else
 	{
-		swapChainDesc.BufferDesc.RefreshRate.Numerator = 0;
+		swapChainDesc.BufferDesc.RefreshRate.Numerator =   0;
 		swapChainDesc.BufferDesc.RefreshRate.Denominator = 1;
 	}
 
@@ -382,7 +327,7 @@ bool ResourcesClass::InitializeDirect3D(int screenWidth, int screenHeight, bool 
 	swapChainDesc.OutputWindow = hwnd;
 
 	// Turn multisampling off.
-	swapChainDesc.SampleDesc.Count = 1;
+	swapChainDesc.SampleDesc.Count =   1;
 	swapChainDesc.SampleDesc.Quality = 0;
 
 	// Set to full screen or windowed mode.
@@ -446,17 +391,17 @@ bool ResourcesClass::InitializeDirect3D(int screenWidth, int screenHeight, bool 
 	ZeroMemory(&depthBufferDesc, sizeof(depthBufferDesc));
 
 	// Set up the description of the depth buffer.
-	depthBufferDesc.Width = screenWidth;
-	depthBufferDesc.Height = screenHeight;
-	depthBufferDesc.MipLevels = 1;
-	depthBufferDesc.ArraySize = 1;
-	depthBufferDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
-	depthBufferDesc.SampleDesc.Count = 1;
+	depthBufferDesc.Width =				 screenWidth;
+	depthBufferDesc.Height =			 screenHeight;
+	depthBufferDesc.MipLevels =			 1;
+	depthBufferDesc.ArraySize =			 1;
+	depthBufferDesc.Format =			 DXGI_FORMAT_D24_UNORM_S8_UINT;
+	depthBufferDesc.SampleDesc.Count =	 1;
 	depthBufferDesc.SampleDesc.Quality = 0;
-	depthBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-	depthBufferDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
-	depthBufferDesc.CPUAccessFlags = 0;
-	depthBufferDesc.MiscFlags = 0;
+	depthBufferDesc.Usage =				 D3D11_USAGE_DEFAULT;
+	depthBufferDesc.BindFlags =			 D3D11_BIND_DEPTH_STENCIL;
+	depthBufferDesc.CPUAccessFlags =	 0;
+	depthBufferDesc.MiscFlags =			 0;
 
 	// Create the texture for the depth buffer using the filled out description.
 	result = m_direct3DDevice->CreateTexture2D(&depthBufferDesc, NULL, &m_depthStencilBuffer);
@@ -469,25 +414,25 @@ bool ResourcesClass::InitializeDirect3D(int screenWidth, int screenHeight, bool 
 	ZeroMemory(&depthStencilDesc, sizeof(depthStencilDesc));
 
 	// Set up the description of the stencil state.
-	depthStencilDesc.DepthEnable = true;
+	depthStencilDesc.DepthEnable =	  true;
 	depthStencilDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
-	depthStencilDesc.DepthFunc = D3D11_COMPARISON_LESS;
+	depthStencilDesc.DepthFunc =	  D3D11_COMPARISON_LESS;
 
-	depthStencilDesc.StencilEnable = true;
-	depthStencilDesc.StencilReadMask = 0xFF;
+	depthStencilDesc.StencilEnable =	true;
+	depthStencilDesc.StencilReadMask =	0xFF;
 	depthStencilDesc.StencilWriteMask = 0xFF;
 
 	// Stencil operations if pixel is front-facing.
-	depthStencilDesc.FrontFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
+	depthStencilDesc.FrontFace.StencilFailOp =		D3D11_STENCIL_OP_KEEP;
 	depthStencilDesc.FrontFace.StencilDepthFailOp = D3D11_STENCIL_OP_INCR;
-	depthStencilDesc.FrontFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
-	depthStencilDesc.FrontFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
+	depthStencilDesc.FrontFace.StencilPassOp =		D3D11_STENCIL_OP_KEEP;
+	depthStencilDesc.FrontFace.StencilFunc =		D3D11_COMPARISON_ALWAYS;
 
 	// Stencil operations if pixel is back-facing.
-	depthStencilDesc.BackFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
+	depthStencilDesc.BackFace.StencilFailOp =	   D3D11_STENCIL_OP_KEEP;
 	depthStencilDesc.BackFace.StencilDepthFailOp = D3D11_STENCIL_OP_DECR;
-	depthStencilDesc.BackFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
-	depthStencilDesc.BackFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
+	depthStencilDesc.BackFace.StencilPassOp =	   D3D11_STENCIL_OP_KEEP;
+	depthStencilDesc.BackFace.StencilFunc =		   D3D11_COMPARISON_ALWAYS;
 
 	// Create the depth stencil state.
 	result = m_direct3DDevice->CreateDepthStencilState(&depthStencilDesc, &m_depthStencilState);
@@ -503,8 +448,8 @@ bool ResourcesClass::InitializeDirect3D(int screenWidth, int screenHeight, bool 
 	ZeroMemory(&depthStencilViewDesc, sizeof(depthStencilViewDesc));
 
 	// Set up the depth stencil view description.
-	depthStencilViewDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
-	depthStencilViewDesc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
+	depthStencilViewDesc.Format =			  DXGI_FORMAT_D24_UNORM_S8_UINT;
+	depthStencilViewDesc.ViewDimension =	  D3D11_DSV_DIMENSION_TEXTURE2D;
 	depthStencilViewDesc.Texture2D.MipSlice = 0;
 
 	// Create the depth stencil view.
@@ -519,15 +464,15 @@ bool ResourcesClass::InitializeDirect3D(int screenWidth, int screenHeight, bool 
 
 	// Setup the raster description which will determine how and what polygons will be drawn.
 	rasterDesc.AntialiasedLineEnable = false;
-	rasterDesc.CullMode = D3D11_CULL_BACK;
-	rasterDesc.DepthBias = 0;
-	rasterDesc.DepthBiasClamp = 0.0f;
-	rasterDesc.DepthClipEnable = true;
-	rasterDesc.FillMode = D3D11_FILL_SOLID;
+	rasterDesc.CullMode =			   D3D11_CULL_BACK;
+	rasterDesc.DepthBias =			   0;
+	rasterDesc.DepthBiasClamp =		   0.0f;
+	rasterDesc.DepthClipEnable =	   true;
+	rasterDesc.FillMode =			   D3D11_FILL_SOLID;
 	rasterDesc.FrontCounterClockwise = false;
-	rasterDesc.MultisampleEnable = false;
-	rasterDesc.ScissorEnable = false;
-	rasterDesc.SlopeScaledDepthBias = 0.0f;
+	rasterDesc.MultisampleEnable =	   false;
+	rasterDesc.ScissorEnable =		   false;
+	rasterDesc.SlopeScaledDepthBias =  0.0f;
 
 	// Create the rasterizer state from the description we just filled out.
 	result = m_direct3DDevice->CreateRasterizerState(&rasterDesc, &m_rasterState);
@@ -540,8 +485,8 @@ bool ResourcesClass::InitializeDirect3D(int screenWidth, int screenHeight, bool 
 	m_direct3DDeviceContext->RSSetState(m_rasterState);
 
 	// Setup the viewport for rendering.
-	viewport.Width = (float)screenWidth;
-	viewport.Height = (float)screenHeight;
+	viewport.Width =	(float)screenWidth;
+	viewport.Height =	(float)screenHeight;
 	viewport.MinDepth = 0.0f;
 	viewport.MaxDepth = 1.0f;
 	viewport.TopLeftX = 0.0f;
@@ -566,13 +511,17 @@ bool ResourcesClass::InitializeDirect3D(int screenWidth, int screenHeight, bool 
 	return true;
 }
 
+
 bool ResourcesClass::InitializeDirect2D()
 {
 	HRESULT result;
 	ID2D1Factory5* factory;
+	D2D1_FACTORY_OPTIONS options;
+	FLOAT dpiX, dpiY;
 	IDXGIDevice *dxgiDevice;
 
-	D2D1_FACTORY_OPTIONS options;
+
+	// Set the default options for the D2DFactory.
 	ZeroMemory(&options, sizeof(D2D1_FACTORY_OPTIONS));
 
 #if defined(_DEBUG)
@@ -608,29 +557,30 @@ bool ResourcesClass::InitializeDirect2D()
 		return false;
 	}
 
-	//Get back buffer from swap chain to use as a DXGI Surface
+	// Get the back buffer from the swap chain to use as a DXGI Surface.
 	result = m_swapChain->GetBuffer(0, __uuidof(m_dxgiSurface), (void**)&m_dxgiSurface);
 	if (FAILED(result))
 	{
 		return false;
 	}
 
-	//Set the device context dpi to match the desktop
-	FLOAT dpiX, dpiY;
+	// Retrieve the device context DPI to match the text DPI with.
 	factory->GetDesktopDpi(&dpiX, &dpiY);
 
-	//Create Bitmap to draw text on using m_dxgiSurface
+	// Define Properties for our bitmap object.
+	//FIXME: currently unused.
 	D2D1_PIXEL_FORMAT pixelFormat = D2D1::PixelFormat(DXGI_FORMAT_B8G8R8A8_UNORM, D2D1_ALPHA_MODE_IGNORE);
 	D2D1_BITMAP_PROPERTIES1 bitmapProperties = D2D1::BitmapProperties1(D2D1_BITMAP_OPTIONS_TARGET | D2D1_BITMAP_OPTIONS_CANNOT_DRAW, pixelFormat, dpiX, dpiY);
 
-	result = m_direct2DDeviceContext->CreateBitmapFromDxgiSurface(m_dxgiSurface, nullptr, &m_Bitmap);
+	// Create a bitmap to draw text on using the DXGI Surface backbuffer.
+	result = m_direct2DDeviceContext->CreateBitmapFromDxgiSurface(m_dxgiSurface, nullptr, &m_bitmap);
 	if (FAILED(result))
 	{
 		return false;
 	}
 
-	//Set m_Bitmap as the drawing target for m_direct2DDeviceContext
-	m_direct2DDeviceContext->SetTarget(m_Bitmap);
+	// Set our bitmap as the drawing target for our device context.
+	m_direct2DDeviceContext->SetTarget(m_bitmap);
 
 	// Release the factory.
 	factory->Release();
@@ -642,6 +592,7 @@ bool ResourcesClass::InitializeDirect2D()
 
 	return true;
 }
+
 
 bool ResourcesClass::InitializeDirectWrite()
 {
@@ -655,4 +606,94 @@ bool ResourcesClass::InitializeDirectWrite()
 	}
 
 	return true;
+}
+
+
+void ResourcesClass::ShutdownDirect3D()
+{
+	if (m_rasterState)
+	{
+		m_rasterState->Release();
+		m_rasterState = nullptr;
+	}
+
+	if (m_depthStencilView)
+	{
+		m_depthStencilView->Release();
+		m_depthStencilView = nullptr;
+	}
+
+	if (m_depthStencilState)
+	{
+		m_depthStencilState->Release();
+		m_depthStencilState = nullptr;
+	}
+
+	if (m_depthStencilBuffer)
+	{
+		m_depthStencilBuffer->Release();
+		m_depthStencilBuffer = nullptr;
+	}
+
+	if (m_renderTargetView)
+	{
+		m_renderTargetView->Release();
+		m_renderTargetView = nullptr;
+	}
+
+	if (m_direct3DDeviceContext)
+	{
+		m_direct3DDeviceContext->Release();
+		m_direct3DDeviceContext = nullptr;
+	}
+
+	if (m_direct3DDevice)
+	{
+		m_direct3DDevice->Release();
+		m_direct3DDevice = nullptr;
+	}
+
+	if (m_swapChain)
+	{
+		m_swapChain->Release();
+		m_swapChain = nullptr;
+	}
+}
+
+
+void ResourcesClass::ShutdownDirect2D()
+{
+	if (m_bitmap)
+	{
+		m_bitmap->Release();
+		m_bitmap = nullptr;
+	}
+
+	if (m_dxgiSurface)
+	{
+		m_dxgiSurface->Release();
+		m_dxgiSurface = nullptr;
+	}
+
+	if (m_direct2DDeviceContext)
+	{
+		m_direct2DDeviceContext->Release();
+		m_direct2DDeviceContext = nullptr;
+	}
+
+	if (m_direct2DDevice)
+	{
+		m_direct2DDevice->Release();
+		m_direct2DDevice = nullptr;
+	}
+}
+
+
+void ResourcesClass::ShutdownDirectWrite()
+{
+	if (m_directWriteFactory)
+	{
+		m_directWriteFactory->Release();
+		m_directWriteFactory = nullptr;
+	}
 }
