@@ -9,6 +9,7 @@
 //////////////
 #include <d2d1_3.h>
 #include <dwrite.h>
+#include <string>
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -21,7 +22,7 @@ public:
 	TextClass(const TextClass&);
 	~TextClass();
 
-	bool Initialize(IDWriteFactory*, ID2D1DeviceContext*, WCHAR*);
+	bool Initialize(IDWriteFactory*, ID2D1DeviceContext*, const std::wstring&);
 	void Shutdown();
 	void Render(ID2D1DeviceContext*);
 
