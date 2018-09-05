@@ -9,7 +9,6 @@ TextClass::TextClass()
 {
 	m_brush = nullptr;
 	m_format = nullptr;
-	m_layout = nullptr;
 }
 
 
@@ -27,6 +26,13 @@ bool TextClass::Initialize(IDWriteFactory* dwriteFactory, ID2D1DeviceContext* de
 {
 	HRESULT result;
 
+
+	// Initialize drawing window to (0, 0, 200, 200)
+	SetDrawWindow(200, 200, 800, 800);
+
+	// Initialize text string to passed in text
+	SetTextString(text);
+
 	// Create our solid white brush.
 	result = deviceContext->CreateSolidColorBrush(D2D1::ColorF(D2D1::ColorF::White), &m_brush);
 	if (FAILED(result))
@@ -42,28 +48,14 @@ bool TextClass::Initialize(IDWriteFactory* dwriteFactory, ID2D1DeviceContext* de
 		return false;
 	}
 
-	// Create the text layout for our sample text.
-	result = dwriteFactory->CreateTextLayout(text.c_str(), (UINT32)text.size(),
-		m_format, 4096.0f, 4096.0f, &m_layout);
-	if (FAILED(result))
-	{
-		return false;
-	}
-
 	return true;
 }
 
 
 void TextClass::Shutdown()
 {
-	// Release the layout object.
-	if (m_layout)
-	{
-		m_layout->Release();
-		m_layout = nullptr;
-	}
 
-	// Release the layout object.
+	// Release the format object.
 	if (m_format)
 	{
 		m_format->Release();
@@ -84,7 +76,20 @@ void TextClass::Shutdown()
 void TextClass::Render(ID2D1DeviceContext* deviceContext)
 {
 	deviceContext->BeginDraw();
-	deviceContext->DrawTextLayout(D2D1::Point2F(200.0f, 200.0f), m_layout, m_brush);
+	deviceContext->DrawTextW(m_string.c_str(), (UINT32)m_string.size(), m_format, m_drawWindow, m_brush);
 	deviceContext->EndDraw();
 	return;
 }
+
+
+void TextClass::SetDrawWindow(float xLeft, float yTop, float xRight, float yBottom)
+{
+	m_drawWindow = D2D1::RectF(xLeft, yTop, xRight, yBottom);
+}
+
+
+void TextClass::SetTextString(const std::wstring& text)
+{
+	m_string = text;
+}
+

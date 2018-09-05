@@ -1,4 +1,4 @@
-////////////////////////////////////////////////////////////////////////////////
+﻿////////////////////////////////////////////////////////////////////////////////
 // Filename: graphicsclass.cpp
 ////////////////////////////////////////////////////////////////////////////////
 #include "graphicsclass.h"
@@ -7,7 +7,6 @@
 GraphicsClass::GraphicsClass()
 {
 	m_Resources = nullptr;
-	//m_Direct2D = nullptr;
 	m_Text = nullptr;
 	m_Camera = nullptr;
 	m_Model = nullptr;
@@ -45,21 +44,6 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 		return false;
 	}
 
-	//// Create the Direct2D object.
-	//m_Direct2D = new D2DClass;
-	//if (!m_Direct2D)
-	//{
-	//	return false;
-	//}
-
-	//// Initialize the Direct2D object.
-	//result = m_Direct2D->Initialize(m_Resources->GetDirect3DDevice());
-	//if (!result)
-	//{
-	//	MessageBox(hwnd, L"Could not initialize Direct2D.", L"Error", MB_OK);
-	//	return false;
-	//}
-
 	// Create the text object.
 	m_Text = new TextClass;
 	if (!m_Text)
@@ -68,7 +52,7 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	}
 
 	// Initialize the text object.
-	result = m_Text->Initialize(m_Resources->GetDirectWriteFactory(), m_Resources->GetDirect2DDeviceContext(), L"Hello, World!");
+	result = m_Text->Initialize(m_Resources->GetDirectWriteFactory(), m_Resources->GetDirect2DDeviceContext(), L"🌎🌍🌏 Hello, World! 🌎🌍🌏");
 	if (!result)
 	{
 		MessageBox(hwnd, L"Could not initialize the text object.", L"Error", MB_OK);
@@ -152,14 +136,6 @@ void GraphicsClass::Shutdown()
 		m_Text = nullptr;
 	}
 
-	//// Release the D2D object.
-	//if (m_Direct2D)
-	//{
-	//	m_Direct2D->Shutdown();
-	//	delete m_Direct2D;
-	//	m_Direct2D = nullptr;
-	//}
-
 	// Release the Resources object.
 	if (m_Resources)
 	{
@@ -215,6 +191,7 @@ bool GraphicsClass::Render()
 		return false;
 	}
 
+	// Render text on the screen.
 	m_Text->Render(m_Resources->GetDirect2DDeviceContext());
 
 	// Present the rendered scene to the screen.

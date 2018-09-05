@@ -24,11 +24,16 @@ public:
 
 	bool Initialize(IDWriteFactory*, ID2D1DeviceContext*, const std::wstring&);
 	void Shutdown();
+
+	void SetDrawWindow(float, float, float, float);
+	void SetTextString(const std::wstring&);
+
 	void Render(ID2D1DeviceContext*);
 
 private:
 	ID2D1SolidColorBrush*	m_brush;
 	IDWriteTextFormat*		m_format;
-	IDWriteTextLayout*		m_layout;
+	std::wstring			m_string;
+	D2D1_RECT_F				m_drawWindow;
 };
 
