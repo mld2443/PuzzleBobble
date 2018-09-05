@@ -39,21 +39,22 @@ bool ResourcesClass::Initialize(int screenWidth, int screenHeight, bool vsync, H
 {
 	bool result;
 	
-	//initialize all direct3D resources
+
+	// Initialize all direct3D resources.
 	result = InitializeDirect3D(screenWidth, screenHeight, vsync, hwnd, fullscreen, screenDepth, screenNear);
 	if (!result)
 	{
 		return false;
 	}
 
-	//initialize all direct2D resources
+	// Initialize all direct2D resources.
 	result = InitializeDirect2D();
 	if (!result)
 	{
 		return false;
 	}
 
-	//initialize all directWrite resources
+	// Initialize all directWrite resources.
 	result = InitializeDirectWrite();
 	if (!result)
 	{
@@ -658,6 +659,8 @@ void ResourcesClass::ShutdownDirect3D()
 		m_swapChain->Release();
 		m_swapChain = nullptr;
 	}
+
+	return;
 }
 
 
@@ -686,6 +689,8 @@ void ResourcesClass::ShutdownDirect2D()
 		m_direct2DDevice->Release();
 		m_direct2DDevice = nullptr;
 	}
+
+	return;
 }
 
 
@@ -696,4 +701,6 @@ void ResourcesClass::ShutdownDirectWrite()
 		m_directWriteFactory->Release();
 		m_directWriteFactory = nullptr;
 	}
+
+	return;
 }
