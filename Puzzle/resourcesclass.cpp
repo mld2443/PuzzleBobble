@@ -520,6 +520,8 @@ bool ResourcesClass::InitializeDirect2D()
 	ID2D1Factory5* factory;
 	IDXGISurface* dxgiSurface;
 	IDXGIDevice* dxgiDevice;
+	D2D1_BITMAP_PROPERTIES1 bitmapProperties;
+	D2D1_PIXEL_FORMAT pixelFormat;
 
 
 	// Set the default options for the D2DFactory.
@@ -577,12 +579,11 @@ bool ResourcesClass::InitializeDirect2D()
 	factory = nullptr;
 
 	// Define Properties for our bitmap object.
-	//FIXME: currently unused.
-	D2D1_PIXEL_FORMAT pixelFormat = D2D1::PixelFormat(DXGI_FORMAT_B8G8R8A8_UNORM, D2D1_ALPHA_MODE_IGNORE);
-	D2D1_BITMAP_PROPERTIES1 bitmapProperties = D2D1::BitmapProperties1(D2D1_BITMAP_OPTIONS_TARGET | D2D1_BITMAP_OPTIONS_CANNOT_DRAW, pixelFormat, dpiX, dpiY);
+	pixelFormat = D2D1::PixelFormat(DXGI_FORMAT_R8G8B8A8_UNORM, D2D1_ALPHA_MODE_IGNORE);
+	bitmapProperties = D2D1::BitmapProperties1(D2D1_BITMAP_OPTIONS_TARGET | D2D1_BITMAP_OPTIONS_CANNOT_DRAW, pixelFormat, dpiX, dpiY);
 
 	// Create a bitmap to draw text on using the DXGI Surface backbuffer.
-	result = m_direct2DDeviceContext->CreateBitmapFromDxgiSurface(dxgiSurface, nullptr, &m_bitmap);
+	result = m_direct2DDeviceContext->CreateBitmapFromDxgiSurface(dxgiSurface, &bitmapProperties, &m_bitmap);
 	if (FAILED(result))
 	{
 		return false;
