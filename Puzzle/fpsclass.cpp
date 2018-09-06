@@ -19,30 +19,44 @@ FpsClass::~FpsClass()
 }
 
 
-void FpsClass::Initialize()
+void FpsClass::Initialize(float window)
 {
-	m_fps = 0;
-	m_count = 0;
-	m_startTime = timeGetTime();
+	m_window = window;
+
 	return;
 }
 
 
 void FpsClass::Frame()
 {
-	m_count++;
+	unsigned long currentTime, cutoffTime;
 
-	if (timeGetTime() >= (m_startTime + 1000))
+
+	// Create a window of time which we care about.
+	currentTime = timeGetTime();
+	cutoffTime = currentTime - ((unsigned long)m_window * 1000);
+
+	// Add the current frame to the list.
+	m_frametimes.push_front(currentTime);
+
+	// Remove old frames from the list that are no longer in our window.
+	while (m_frametimes.back() < cutoffTime)
 	{
-		m_fps = m_count;
-		m_count = 0;
-
-		m_startTime = timeGetTime();
+		m_frametimes.pop_back();
 	}
 }
 
 
-int FpsClass::GetFps()
+float FpsClass::GetFps()
 {
-	return m_fps;
+	float fps, framesInWindow;
+
+
+	// Get number of frames that have been drawn during our rolling window.
+	framesInWindow = (float)m_frametimes.size();
+
+	// Calculate the average framerate over that window.
+	fps = framesInWindow / m_window;
+
+	return fps;
 }

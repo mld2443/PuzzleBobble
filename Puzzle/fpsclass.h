@@ -13,6 +13,7 @@
 //////////////
 // INCLUDES //
 //////////////
+#include <list>
 #include <windows.h>
 #include <mmsystem.h>
 
@@ -27,12 +28,12 @@ public:
 	FpsClass(const FpsClass&);
 	~FpsClass();
 
-	void Initialize();
+	void Initialize(float = 1.0f);
 	void Frame();
 
-	int GetFps();
+	float GetFps();
 
 private:
-	int				m_fps, m_count;
-	unsigned long	m_startTime;
+	float						m_window;
+	std::list<unsigned long>	m_frametimes;
 };

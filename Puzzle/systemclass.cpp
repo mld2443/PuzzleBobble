@@ -74,7 +74,7 @@ bool SystemClass::Initialize()
 	}
 
 	// Initialize the fps object.
-	m_Fps->Initialize();
+	m_Fps->Initialize(1.0);
 
 	// Create the cpu object.
 	m_Cpu = new CpuClass;

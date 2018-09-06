@@ -154,14 +154,14 @@ void GraphicsClass::Shutdown()
 }
 
 
-bool GraphicsClass::Frame(int fps, int cpu, float frameTime)
+bool GraphicsClass::Frame(float fps, int cpu, float frameTime)
 {
 	bool result;
 	CString stats;
 
 
 	// Build the statistics string.
-	stats.Format(L"FPS: %d\nCPU: %d%%", fps, cpu);
+	stats.Format(L"FPS: %.1f\nCPU: %d%%", fps, cpu);
 	
 	// Set the stats text string for our text object.
 	m_Text->SetTextString(stats.GetString());
