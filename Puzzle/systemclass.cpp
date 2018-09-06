@@ -8,6 +8,8 @@ SystemClass::SystemClass()
 {
 	m_Input = nullptr;
 	m_Graphics = nullptr;
+	m_Fps = nullptr;
+	m_Cpu = nullptr;
 	m_Timer = nullptr;
 }
 
@@ -64,6 +66,26 @@ bool SystemClass::Initialize()
 		return false;
 	}
 
+	// Create the fps object.
+	m_Fps = new FpsClass;
+	if (!m_Fps)
+	{
+		return false;
+	}
+
+	// Initialize the fps object.
+	m_Fps->Initialize(1.0);
+
+	// Create the cpu object.
+	m_Cpu = new CpuClass;
+	if (!m_Cpu)
+	{
+		return false;
+	}
+
+	// Initialize the cpu object.
+	m_Cpu->Initialize();
+
 	// Create the timer object.
 	m_Timer = new TimerClass;
 	if (!m_Timer)
@@ -89,7 +111,22 @@ void SystemClass::Shutdown()
 	if (m_Timer)
 	{
 		delete m_Timer;
-		m_Timer = 0;
+		m_Timer = nullptr;
+	}
+
+	// Release the cpu object.
+	if (m_Cpu)
+	{
+		m_Cpu->Shutdown();
+		delete m_Cpu;
+		m_Cpu = nullptr;
+	}
+
+	// Release the fps object.
+	if (m_Fps)
+	{
+		delete m_Fps;
+		m_Fps = nullptr;
 	}
 
 	// Release the graphics object.
@@ -161,8 +198,11 @@ bool SystemClass::Frame()
 	bool result, clicked;
 	int mouseX, mouseY;
 
+
 	// Update the system stats.
 	m_Timer->Frame();
+	m_Fps->Frame();
+	m_Cpu->Frame();
 
 	// Do the input frame processing.
 	result = m_Input->Frame();
@@ -182,7 +222,7 @@ bool SystemClass::Frame()
 	clicked = m_Input->IsLeftMouseButtonDown();
 
 	// Do the frame processing for the graphics object.
-	result = m_Graphics->Frame();
+	result = m_Graphics->Frame(m_Fps->GetFps(), m_Cpu->GetCpuPercentage(), m_Timer->GetTime());
 	if (!result)
 	{
 		return false;
@@ -323,7 +363,7 @@ void SystemClass::ShutdownWindows()
 	m_hinstance = NULL;
 
 	// Release the pointer to this class.
-	ApplicationHandle = NULL;
+	ApplicationHandle = nullptr;
 
 	return;
 }

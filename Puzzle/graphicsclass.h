@@ -4,13 +4,20 @@
 #pragma once
 
 
+//////////////
+// INCLUDES //
+//////////////
+#include <atlstr.h>
+
+
 ///////////////////////
 // MY CLASS INCLUDES //
 ///////////////////////
-#include "d3dclass.h"
+#include "resourcesclass.h"
 #include "cameraclass.h"
 #include "modelclass.h"
 #include "colorshaderclass.h"
+#include "textclass.h"
 
 
 /////////////
@@ -34,14 +41,15 @@ public:
 
 	bool Initialize(int, int, HWND);
 	void Shutdown();
-	bool Frame();
+	bool Frame(float, int, float);
 
 private:
 	bool Render();
 
 private:
-	D3DClass * m_Direct3D;
-	CameraClass* m_Camera;
-	ModelClass* m_Model;
-	ColorShaderClass* m_ColorShader;
+	ResourcesClass*		m_Resources;
+	TextClass*			m_Text;
+	CameraClass*		m_Camera;
+	ModelClass*			m_Model;
+	ColorShaderClass*	m_ColorShader;
 };

@@ -1,33 +1,39 @@
 ////////////////////////////////////////////////////////////////////////////////
-// Filename: timerclass.h
+// Filename: fpsclass.h
 ////////////////////////////////////////////////////////////////////////////////
 #pragma once
+
+
+/////////////
+// LINKING //
+/////////////
+#pragma comment(lib, "winmm.lib")
 
 
 //////////////
 // INCLUDES //
 //////////////
+#include <list>
 #include <windows.h>
+#include <mmsystem.h>
 
 
 ////////////////////////////////////////////////////////////////////////////////
-// Class name: TimerClass
+// Class name: FpsClass
 ////////////////////////////////////////////////////////////////////////////////
-class TimerClass
+class FpsClass
 {
 public:
-	TimerClass();
-	TimerClass(const TimerClass&);
-	~TimerClass();
+	FpsClass();
+	FpsClass(const FpsClass&);
+	~FpsClass();
 
-	bool Initialize();
+	void Initialize(float = 1.0f);
 	void Frame();
 
-	float GetTime();
+	float GetFps();
 
 private:
-	INT64	m_frequency;
-	float	m_ticksPerMs;
-	INT64	m_startTime;
-	float	m_frameTime;
+	float						m_window;
+	std::list<unsigned long>	m_frametimes;
 };
