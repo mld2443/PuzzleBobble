@@ -52,12 +52,18 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	}
 
 	// Initialize the text object.
-	result = m_Text->Initialize(m_Resources->GetDirectWriteFactory(), m_Resources->GetDirect2DDeviceContext(), L"🌎🌍🌏 Hello, World! 🌎🌍🌏");
+	result = m_Text->Initialize(m_Resources->GetDirectWriteFactory(), m_Resources->GetDirect2DDeviceContext(), 20.0f, L"Consolas");
 	if (!result)
 	{
 		MessageBox(hwnd, L"Could not initialize the text object.", L"Error", MB_OK);
 		return false;
 	}
+
+	// Set the window of the text object.
+	m_Text->SetDrawWindow(3, 0, 150, 150);
+
+	// Set the color of our text object.
+	m_Text->SetBrushColor(D2D1::ColorF(D2D1::ColorF::Plum));
 
 	// Create the camera object.
 	m_Camera = new CameraClass;
@@ -148,10 +154,17 @@ void GraphicsClass::Shutdown()
 }
 
 
-bool GraphicsClass::Frame()
+bool GraphicsClass::Frame(int fps, int cpu, float frameTime)
 {
 	bool result;
+	CString stats;
 
+
+	// Build the statistics string.
+	stats.Format(L"FPS: %d\nCPU: %d%%", fps, cpu);
+	
+	// Set the stats text string for our text object.
+	m_Text->SetTextString(stats.GetString());
 
 	// Render the graphics scene.
 	result = Render();

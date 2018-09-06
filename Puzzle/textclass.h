@@ -22,10 +22,11 @@ public:
 	TextClass(const TextClass&);
 	~TextClass();
 
-	bool Initialize(IDWriteFactory*, ID2D1DeviceContext*, const std::wstring&);
+	bool Initialize(IDWriteFactory*, ID2D1DeviceContext*, float = 36.0f, WCHAR* = L"Segoe UI");
 	void Shutdown();
 
 	void SetDrawWindow(float, float, float, float);
+	void SetBrushColor(D2D1::ColorF&);
 	void SetTextString(const std::wstring&);
 
 	void Render(ID2D1DeviceContext*);

@@ -4,6 +4,12 @@
 #pragma once
 
 
+//////////////
+// INCLUDES //
+//////////////
+#include <atlstr.h>
+
+
 ///////////////////////
 // MY CLASS INCLUDES //
 ///////////////////////
@@ -11,7 +17,6 @@
 #include "cameraclass.h"
 #include "modelclass.h"
 #include "colorshaderclass.h"
-//#include "d2dclass.h"
 #include "textclass.h"
 
 
@@ -36,7 +41,7 @@ public:
 
 	bool Initialize(int, int, HWND);
 	void Shutdown();
-	bool Frame();
+	bool Frame(int, int, float);
 
 private:
 	bool Render();

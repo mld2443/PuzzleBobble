@@ -22,16 +22,19 @@ TextClass::~TextClass()
 }
 
 
-bool TextClass::Initialize(IDWriteFactory* dwriteFactory, ID2D1DeviceContext* deviceContext, const std::wstring& text)
+bool TextClass::Initialize(IDWriteFactory* dwriteFactory,
+						   ID2D1DeviceContext* deviceContext,
+						   float fontSize,
+						   WCHAR* fontName)
 {
 	HRESULT result;
 
 
-	// Initialize drawing window to (0, 0, 200, 200)
-	SetDrawWindow(200, 200, 800, 800);
+	// Initialize drawing window.
+	SetDrawWindow(0, 0, 100, 100);
 
-	// Initialize text string to passed in text
-	SetTextString(text);
+	// Initialize empty text string
+	SetTextString(L"");
 
 	// Create our solid white brush.
 	result = deviceContext->CreateSolidColorBrush(D2D1::ColorF(D2D1::ColorF::White), &m_brush);
@@ -41,8 +44,8 @@ bool TextClass::Initialize(IDWriteFactory* dwriteFactory, ID2D1DeviceContext* de
 	}
 
 	// Create our text format with specified parameters.
-	result = dwriteFactory->CreateTextFormat(L"Segoe UI", nullptr, DWRITE_FONT_WEIGHT_LIGHT,
-		DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL, 36.0f, L"en-US", &m_format);
+	result = dwriteFactory->CreateTextFormat(fontName, nullptr, DWRITE_FONT_WEIGHT_LIGHT,
+		DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL, fontSize, L"en-US", &m_format);
 	if (FAILED(result))
 	{
 		return false;
@@ -54,7 +57,6 @@ bool TextClass::Initialize(IDWriteFactory* dwriteFactory, ID2D1DeviceContext* de
 
 void TextClass::Shutdown()
 {
-
 	// Release the format object.
 	if (m_format)
 	{
@@ -76,8 +78,11 @@ void TextClass::Shutdown()
 void TextClass::Render(ID2D1DeviceContext* deviceContext)
 {
 	deviceContext->BeginDraw();
+
 	deviceContext->DrawTextW(m_string.c_str(), (UINT32)m_string.size(), m_format, m_drawWindow, m_brush);
+
 	deviceContext->EndDraw();
+
 	return;
 }
 
@@ -88,8 +93,13 @@ void TextClass::SetDrawWindow(float xLeft, float yTop, float xRight, float yBott
 }
 
 
+void TextClass::SetBrushColor(D2D1::ColorF& color)
+{
+	m_brush->SetColor(color);
+}
+
+
 void TextClass::SetTextString(const std::wstring& text)
 {
 	m_string = text;
 }
-
