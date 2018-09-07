@@ -76,7 +76,7 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	m_Camera->SetPosition(0.0f, 0.0f, -5.0f);
 
 	// Create the model object.
-	m_Geometry = new TriangleClass;
+	m_Geometry = new PieceClass;
 	if (!m_Geometry)
 	{
 		return false;

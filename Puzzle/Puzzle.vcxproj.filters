@@ -53,6 +53,9 @@
     <ClCompile Include="triangleclass.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="piececlass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="systemclass.h">
@@ -89,6 +92,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="triangleclass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="piececlass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

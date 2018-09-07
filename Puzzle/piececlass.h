@@ -13,14 +13,15 @@
 ////////////////////////////////////////////////////////////////////////////////
 // Class name: TriangleClass
 ////////////////////////////////////////////////////////////////////////////////
-class TriangleClass : public DrawableInterface
+class PieceClass : public DrawableInterface
 {
 public:
-	TriangleClass();
-	TriangleClass(const TriangleClass&);
-	~TriangleClass();
+	PieceClass();
+	PieceClass(const PieceClass&);
+	~PieceClass();
 
 	bool Initialize(ID3D11Device*) override;
 	void Shutdown() override;
 	void Render(ID3D11DeviceContext*) override;
 };
+

@@ -16,6 +16,7 @@
 #include "resourcesclass.h"
 #include "cameraclass.h"
 #include "triangleclass.h"
+#include "piececlass.h"
 #include "colorshaderclass.h"
 #include "textclass.h"
 
@@ -50,6 +51,6 @@ private:
 	ResourcesClass*		m_Resources;
 	TextClass*			m_Text;
 	CameraClass*		m_Camera;
-	TriangleClass*		m_Geometry;
+	PieceClass*			m_Geometry;
 	ColorShaderClass*	m_ColorShader;
 };
