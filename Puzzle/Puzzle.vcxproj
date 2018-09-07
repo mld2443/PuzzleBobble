@@ -28,7 +28,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="inputclass.cpp" />
     <ClCompile Include="graphicsclass.cpp" />
-    <ClCompile Include="modelclass.cpp" />
+    <ClCompile Include="triangleclass.cpp" />
     <ClCompile Include="systemclass.cpp" />
     <ClCompile Include="textclass.cpp" />
     <ClCompile Include="timerclass.cpp" />
@@ -42,7 +42,7 @@
     <ClInclude Include="graphicsclass.h" />
     <ClInclude Include="colorshaderclass.h" />
     <ClInclude Include="inputclass.h" />
-    <ClInclude Include="modelclass.h" />
+    <ClInclude Include="triangleclass.h" />
     <ClInclude Include="systemclass.h" />
     <ClInclude Include="textclass.h" />
     <ClInclude Include="timerclass.h" />
