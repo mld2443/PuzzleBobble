@@ -9,7 +9,7 @@ GraphicsClass::GraphicsClass()
 	m_Resources = nullptr;
 	m_Text = nullptr;
 	m_Camera = nullptr;
-	m_Model = nullptr;
+	m_Geometry = nullptr;
 	m_ColorShader = nullptr;
 }
 
@@ -76,14 +76,14 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	m_Camera->SetPosition(0.0f, 0.0f, -5.0f);
 
 	// Create the model object.
-	m_Model = new ModelClass;
-	if (!m_Model)
+	m_Geometry = new TriangleClass;
+	if (!m_Geometry)
 	{
 		return false;
 	}
 
 	// Initialize the model object.
-	result = m_Model->Initialize(m_Resources->GetDirect3DDevice());
+	result = m_Geometry->Initialize(m_Resources->GetDirect3DDevice());
 	if (!result)
 	{
 		MessageBox(hwnd, L"Could not initialize the model object.", L"Error", MB_OK);
@@ -120,11 +120,11 @@ void GraphicsClass::Shutdown()
 	}
 
 	// Release the model object.
-	if (m_Model)
+	if (m_Geometry)
 	{
-		m_Model->Shutdown();
-		delete m_Model;
-		m_Model = nullptr;
+		m_Geometry->Shutdown();
+		delete m_Geometry;
+		m_Geometry = nullptr;
 	}
 
 	// Release the camera object.
@@ -195,10 +195,10 @@ bool GraphicsClass::Render()
 	m_Resources->GetProjectionMatrix(projectionMatrix);
 
 	// Put the model vertex and index buffers on the graphics pipeline to prepare them for drawing.
-	m_Model->Render(m_Resources->GetDirect3DDeviceContext());
+	m_Geometry->Render(m_Resources->GetDirect3DDeviceContext());
 
 	// Render the model using the color shader.
-	result = m_ColorShader->Render(m_Resources->GetDirect3DDeviceContext(), m_Model->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix);
+	result = m_ColorShader->Render(m_Resources->GetDirect3DDeviceContext(), m_Geometry->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix);
 	if (!result)
 	{
 		return false;

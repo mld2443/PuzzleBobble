@@ -22,12 +22,13 @@
     <ClCompile Include="cameraclass.cpp" />
     <ClCompile Include="colorshaderclass.cpp" />
     <ClCompile Include="cpuclass.cpp" />
+    <ClCompile Include="drawableinterface.cpp" />
     <ClCompile Include="fpsclass.cpp" />
     <ClCompile Include="resourcesclass.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="inputclass.cpp" />
     <ClCompile Include="graphicsclass.cpp" />
-    <ClCompile Include="modelclass.cpp" />
+    <ClCompile Include="triangleclass.cpp" />
     <ClCompile Include="systemclass.cpp" />
     <ClCompile Include="textclass.cpp" />
     <ClCompile Include="timerclass.cpp" />
@@ -35,12 +36,13 @@
   <ItemGroup>
     <ClInclude Include="cameraclass.h" />
     <ClInclude Include="cpuclass.h" />
+    <ClInclude Include="drawableinterface.h" />
     <ClInclude Include="fpsclass.h" />
     <ClInclude Include="resourcesclass.h" />
     <ClInclude Include="graphicsclass.h" />
     <ClInclude Include="colorshaderclass.h" />
     <ClInclude Include="inputclass.h" />
-    <ClInclude Include="modelclass.h" />
+    <ClInclude Include="triangleclass.h" />
     <ClInclude Include="systemclass.h" />
     <ClInclude Include="textclass.h" />
     <ClInclude Include="timerclass.h" />

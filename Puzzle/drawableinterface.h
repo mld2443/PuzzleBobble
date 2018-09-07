@@ -1,5 +1,5 @@
 ////////////////////////////////////////////////////////////////////////////////
-// Filename: modelclass.h
+// Filename: drawableinterface.h
 ////////////////////////////////////////////////////////////////////////////////
 #pragma once
 
@@ -13,11 +13,11 @@
 using namespace DirectX;
 
 ////////////////////////////////////////////////////////////////////////////////
-// Class name: ModelClass
+// Interface name: DrawableInterface
 ////////////////////////////////////////////////////////////////////////////////
-class ModelClass
+class DrawableInterface
 {
-private:
+protected:
 	struct VertexType
 	{
 		XMFLOAT3 position;
@@ -25,18 +25,18 @@ private:
 	};
 
 public:
-	ModelClass();
-	ModelClass(const ModelClass&);
-	~ModelClass();
+	DrawableInterface();
+	DrawableInterface(const DrawableInterface&);
+	~DrawableInterface();
 
-	bool Initialize(ID3D11Device*);
-	void Shutdown();
-	void Render(ID3D11DeviceContext*);
+	virtual bool Initialize(ID3D11Device*) = 0;
+	virtual void Shutdown() = 0;
+	virtual void Render(ID3D11DeviceContext*) = 0;
 
 	int GetIndexCount();
 
-private:
-	bool InitializeBuffers(ID3D11Device*);
+protected:
+	bool InitializeBuffers(ID3D11Device*, VertexType*, int, unsigned long*, int);
 	void ShutdownBuffers();
 	void RenderBuffers(ID3D11DeviceContext*);
 
@@ -44,3 +44,4 @@ private:
 	ID3D11Buffer *	m_vertexBuffer, *m_indexBuffer;
 	int				m_vertexCount, m_indexCount;
 };
+
