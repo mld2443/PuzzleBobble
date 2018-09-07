@@ -22,6 +22,7 @@
     <ClCompile Include="cameraclass.cpp" />
     <ClCompile Include="colorshaderclass.cpp" />
     <ClCompile Include="cpuclass.cpp" />
+    <ClCompile Include="drawableinterface.cpp" />
     <ClCompile Include="fpsclass.cpp" />
     <ClCompile Include="resourcesclass.cpp" />
     <ClCompile Include="main.cpp" />
@@ -35,6 +36,7 @@
   <ItemGroup>
     <ClInclude Include="cameraclass.h" />
     <ClInclude Include="cpuclass.h" />
+    <ClInclude Include="drawableinterface.h" />
     <ClInclude Include="fpsclass.h" />
     <ClInclude Include="resourcesclass.h" />
     <ClInclude Include="graphicsclass.h" />
