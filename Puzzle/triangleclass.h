@@ -20,7 +20,7 @@ public:
 	TriangleClass(const TriangleClass&);
 	~TriangleClass();
 
-	bool Initialize(ID3D11Device*) override;
+	bool Initialize(ID3D11Device*, ID3D11DeviceContext*) override;
 	void Shutdown() override;
 	void Render(ID3D11DeviceContext*) override;
 };
