@@ -194,6 +194,9 @@ bool GraphicsClass::Render()
 	m_Camera->GetViewMatrix(viewMatrix);
 	m_Resources->GetProjectionMatrix(projectionMatrix);
 
+	// Turn on alpha blending for the transparency to work.
+	m_Resources->TurnOnAlphaBlending();
+
 	// Put the model vertex and index buffers on the graphics pipeline to prepare them for drawing.
 	m_Geometry->Render(m_Resources->GetDirect3DDeviceContext());
 
@@ -206,6 +209,9 @@ bool GraphicsClass::Render()
 
 	// Render text on the screen.
 	m_Text->Render(m_Resources->GetDirect2DDeviceContext());
+
+	// Turn off alpha blending.
+	m_Resources->TurnOffAlphaBlending();
 
 	// Present the rendered scene to the screen.
 	m_Resources->EndScene();

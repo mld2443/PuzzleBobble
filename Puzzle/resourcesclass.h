@@ -54,6 +54,9 @@ public:
 
 	void GetVideoCardInfo(char*, int&);
 
+	void TurnOnAlphaBlending();
+	void TurnOffAlphaBlending();
+
 private:
 	bool InitializeDirect3D(int, int, bool, HWND, bool, float, float);
 	bool InitializeDirect2D();
@@ -77,6 +80,9 @@ private:
 	ID3D11DepthStencilState*	m_depthStencilState;
 	ID3D11DepthStencilView*		m_depthStencilView;
 	ID3D11RasterizerState*		m_rasterState;
+	ID3D11DepthStencilState*	m_depthDisabledStencilState;
+	ID3D11BlendState*			m_alphaEnableBlendingState;
+	ID3D11BlendState*			m_alphaDisableBlendingState;
 
 	// Direct2D
 	ID2D1Device4*			m_direct2DDevice;
