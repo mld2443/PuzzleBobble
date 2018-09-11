@@ -1,5 +1,5 @@
 ////////////////////////////////////////////////////////////////////////////////
-// Filename: piececlass.h
+// Filename: boardclass.h
 ////////////////////////////////////////////////////////////////////////////////
 #pragma once
 
@@ -12,14 +12,14 @@
 
 
 ////////////////////////////////////////////////////////////////////////////////
-// Class name: PieceClass
+// Class name: BoardClass
 ////////////////////////////////////////////////////////////////////////////////
-class PieceClass : public DrawableInterface
+class BoardClass : public DrawableInterface
 {
 public:
-	PieceClass();
-	PieceClass(const PieceClass&);
-	~PieceClass();
+	BoardClass();
+	BoardClass(const BoardClass&);
+	~BoardClass();
 
 	bool Initialize(ID3D11Device*, ID3D11DeviceContext*) override;
 	void Shutdown() override;

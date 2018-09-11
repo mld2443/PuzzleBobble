@@ -1,27 +1,27 @@
 ////////////////////////////////////////////////////////////////////////////////
-// Filename: piececlass.cpp
+// Filename: boardclass.cpp
 ////////////////////////////////////////////////////////////////////////////////
-#include "piececlass.h"
+#include "boardclass.h"
 
 
 
-PieceClass::PieceClass() : DrawableInterface()
+BoardClass::BoardClass() : DrawableInterface()
 {
 	m_Texture = nullptr;
 }
 
 
-PieceClass::PieceClass(const PieceClass& other) : DrawableInterface(other)
+BoardClass::BoardClass(const BoardClass& other) : DrawableInterface(other)
 {
 }
 
 
-PieceClass::~PieceClass()
+BoardClass::~BoardClass()
 {
 }
 
 
-bool PieceClass::Initialize(ID3D11Device* device, ID3D11DeviceContext* deviceContext)
+bool BoardClass::Initialize(ID3D11Device* device, ID3D11DeviceContext* deviceContext)
 {
 	bool result;
 	VertexType* vertices;
@@ -96,7 +96,7 @@ bool PieceClass::Initialize(ID3D11Device* device, ID3D11DeviceContext* deviceCon
 }
 
 
-void PieceClass::Shutdown()
+void BoardClass::Shutdown()
 {
 	// Shutdown the vertex and index buffers.
 	ShutdownBuffers();
@@ -112,7 +112,7 @@ void PieceClass::Shutdown()
 }
 
 
-void PieceClass::Render(ID3D11DeviceContext* deviceContext)
+void BoardClass::Render(ID3D11DeviceContext* deviceContext)
 {
 	// Put the vertex and index buffers on the graphics pipeline to prepare them for drawing.
 	RenderBuffers(deviceContext);
@@ -121,14 +121,14 @@ void PieceClass::Render(ID3D11DeviceContext* deviceContext)
 }
 
 
-ID3D11ShaderResourceView* PieceClass::GetTexture()
+ID3D11ShaderResourceView* BoardClass::GetTexture()
 {
 	return m_Texture->GetTexture();
 }
 
 
 
-bool PieceClass::LoadTexture(ID3D11Device* device, ID3D11DeviceContext* deviceContext, char* filename)
+bool BoardClass::LoadTexture(ID3D11Device* device, ID3D11DeviceContext* deviceContext, char* filename)
 {
 	bool result;
 
