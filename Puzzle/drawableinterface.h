@@ -21,7 +21,7 @@ protected:
 	struct VertexType
 	{
 		XMFLOAT3 position;
-		XMFLOAT4 color;
+		XMFLOAT2 texture;
 	};
 
 public:
@@ -29,7 +29,7 @@ public:
 	DrawableInterface(const DrawableInterface&);
 	~DrawableInterface();
 
-	virtual bool Initialize(ID3D11Device*) = 0;
+	virtual bool Initialize(ID3D11Device*, ID3D11DeviceContext*) = 0;
 	virtual void Shutdown() = 0;
 	virtual void Render(ID3D11DeviceContext*) = 0;
 

@@ -10,7 +10,7 @@ GraphicsClass::GraphicsClass()
 	m_Text = nullptr;
 	m_Camera = nullptr;
 	m_Geometry = nullptr;
-	m_ColorShader = nullptr;
+	m_TextureShader = nullptr;
 }
 
 
@@ -76,14 +76,14 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	m_Camera->SetPosition(0.0f, 0.0f, -5.0f);
 
 	// Create the model object.
-	m_Geometry = new TriangleClass;
+	m_Geometry = new PieceClass;
 	if (!m_Geometry)
 	{
 		return false;
 	}
 
 	// Initialize the model object.
-	result = m_Geometry->Initialize(m_Resources->GetDirect3DDevice());
+	result = m_Geometry->Initialize(m_Resources->GetDirect3DDevice(), m_Resources->GetDirect3DDeviceContext());
 	if (!result)
 	{
 		MessageBox(hwnd, L"Could not initialize the model object.", L"Error", MB_OK);
@@ -91,14 +91,14 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	}
 
 	// Create the color shader object.
-	m_ColorShader = new ColorShaderClass;
-	if (!m_ColorShader)
+	m_TextureShader = new TextureShaderClass;
+	if (!m_TextureShader)
 	{
 		return false;
 	}
 
 	// Initialize the color shader object.
-	result = m_ColorShader->Initialize(m_Resources->GetDirect3DDevice());
+	result = m_TextureShader->Initialize(m_Resources->GetDirect3DDevice());
 	if (!result)
 	{
 		MessageBox(hwnd, L"Could not initialize the color shader object.", L"Error", MB_OK);
@@ -112,11 +112,11 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 void GraphicsClass::Shutdown()
 {
 	// Release the color shader object.
-	if (m_ColorShader)
+	if (m_TextureShader)
 	{
-		m_ColorShader->Shutdown();
-		delete m_ColorShader;
-		m_ColorShader = nullptr;
+		m_TextureShader->Shutdown();
+		delete m_TextureShader;
+		m_TextureShader = nullptr;
 	}
 
 	// Release the model object.
@@ -194,11 +194,14 @@ bool GraphicsClass::Render()
 	m_Camera->GetViewMatrix(viewMatrix);
 	m_Resources->GetProjectionMatrix(projectionMatrix);
 
+	// Turn on alpha blending for the transparency to work.
+	m_Resources->TurnOnAlphaBlending();
+
 	// Put the model vertex and index buffers on the graphics pipeline to prepare them for drawing.
 	m_Geometry->Render(m_Resources->GetDirect3DDeviceContext());
 
 	// Render the model using the color shader.
-	result = m_ColorShader->Render(m_Resources->GetDirect3DDeviceContext(), m_Geometry->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix);
+	result = m_TextureShader->Render(m_Resources->GetDirect3DDeviceContext(), m_Geometry->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix, m_Geometry->GetTexture());
 	if (!result)
 	{
 		return false;
@@ -206,6 +209,9 @@ bool GraphicsClass::Render()
 
 	// Render text on the screen.
 	m_Text->Render(m_Resources->GetDirect2DDeviceContext());
+
+	// Turn off alpha blending.
+	m_Resources->TurnOffAlphaBlending();
 
 	// Present the rendered scene to the screen.
 	m_Resources->EndScene();

@@ -1,5 +1,5 @@
 ////////////////////////////////////////////////////////////////////////////////
-// Filename: color.vs
+// Filename: VertexShader.hlsl
 ////////////////////////////////////////////////////////////////////////////////
 
 
@@ -20,13 +20,13 @@ cbuffer MatrixBuffer
 struct VertexInputType
 {
 	float4 position : POSITION;
-	float4 color : COLOR;
+	float2 tex : TEXCOORD0;
 };
 
 struct PixelInputType
 {
 	float4 position : SV_POSITION;
-	float4 color : COLOR;
+	float2 tex : TEXCOORD0;
 };
 
 
@@ -47,7 +47,7 @@ PixelInputType VSMain(VertexInputType input)
 	output.position = mul(output.position, projectionMatrix);
 
 	// Store the input color for the pixel shader to use.
-	output.color = input.color;
+	output.tex = input.tex;
 
 	return output;
 }
