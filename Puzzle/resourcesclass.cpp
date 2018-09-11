@@ -14,6 +14,9 @@ ResourcesClass::ResourcesClass()
 	m_depthStencilState = nullptr;
 	m_depthStencilView = nullptr;
 	m_rasterState = nullptr;
+	m_depthDisabledStencilState = nullptr;
+	m_alphaEnableBlendingState = nullptr;
+	m_alphaDisableBlendingState = nullptr;
 
 	m_direct2DDevice = nullptr;
 	m_direct2DDeviceContext = nullptr;
@@ -541,7 +544,6 @@ bool ResourcesClass::InitializeDirect3D(int screenWidth, int screenHeight, bool 
 
 	// Create an alpha enabled blend state description.
 	blendStateDescription.RenderTarget[0].BlendEnable =				TRUE;
-	//blendStateDescription.RenderTarget[0].SrcBlend =				D3D11_BLEND_ONE;
 	blendStateDescription.RenderTarget[0].SrcBlend =				D3D11_BLEND_SRC_ALPHA;
 	blendStateDescription.RenderTarget[0].DestBlend =				D3D11_BLEND_INV_SRC_ALPHA;
 	blendStateDescription.RenderTarget[0].BlendOp =					D3D11_BLEND_OP_ADD;
@@ -685,13 +687,13 @@ void ResourcesClass::ShutdownDirect3D()
 	if (m_alphaEnableBlendingState)
 	{
 		m_alphaEnableBlendingState->Release();
-		m_alphaEnableBlendingState = 0;
+		m_alphaEnableBlendingState = nullptr;
 	}
 
 	if (m_alphaDisableBlendingState)
 	{
 		m_alphaDisableBlendingState->Release();
-		m_alphaDisableBlendingState = 0;
+		m_alphaDisableBlendingState = nullptr;
 	}
 
 	if (m_depthStencilView)
@@ -703,7 +705,7 @@ void ResourcesClass::ShutdownDirect3D()
 	if (m_depthDisabledStencilState)
 	{
 		m_depthDisabledStencilState->Release();
-		m_depthDisabledStencilState = 0;
+		m_depthDisabledStencilState = nullptr;
 	}
 
 	if (m_depthStencilState)
