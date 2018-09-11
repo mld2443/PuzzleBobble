@@ -20,7 +20,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="cameraclass.cpp" />
-    <ClCompile Include="colorshaderclass.cpp" />
     <ClCompile Include="cpuclass.cpp" />
     <ClCompile Include="drawableinterface.cpp" />
     <ClCompile Include="fpsclass.cpp" />
@@ -31,7 +30,6 @@
     <ClCompile Include="graphicsclass.cpp" />
     <ClCompile Include="textureclass.cpp" />
     <ClCompile Include="textureshaderclass.cpp" />
-    <ClCompile Include="triangleclass.cpp" />
     <ClCompile Include="systemclass.cpp" />
     <ClCompile Include="textclass.cpp" />
     <ClCompile Include="timerclass.cpp" />
@@ -44,11 +42,9 @@
     <ClInclude Include="piececlass.h" />
     <ClInclude Include="resourcesclass.h" />
     <ClInclude Include="graphicsclass.h" />
-    <ClInclude Include="colorshaderclass.h" />
     <ClInclude Include="inputclass.h" />
     <ClInclude Include="textureclass.h" />
     <ClInclude Include="textureshaderclass.h" />
-    <ClInclude Include="triangleclass.h" />
     <ClInclude Include="systemclass.h" />
     <ClInclude Include="textclass.h" />
     <ClInclude Include="timerclass.h" />
