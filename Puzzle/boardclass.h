@@ -22,6 +22,12 @@
 class BoardClass : public DrawableInterface
 {
 public:
+	struct InstanceType
+	{
+		XMFLOAT3 position;
+	};
+
+public:
 	BoardClass();
 	BoardClass(const BoardClass&);
 	~BoardClass();
@@ -29,5 +35,16 @@ public:
 	bool Initialize(ID3D11Device*, ID3D11DeviceContext*) override;
 	void Shutdown() override;
 	void Render(ID3D11DeviceContext*) override;
+
+	int GetInstanceCount();
+
+private:
+	bool InitializeInstanceBuffer(ID3D11Device*);
+	void ShutdownInstanceBuffer();
+	void RenderAllBuffers(ID3D11DeviceContext*);
+
+private:
+	ID3D11Buffer *	m_instanceBuffer;
+	int				m_instanceCount;
 };
 

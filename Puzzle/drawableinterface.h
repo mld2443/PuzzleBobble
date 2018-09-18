@@ -34,6 +34,9 @@ public:
 	virtual void Render(ID3D11DeviceContext*) = 0;
 
 	int GetIndexCount();
+	int GetVertexCount();
+	ID3D11Buffer * GetIndexBuffer();
+	ID3D11Buffer * GetVertexBuffer();
 
 protected:
 	bool InitializeBuffers(ID3D11Device*, VertexType*, int, unsigned long*, int);
