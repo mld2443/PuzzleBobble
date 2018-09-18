@@ -48,7 +48,7 @@ void ColorShaderClass::Shutdown()
 }
 
 
-bool ColorShaderClass::Render(ID3D11DeviceContext* deviceContext, int indexCount, XMMATRIX worldMatrix, XMMATRIX viewMatrix,
+bool ColorShaderClass::Render(ID3D11DeviceContext* deviceContext, int indexCountPerInstance, int instanceCount, XMMATRIX worldMatrix, XMMATRIX viewMatrix,
 	XMMATRIX projectionMatrix)
 {
 	bool result;
@@ -62,7 +62,7 @@ bool ColorShaderClass::Render(ID3D11DeviceContext* deviceContext, int indexCount
 	}
 
 	// Now render the prepared buffers with the shader.
-	RenderShader(deviceContext, indexCount);
+	RenderShader(deviceContext, indexCountPerInstance, instanceCount);
 
 	return true;
 }
@@ -71,27 +71,27 @@ bool ColorShaderClass::Render(ID3D11DeviceContext* deviceContext, int indexCount
 bool ColorShaderClass::InitializeShader(ID3D11Device* device)
 {
 	HRESULT result;
-	D3D11_INPUT_ELEMENT_DESC polygonLayout[2];
+	D3D11_INPUT_ELEMENT_DESC polygonLayout[4];
 	unsigned int numElements;
 	D3D11_BUFFER_DESC matrixBufferDesc;
 
 
 	// Create the vertex shader from the header file provided by compiling VertexShader.hlsl.
-	result = device->CreateVertexShader(g_vsshader, sizeof(g_vsshader), NULL, &m_vertexShader);
+	result = device->CreateVertexShader(g_vsshader, sizeof(g_vsshader), nullptr, &m_vertexShader);
 	if (FAILED(result))
 	{
 		return false;
 	}
 
 	// Create the pixel shader from the header file provided by compiling PixelShader.hlsl.
-	result = device->CreatePixelShader(g_psshader, sizeof(g_psshader), NULL, &m_pixelShader);
+	result = device->CreatePixelShader(g_psshader, sizeof(g_psshader), nullptr, &m_pixelShader);
 	if (FAILED(result))
 	{
 		return false;
 	}
 
 	// Create the vertex input layout description.
-	// This setup needs to match the VertexType stucture in the DrawableInterface and in the shader.
+	// This setup needs to match the VertexType stucture in the ModelClass and in the shader.
 	polygonLayout[0].SemanticName =			"POSITION";
 	polygonLayout[0].SemanticIndex =		0;
 	polygonLayout[0].Format =				DXGI_FORMAT_R32G32B32_FLOAT;
@@ -107,6 +107,22 @@ bool ColorShaderClass::InitializeShader(ID3D11Device* device)
 	polygonLayout[1].AlignedByteOffset =	D3D11_APPEND_ALIGNED_ELEMENT;
 	polygonLayout[1].InputSlotClass =		D3D11_INPUT_PER_VERTEX_DATA;
 	polygonLayout[1].InstanceDataStepRate = 0;
+
+	polygonLayout[2].SemanticName =			"POSITION";
+	polygonLayout[2].SemanticIndex =		1;
+	polygonLayout[2].Format =				DXGI_FORMAT_R32G32B32_FLOAT;
+	polygonLayout[2].InputSlot =			1;
+	polygonLayout[2].AlignedByteOffset =	0;
+	polygonLayout[2].InputSlotClass =		D3D11_INPUT_PER_INSTANCE_DATA;
+	polygonLayout[2].InstanceDataStepRate = 1;
+
+	polygonLayout[3].SemanticName =			"COLOR";
+	polygonLayout[3].SemanticIndex =		1;
+	polygonLayout[3].Format =				DXGI_FORMAT_R32G32B32A32_FLOAT;
+	polygonLayout[3].InputSlot =			1;
+	polygonLayout[3].AlignedByteOffset =	D3D11_APPEND_ALIGNED_ELEMENT;
+	polygonLayout[3].InputSlotClass =		D3D11_INPUT_PER_INSTANCE_DATA;
+	polygonLayout[3].InstanceDataStepRate = 1;
 
 	// Get a count of the elements in the layout.
 	numElements = sizeof(polygonLayout) / sizeof(polygonLayout[0]);
@@ -127,7 +143,7 @@ bool ColorShaderClass::InitializeShader(ID3D11Device* device)
 	matrixBufferDesc.StructureByteStride = 0;
 
 	// Create the constant buffer pointer so we can access the vertex shader constant buffer from within this class.
-	result = device->CreateBuffer(&matrixBufferDesc, NULL, &m_matrixBuffer);
+	result = device->CreateBuffer(&matrixBufferDesc, nullptr, &m_matrixBuffer);
 	if (FAILED(result))
 	{
 		return false;
@@ -213,17 +229,17 @@ bool ColorShaderClass::SetShaderParameters(ID3D11DeviceContext* deviceContext, X
 }
 
 
-void ColorShaderClass::RenderShader(ID3D11DeviceContext* deviceContext, int indexCount)
+void ColorShaderClass::RenderShader(ID3D11DeviceContext* deviceContext, int indexCountPerInstance, int instanceCount)
 {
 	// Set the vertex input layout.
 	deviceContext->IASetInputLayout(m_layout);
 
 	// Set the vertex and pixel shaders that will be used to render this triangle.
-	deviceContext->VSSetShader(m_vertexShader, NULL, 0);
-	deviceContext->PSSetShader(m_pixelShader, NULL, 0);
+	deviceContext->VSSetShader(m_vertexShader, nullptr, 0);
+	deviceContext->PSSetShader(m_pixelShader, nullptr, 0);
 
-	// Render geometry.
-	deviceContext->DrawIndexed(indexCount, 0, 0);
+	// Render the triangle.
+	deviceContext->DrawIndexedInstanced(indexCountPerInstance, instanceCount, 0, 0, 0);
 
 	return;
 }
