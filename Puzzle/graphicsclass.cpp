@@ -10,7 +10,7 @@ GraphicsClass::GraphicsClass()
 	m_Text = nullptr;
 	m_Camera = nullptr;
 	m_Geometry = nullptr;
-	m_TextureShader = nullptr;
+	m_ColorShader = nullptr;
 }
 
 
@@ -91,14 +91,14 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	}
 
 	// Create the color shader object.
-	m_TextureShader = new TextureShaderClass;
-	if (!m_TextureShader)
+	m_ColorShader = new ColorShaderClass;
+	if (!m_ColorShader)
 	{
 		return false;
 	}
 
 	// Initialize the color shader object.
-	result = m_TextureShader->Initialize(m_Resources->GetDirect3DDevice());
+	result = m_ColorShader->Initialize(m_Resources->GetDirect3DDevice());
 	if (!result)
 	{
 		MessageBox(hwnd, L"Could not initialize the color shader object.", L"Error", MB_OK);
@@ -112,11 +112,11 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 void GraphicsClass::Shutdown()
 {
 	// Release the color shader object.
-	if (m_TextureShader)
+	if (m_ColorShader)
 	{
-		m_TextureShader->Shutdown();
-		delete m_TextureShader;
-		m_TextureShader = nullptr;
+		m_ColorShader->Shutdown();
+		delete m_ColorShader;
+		m_ColorShader = nullptr;
 	}
 
 	// Release the model object.
@@ -201,7 +201,7 @@ bool GraphicsClass::Render()
 	m_Geometry->Render(m_Resources->GetDirect3DDeviceContext());
 
 	// Render the model using the color shader.
-	result = m_TextureShader->Render(m_Resources->GetDirect3DDeviceContext(), m_Geometry->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix, m_Geometry->GetTexture());
+	result = m_ColorShader->Render(m_Resources->GetDirect3DDeviceContext(), m_Geometry->GetIndexCount(), m_Geometry->GetInstanceCount(), worldMatrix, viewMatrix, projectionMatrix);
 	if (!result)
 	{
 		return false;

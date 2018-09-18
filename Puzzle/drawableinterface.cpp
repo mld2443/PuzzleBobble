@@ -4,7 +4,6 @@
 #include "drawableinterface.h"
 
 
-
 DrawableInterface::DrawableInterface()
 {
 	m_vertexBuffer = nullptr;
@@ -27,6 +26,23 @@ int DrawableInterface::GetIndexCount()
 	return m_indexCount;
 }
 
+
+int DrawableInterface::GetVertexCount()
+{
+	return m_vertexCount;
+}
+
+
+ID3D11Buffer * DrawableInterface::GetIndexBuffer()
+{
+	return m_indexBuffer;
+}
+
+
+ID3D11Buffer * DrawableInterface::GetVertexBuffer()
+{
+	return m_vertexBuffer;
+}
 
 
 bool DrawableInterface::InitializeBuffers(ID3D11Device* device, VertexType* vertices, int vertexCount, 

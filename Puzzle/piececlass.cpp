@@ -19,13 +19,13 @@ PieceClass::~PieceClass()
 }
 
 
-void PieceClass::Initialize(PieceClass::PieceColor color)
+void PieceClass::Initialize()
 {
-	m_Color = color;
+	//m_Color = color;
 }
 
 
-PieceClass::PieceColor PieceClass::GetPieceColor()
-{
-	return m_Color;
-}
+//PieceClass::PieceColor PieceClass::GetPieceColor()
+//{
+//	return m_Color;
+//}

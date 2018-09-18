@@ -1,5 +1,5 @@
 ////////////////////////////////////////////////////////////////////////////////
-// Filename: textureshaderclass.h
+// Filename: colorshaderclass.h
 ////////////////////////////////////////////////////////////////////////////////
 #pragma once
 
@@ -21,9 +21,9 @@
 using namespace DirectX;
 
 ////////////////////////////////////////////////////////////////////////////////
-// Class name: TextureShaderClass
+// Class name: ColorShaderClass
 ////////////////////////////////////////////////////////////////////////////////
-class TextureShaderClass
+class ColorShaderClass
 {
 private:
 	struct MatrixBufferType
@@ -34,25 +34,24 @@ private:
 	};
 
 public:
-	TextureShaderClass();
-	TextureShaderClass(const TextureShaderClass&);
-	~TextureShaderClass();
+	ColorShaderClass();
+	ColorShaderClass(const ColorShaderClass&);
+	~ColorShaderClass();
 
 	bool Initialize(ID3D11Device*);
 	void Shutdown();
-	bool Render(ID3D11DeviceContext*, int, XMMATRIX, XMMATRIX, XMMATRIX, ID3D11ShaderResourceView*);
+	bool Render(ID3D11DeviceContext*, int, int, XMMATRIX, XMMATRIX, XMMATRIX);
 
 private:
 	bool InitializeShader(ID3D11Device*);
 	void ShutdownShader();
 
-	bool SetShaderParameters(ID3D11DeviceContext*, XMMATRIX, XMMATRIX, XMMATRIX, ID3D11ShaderResourceView*);
-	void RenderShader(ID3D11DeviceContext*, int);
+	bool SetShaderParameters(ID3D11DeviceContext*, XMMATRIX, XMMATRIX, XMMATRIX);
+	void RenderShader(ID3D11DeviceContext*, int, int);
 
 private:
 	ID3D11VertexShader*	m_vertexShader;
 	ID3D11PixelShader*	m_pixelShader;
 	ID3D11InputLayout*	m_layout;
 	ID3D11Buffer*		m_matrixBuffer;
-	ID3D11SamplerState*	m_sampleState;
 };

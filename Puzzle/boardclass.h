@@ -8,7 +8,12 @@
 // MY CLASS INCLUDES //
 ///////////////////////
 #include "drawableinterface.h"
-#include "textureclass.h"
+
+
+///////////////
+// CONSTANTS //
+///////////////
+#define SQRT075 0.86602540378f
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -16,6 +21,13 @@
 ////////////////////////////////////////////////////////////////////////////////
 class BoardClass : public DrawableInterface
 {
+public:
+	struct InstanceType
+	{
+		XMFLOAT3 position;
+		XMFLOAT4 color;
+	};
+
 public:
 	BoardClass();
 	BoardClass(const BoardClass&);
@@ -25,12 +37,15 @@ public:
 	void Shutdown() override;
 	void Render(ID3D11DeviceContext*) override;
 
-	ID3D11ShaderResourceView* GetTexture();
+	int GetInstanceCount();
 
 private:
-	bool LoadTexture(ID3D11Device*, ID3D11DeviceContext*, char*);
+	bool InitializeInstanceBuffer(ID3D11Device*);
+	void ShutdownInstanceBuffer();
+	void RenderWithInstanceBuffer(ID3D11DeviceContext*);
 
 private:
-	TextureClass* m_Texture;
+	ID3D11Buffer *	m_instanceBuffer;
+	int				m_instanceCount;
 };
 
