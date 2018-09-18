@@ -51,25 +51,25 @@ bool BoardClass::Initialize(ID3D11Device* device, ID3D11DeviceContext* deviceCon
 
 	// Load the vertex array with data.
 	vertices[0].position = XMFLOAT3(0.0f, 0.0f, 0.0f);	// Center.
-	vertices[0].color = XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f);
+	vertices[0].color = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
 
 	vertices[1].position = XMFLOAT3(0.5f, SQRT075, 0.0f);	// Top right.
-	vertices[1].color = XMFLOAT4(0.8f, 0.0f, 0.0f, 1.0f);
+	vertices[1].color = XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f);
 
 	vertices[2].position = XMFLOAT3(1.0f, 0.0f, 0.0f);		// Right.
-	vertices[2].color = XMFLOAT4(0.6f, 0.0f, 0.0f, 1.0f);
+	vertices[2].color = XMFLOAT4(0.6f, 0.6f, 0.6f, 1.0f);
 
 	vertices[3].position = XMFLOAT3(0.5f, -SQRT075, 0.0f);	// Bottom right.
-	vertices[3].color = XMFLOAT4(0.4f, 0.0f, 0.0f, 1.0f);
+	vertices[3].color = XMFLOAT4(0.4f, 0.4f, 0.4f, 1.0f);
 
 	vertices[4].position = XMFLOAT3(-0.5f, -SQRT075, 0.0f);	// Bottom left.
-	vertices[4].color = XMFLOAT4(0.2f, 0.0f, 0.0f, 1.0f);
+	vertices[4].color = XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f);
 
 	vertices[5].position = XMFLOAT3(-1.0f, 0.0f, 0.0f);		// Left.
-	vertices[5].color = XMFLOAT4(0.4f, 0.0f, 0.0f, 1.0f);
+	vertices[5].color = XMFLOAT4(0.4f, 0.4f, 0.4f, 1.0f);
 
 	vertices[6].position = XMFLOAT3(-0.5f, SQRT075, 0.0f);	// Top left.
-	vertices[6].color = XMFLOAT4(0.6f, 0.0f, 0.0f, 1.0f);
+	vertices[6].color = XMFLOAT4(0.6f, 0.6f, 0.6f, 1.0f);
 
 	// Load the index array with data.
 	indices[0] = 0;  // Center.
@@ -168,9 +168,16 @@ bool BoardClass::InitializeInstanceBuffer(ID3D11Device* device)
 
 	// Load the instance array with data.
 	instances[0].position = XMFLOAT3(-1.5f, -1.5f, 5.0f);
+	instances[0].color =	XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f);
+
 	instances[1].position = XMFLOAT3(-1.5f, 1.5f, 5.0f);
+	instances[1].color =	XMFLOAT4(0.0f, 0.0f, 1.0f, 1.0f);
+
 	instances[2].position = XMFLOAT3(1.5f, -1.5f, 5.0f);
+	instances[2].color =	XMFLOAT4(0.0f, 1.0f, 0.0f, 1.0f);
+
 	instances[3].position = XMFLOAT3(1.5f, 1.5f, 5.0f);
+	instances[3].color =	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
 
 	// Set up the description of the instance buffer.
 	instanceBufferDesc.Usage = D3D11_USAGE_DEFAULT;
