@@ -21,7 +21,7 @@ protected:
 	struct VertexType
 	{
 		XMFLOAT3 position;
-		XMFLOAT2 texture;
+		XMFLOAT4 color;
 	};
 
 public:

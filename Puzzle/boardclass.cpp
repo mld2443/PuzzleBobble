@@ -7,7 +7,6 @@
 
 BoardClass::BoardClass() : DrawableInterface()
 {
-	m_Texture = nullptr;
 }
 
 
@@ -29,18 +28,11 @@ bool BoardClass::Initialize(ID3D11Device* device, ID3D11DeviceContext* deviceCon
 	int vertexCount, indexCount;
 
 
-	// Load the texture for our piece.
-	result = LoadTexture(device, deviceContext, "../Puzzle/data/piece.tga");
-	if (!result)
-	{
-		return false;
-	}
-
 	// Set the number of vertices in the vertex array.
-	vertexCount = 4;
+	vertexCount = 6;
 
 	// Set the number of indices in the index array.
-	indexCount = 6;
+	indexCount = 12;
 
 	// Create the vertex array.
 	vertices = new VertexType[vertexCount];
@@ -57,26 +49,40 @@ bool BoardClass::Initialize(ID3D11Device* device, ID3D11DeviceContext* deviceCon
 	}
 
 	// Load the vertex array with data.
-	vertices[0].position = XMFLOAT3(-1.0f, -1.0f, 0.0f);	// Bottom left.
-	vertices[0].texture = XMFLOAT2(0.0f, 1.0f);
+	vertices[0].position = XMFLOAT3(-0.5f, SQRT075, 0.0f);	// Top left.
+	vertices[0].color = XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f);
 
-	vertices[1].position = XMFLOAT3(-1.0f, 1.0f, 0.0f);		// Top left.
-	vertices[1].texture = XMFLOAT2(0.0f, 0.0f);
+	vertices[1].position = XMFLOAT3(0.5f, SQRT075, 0.0f);	// Top right.
+	vertices[1].color = XMFLOAT4(1.0f, 1.0f, 0.0f, 1.0f);
 
-	vertices[2].position = XMFLOAT3(1.0f, -1.0f, 0.0f);		// Bottom right.
-	vertices[2].texture = XMFLOAT2(1.0f, 1.0f);
+	vertices[2].position = XMFLOAT3(1.0f, 0.0f, 0.0f);		// Right.
+	vertices[2].color = XMFLOAT4(0.0f, 1.0f, 0.0f, 1.0f);
 
-	vertices[3].position = XMFLOAT3(1.0f, 1.0f, 0.0f);		// Top right.
-	vertices[3].texture = XMFLOAT2(1.0f, 0.0f);
+	vertices[3].position = XMFLOAT3(0.5f, -SQRT075, 0.0f);	// Bottom right.
+	vertices[3].color = XMFLOAT4(0.0f, 1.0f, 1.0f, 1.0f);
+
+	vertices[4].position = XMFLOAT3(-0.5f, -SQRT075, 0.0f);	// Bottom left.
+	vertices[4].color = XMFLOAT4(0.0f, 0.0f, 1.0f, 1.0f);
+
+	vertices[5].position = XMFLOAT3(-1.0f, 0.0f, 0.0f);		// Left.
+	vertices[5].color = XMFLOAT4(1.0f, 0.0f, 1.0f, 1.0f);
 
 	// Load the index array with data.
-	indices[0] = 0;  // Bottom left.
-	indices[1] = 1;  // Top left.
-	indices[2] = 2;  // Bottom right.
+	indices[0] = 5;  // Left.
+	indices[1] = 0;  // Top left.
+	indices[2] = 4;  // Bottom left.
 
-	indices[3] = 2;  // Bottom right.
-	indices[4] = 1;  // Top left.
-	indices[5] = 3;  // Top right.
+	indices[3] = 4;  // Bottom left.
+	indices[4] = 0;  // Top left.
+	indices[5] = 3;  // Bottom right.
+
+	indices[6] = 0;  // Top left.
+	indices[7] = 1;  // Top right.
+	indices[8] = 3;  // Bottom right.
+
+	indices[9] = 1;  // Top right.
+	indices[10] = 2;  // Right.
+	indices[11] = 3;  // Bottom right.
 
 	// Initialize the vertex and index buffers.
 	result = InitializeBuffers(device, vertices, vertexCount, indices, indexCount);
@@ -101,13 +107,6 @@ void BoardClass::Shutdown()
 	// Shutdown the vertex and index buffers.
 	ShutdownBuffers();
 
-	if (m_Texture)
-	{
-		m_Texture->Shutdown();
-		delete m_Texture;
-		m_Texture = nullptr;
-	}
-
 	return;
 }
 
@@ -118,34 +117,4 @@ void BoardClass::Render(ID3D11DeviceContext* deviceContext)
 	RenderBuffers(deviceContext);
 
 	return;
-}
-
-
-ID3D11ShaderResourceView* BoardClass::GetTexture()
-{
-	return m_Texture->GetTexture();
-}
-
-
-
-bool BoardClass::LoadTexture(ID3D11Device* device, ID3D11DeviceContext* deviceContext, char* filename)
-{
-	bool result;
-
-
-	// Create the texture object.
-	m_Texture = new TextureClass;
-	if (!m_Texture)
-	{
-		return false;
-	}
-
-	// Initialize the texture object.
-	result = m_Texture->Initialize(device, deviceContext, filename);
-	if (!result)
-	{
-		return false;
-	}
-
-	return true;
 }
