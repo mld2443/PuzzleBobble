@@ -29,10 +29,10 @@ bool BoardClass::Initialize(ID3D11Device* device, ID3D11DeviceContext* deviceCon
 
 
 	// Set the number of vertices in the vertex array.
-	vertexCount = 6;
+	vertexCount = 7;
 
 	// Set the number of indices in the index array.
-	indexCount = 12;
+	indexCount = 18;
 
 	// Create the vertex array.
 	vertices = new VertexType[vertexCount];
@@ -49,8 +49,8 @@ bool BoardClass::Initialize(ID3D11Device* device, ID3D11DeviceContext* deviceCon
 	}
 
 	// Load the vertex array with data.
-	vertices[0].position = XMFLOAT3(-0.5f, SQRT075, 0.0f);	// Top left.
-	vertices[0].color = XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f);
+	vertices[0].position = XMFLOAT3(0.0f, 0.0f, 0.0f);	// Center.
+	vertices[0].color = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
 
 	vertices[1].position = XMFLOAT3(0.5f, SQRT075, 0.0f);	// Top right.
 	vertices[1].color = XMFLOAT4(1.0f, 1.0f, 0.0f, 1.0f);
@@ -67,22 +67,33 @@ bool BoardClass::Initialize(ID3D11Device* device, ID3D11DeviceContext* deviceCon
 	vertices[5].position = XMFLOAT3(-1.0f, 0.0f, 0.0f);		// Left.
 	vertices[5].color = XMFLOAT4(1.0f, 0.0f, 1.0f, 1.0f);
 
-	// Load the index array with data.
-	indices[0] = 5;  // Left.
-	indices[1] = 0;  // Top left.
-	indices[2] = 4;  // Bottom left.
+	vertices[6].position = XMFLOAT3(-0.5f, SQRT075, 0.0f);	// Top left.
+	vertices[6].color = XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f);
 
-	indices[3] = 4;  // Bottom left.
-	indices[4] = 0;  // Top left.
+	// Load the index array with data.
+	indices[0] = 0;  // Center.
+	indices[1] = 1;  // Top Right.
+	indices[2] = 2;  // Right.
+
+	indices[3] = 0;  // Center.
+	indices[4] = 2;  // Right.
 	indices[5] = 3;  // Bottom right.
 
-	indices[6] = 0;  // Top left.
-	indices[7] = 1;  // Top right.
-	indices[8] = 3;  // Bottom right.
+	indices[6] = 0;  // Center.
+	indices[7] = 3;  // Bottom right.
+	indices[8] = 4;  // Bottom left.
 
-	indices[9] = 1;  // Top right.
-	indices[10] = 2;  // Right.
-	indices[11] = 3;  // Bottom right.
+	indices[9] = 0;  // Center.
+	indices[10] = 4;  // Bottom left.
+	indices[11] = 5;  // Left.
+
+	indices[12] = 0;  // Center.
+	indices[13] = 5;  // Left.
+	indices[14] = 6;  // Top left.
+
+	indices[15] = 0;  // Center.
+	indices[16] = 6;  // Top left.
+	indices[17] = 1;  // Top right.
 
 	// Initialize the vertex and index buffers.
 	result = InitializeBuffers(device, vertices, vertexCount, indices, indexCount);
