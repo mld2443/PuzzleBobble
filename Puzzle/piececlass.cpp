@@ -21,11 +21,11 @@ PieceClass::~PieceClass()
 
 void PieceClass::Initialize()
 {
-	//m_Color = color;
+	
 }
 
 
-//PieceClass::PieceColor PieceClass::GetPieceColor()
-//{
-//	return m_Color;
-//}
+char PieceClass::GetPieceColor()
+{
+	return m_color;
+}

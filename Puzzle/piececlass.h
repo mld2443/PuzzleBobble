@@ -10,28 +10,15 @@
 class PieceClass
 {
 public:
-	/*enum PieceColor : char
-	{
-		empty =		' ',
-		red =		'r',
-		orange =	'o',
-		yellow =	'y',
-		green =		'g',
-		blue =		'b',
-		indigo =	'i',
-		violet =	'v'
-	};*/
-
-public:
 	PieceClass();
 	PieceClass(const PieceClass&);
 	~PieceClass();
 
 	void Initialize();
 
-	//PieceColor GetPieceColor();
+	char GetPieceColor();
 
 private:
-	//PieceColor m_Color;
+	char m_color;
 };
 
