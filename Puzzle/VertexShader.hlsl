@@ -19,9 +19,9 @@ cbuffer MatrixBuffer
 //////////////
 struct VertexInputType
 {
-	float4 position : POSITION;
+	float4 position : POSITION0;
 	float4 color : COLOR0;
-	float3 instancePosition : TEXCOORD0;
+	float4 instancePosition : POSITION1;
 	float4 instanceColor: COLOR1;
 };
 
@@ -58,7 +58,6 @@ PixelInputType VSMain(VertexInputType input)
 	output.color.y = input.color.y * input.instanceColor.y;
 	output.color.z = input.color.z * input.instanceColor.z;
 	output.color.w = input.color.w * input.instanceColor.w;
-
 
 	return output;
 }
