@@ -8,6 +8,7 @@ DrawableInterface::DrawableInterface()
 {
 	m_vertexBuffer = nullptr;
 	m_indexBuffer = nullptr;
+	m_instanceBuffer = nullptr;
 }
 
 
@@ -21,56 +22,46 @@ DrawableInterface::~DrawableInterface()
 }
 
 
-int DrawableInterface::GetIndexCount()
-{
-	return m_indexCount;
-}
-
-
 int DrawableInterface::GetVertexCount()
 {
 	return m_vertexCount;
 }
 
 
-ID3D11Buffer * DrawableInterface::GetIndexBuffer()
+int DrawableInterface::GetIndexCount()
 {
-	return m_indexBuffer;
+	return m_indexCount;
 }
 
 
-ID3D11Buffer * DrawableInterface::GetVertexBuffer()
+int DrawableInterface::GetInstanceCount()
 {
-	return m_vertexBuffer;
+	return m_instanceCount;
 }
 
 
-bool DrawableInterface::InitializeBuffers(ID3D11Device* device, VertexType* vertices, int vertexCount, 
-										  unsigned long* indices, int indexCount)
+bool DrawableInterface::InitializeVertexBuffer(ID3D11Device* device, VertexType* vertices, int vertexCount)
 {
-	D3D11_BUFFER_DESC vertexBufferDesc, indexBufferDesc;
-	D3D11_SUBRESOURCE_DATA vertexData, indexData;
+	D3D11_BUFFER_DESC vertexBufferDesc;
+	D3D11_SUBRESOURCE_DATA vertexData;
 	HRESULT result;
 
 
 	// Set the number of vertices in the vertex array.
 	m_vertexCount = vertexCount;
 
-	// Set the number of indices in the index array.
-	m_indexCount = indexCount;
-
 	// Set up the description of the static vertex buffer.
-	vertexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-	vertexBufferDesc.ByteWidth =		   sizeof(VertexType) * m_vertexCount;
-	vertexBufferDesc.BindFlags =		   D3D11_BIND_VERTEX_BUFFER;
-	vertexBufferDesc.CPUAccessFlags =	   0;
-	vertexBufferDesc.MiscFlags =		   0;
-	vertexBufferDesc.StructureByteStride = 0;
+	vertexBufferDesc.Usage =				D3D11_USAGE_DEFAULT;
+	vertexBufferDesc.ByteWidth =			sizeof(VertexType) * m_vertexCount;
+	vertexBufferDesc.BindFlags =			D3D11_BIND_VERTEX_BUFFER;
+	vertexBufferDesc.CPUAccessFlags =		0;
+	vertexBufferDesc.MiscFlags =			0;
+	vertexBufferDesc.StructureByteStride =	0;
 
 	// Give the subresource structure a pointer to the vertex data.
-	vertexData.pSysMem =		  vertices;
-	vertexData.SysMemPitch =	  0;
-	vertexData.SysMemSlicePitch = 0;
+	vertexData.pSysMem =			vertices;
+	vertexData.SysMemPitch =		0;
+	vertexData.SysMemSlicePitch =	0;
 
 	// Now create the vertex buffer.
 	result = device->CreateBuffer(&vertexBufferDesc, &vertexData, &m_vertexBuffer);
@@ -79,18 +70,32 @@ bool DrawableInterface::InitializeBuffers(ID3D11Device* device, VertexType* vert
 		return false;
 	}
 
+	return true;
+}
+
+
+bool DrawableInterface::InitializeIndexBuffer(ID3D11Device* device, unsigned long* indices, int indexCount)
+{
+	D3D11_BUFFER_DESC indexBufferDesc;
+	D3D11_SUBRESOURCE_DATA indexData;
+	HRESULT result;
+
+
+	// Set the number of indices in the index array.
+	m_indexCount = indexCount;
+
 	// Set up the description of the static index buffer.
-	indexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-	indexBufferDesc.ByteWidth =			  sizeof(unsigned long) * m_indexCount;
-	indexBufferDesc.BindFlags =			  D3D11_BIND_INDEX_BUFFER;
-	indexBufferDesc.CPUAccessFlags =	  0;
-	indexBufferDesc.MiscFlags =			  0;
-	indexBufferDesc.StructureByteStride = 0;
+	indexBufferDesc.Usage =					D3D11_USAGE_DEFAULT;
+	indexBufferDesc.ByteWidth =				sizeof(unsigned long) * m_indexCount;
+	indexBufferDesc.BindFlags =				D3D11_BIND_INDEX_BUFFER;
+	indexBufferDesc.CPUAccessFlags =		0;
+	indexBufferDesc.MiscFlags =				0;
+	indexBufferDesc.StructureByteStride =	0;
 
 	// Give the subresource structure a pointer to the index data.
-	indexData.pSysMem =			 indices;
-	indexData.SysMemPitch =		 0;
-	indexData.SysMemSlicePitch = 0;
+	indexData.pSysMem =				indices;
+	indexData.SysMemPitch =			0;
+	indexData.SysMemSlicePitch =	0;
 
 	// Create the index buffer.
 	result = device->CreateBuffer(&indexBufferDesc, &indexData, &m_indexBuffer);
@@ -103,8 +108,49 @@ bool DrawableInterface::InitializeBuffers(ID3D11Device* device, VertexType* vert
 }
 
 
+bool DrawableInterface::InitializeInstanceBuffer(ID3D11Device* device, InstanceType* instances, int instanceCount)
+{
+	D3D11_BUFFER_DESC instanceBufferDesc;
+	D3D11_SUBRESOURCE_DATA instanceData;
+	HRESULT result;
+
+
+	// Set the number of instances in the array.
+	m_instanceCount = instanceCount;
+
+	// Set up the description of the instance buffer.
+	instanceBufferDesc.Usage =					D3D11_USAGE_DEFAULT;
+	instanceBufferDesc.ByteWidth =				sizeof(InstanceType) * m_instanceCount;
+	instanceBufferDesc.BindFlags =				D3D11_BIND_VERTEX_BUFFER;
+	instanceBufferDesc.CPUAccessFlags =			0;
+	instanceBufferDesc.MiscFlags =				0;
+	instanceBufferDesc.StructureByteStride =	0;
+
+	// Give the subresource structure a pointer to the instance data.
+	instanceData.pSysMem =			instances;
+	instanceData.SysMemPitch =		0;
+	instanceData.SysMemSlicePitch =	0;
+
+	// Create the instance buffer.
+	result = device->CreateBuffer(&instanceBufferDesc, &instanceData, &m_instanceBuffer);
+	if (FAILED(result))
+	{
+		return false;
+	}
+
+	return true;
+}
+
+
 void DrawableInterface::ShutdownBuffers()
 {
+	// Release the instance buffer.
+	if (m_instanceBuffer)
+	{
+		m_instanceBuffer->Release();
+		m_instanceBuffer = nullptr;
+	}
+
 	// Release the index buffer.
 	if (m_indexBuffer)
 	{
@@ -123,7 +169,39 @@ void DrawableInterface::ShutdownBuffers()
 }
 
 
-void DrawableInterface::RenderBuffers(ID3D11DeviceContext* deviceContext)
+void DrawableInterface::RenderWithInstanceBuffer(ID3D11DeviceContext* deviceContext)
+{
+	unsigned int strides[2];
+	unsigned int offsets[2];
+	ID3D11Buffer* bufferPointers[2];
+
+
+	// Set the buffer strides.
+	strides[0] = sizeof(VertexType);
+	strides[1] = sizeof(InstanceType);
+
+	// Set the buffer offsets.
+	offsets[0] = 0;
+	offsets[1] = 0;
+
+	// Set the array of pointers to the vertex and instance buffers.
+	bufferPointers[0] = m_vertexBuffer;
+	bufferPointers[1] = m_instanceBuffer;
+
+	// Set the vertex buffer to active in the input assembler so it can be rendered.
+	deviceContext->IASetVertexBuffers(0, 2, bufferPointers, strides, offsets);
+
+	// Set the index buffer to active in the input assembler so it can be rendered.
+	deviceContext->IASetIndexBuffer(m_indexBuffer, DXGI_FORMAT_R32_UINT, 0);
+
+	// Set the type of primitive that should be rendered from this vertex buffer, in this case triangles.
+	deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
+	return;
+}
+
+
+void DrawableInterface::RenderWithoutInstanceBuffer(ID3D11DeviceContext* deviceContext)
 {
 	unsigned int stride;
 	unsigned int offset;
