@@ -136,7 +136,7 @@ void BoardClass::Shutdown()
 void BoardClass::Render(ID3D11DeviceContext* deviceContext)
 {
 	// Put the vertex and index buffers on the graphics pipeline to prepare them for drawing.
-	RenderAllBuffers(deviceContext);
+	RenderWithInstanceBuffer(deviceContext);
 
 	return;
 }
@@ -220,7 +220,7 @@ void BoardClass::ShutdownInstanceBuffer()
 }
 
 
-void BoardClass::RenderAllBuffers(ID3D11DeviceContext* deviceContext)
+void BoardClass::RenderWithInstanceBuffer(ID3D11DeviceContext* deviceContext)
 {
 	unsigned int strides[2];
 	unsigned int offsets[2];

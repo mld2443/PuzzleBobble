@@ -4,7 +4,6 @@
 #include "drawableinterface.h"
 
 
-
 DrawableInterface::DrawableInterface()
 {
 	m_vertexBuffer = nullptr;

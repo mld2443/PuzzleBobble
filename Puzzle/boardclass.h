@@ -42,7 +42,7 @@ public:
 private:
 	bool InitializeInstanceBuffer(ID3D11Device*);
 	void ShutdownInstanceBuffer();
-	void RenderAllBuffers(ID3D11DeviceContext*);
+	void RenderWithInstanceBuffer(ID3D11DeviceContext*);
 
 private:
 	ID3D11Buffer *	m_instanceBuffer;
