@@ -75,33 +75,48 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	// Set the initial position of the camera.
 	m_Camera->SetPosition(0.0f, 0.0f, -5.0f);
 
+	// Create the triangle object.
+	m_Drawables.push_back(new TriangleClass);
+	if (!m_Drawables.back())
+	{
+		return false;
+	}
+
+	// Initialize the triangle object.
+	result = m_Drawables.back()->Initialize(m_Resources->GetDirect3DDevice(), m_Resources->GetDirect3DDeviceContext());
+	if (!result)
+	{
+		MessageBox(hwnd, L"Could not initialize the triangle object.", L"Error", MB_OK);
+		return false;
+	}
+
 	// Create the board object.
-	m_Drawables.push_front(new BoardClass);
-	if (!m_Drawables.front())
+	m_Drawables.push_back(new BoardClass);
+	if (!m_Drawables.back())
 	{
 		return false;
 	}
 
 	// Initialize the board object.
-	result = m_Drawables.front()->Initialize(m_Resources->GetDirect3DDevice(), m_Resources->GetDirect3DDeviceContext());
+	result = m_Drawables.back()->Initialize(m_Resources->GetDirect3DDevice(), m_Resources->GetDirect3DDeviceContext());
 	if (!result)
 	{
 		MessageBox(hwnd, L"Could not initialize the board object.", L"Error", MB_OK);
 		return false;
 	}
 
-	// Create the triangle object.
-	m_Drawables.push_front(new TriangleClass);
-	if (!m_Drawables.front())
+	// Create the instance shader object.
+	m_InstanceShader = new InstanceShaderClass;
+	if (!m_InstanceShader)
 	{
 		return false;
 	}
 
-	// Initialize the triangle object.
-	result = m_Drawables.front()->Initialize(m_Resources->GetDirect3DDevice(), m_Resources->GetDirect3DDeviceContext());
+	// Initialize the instance shader object.
+	result = m_InstanceShader->Initialize(m_Resources->GetDirect3DDevice());
 	if (!result)
 	{
-		MessageBox(hwnd, L"Could not initialize the triangle object.", L"Error", MB_OK);
+		MessageBox(hwnd, L"Could not initialize the instance shader object.", L"Error", MB_OK);
 		return false;
 	}
 
@@ -114,21 +129,6 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 
 	// Initialize the color shader object.
 	result = m_ColorShader->Initialize(m_Resources->GetDirect3DDevice());
-	if (!result)
-	{
-		MessageBox(hwnd, L"Could not initialize the color shader object.", L"Error", MB_OK);
-		return false;
-	}
-
-	// Create the instance shader object.
-	m_InstanceShader = new InstanceShaderClass;
-	if (!m_ColorShader)
-	{
-		return false;
-	}
-
-	// Initialize the instance shader object.
-	result = m_InstanceShader->Initialize(m_Resources->GetDirect3DDevice());
 	if (!result)
 	{
 		MessageBox(hwnd, L"Could not initialize the color shader object.", L"Error", MB_OK);
@@ -227,20 +227,20 @@ bool GraphicsClass::Render()
 	// Clear the buffers to begin the scene.
 	m_Resources->BeginScene(0.2f, 0.2f, 0.2f, 1.0f);
 
-	// Generate the view matrix based on the camera's position.
-	m_Camera->Render();
-
-	// Get the world, view, and projection matrices from the camera and d3d objects.
-	m_Resources->GetWorldMatrix(worldMatrix);
-	m_Camera->GetViewMatrix(viewMatrix);
-	m_Resources->GetProjectionMatrix(projectionMatrix);
-
 	// Turn on alpha blending for the transparency to work.
 	//m_Resources->TurnOnAlphaBlending();
 
 	// Put the drawable buffers on the appropriate graphics pipeline to prepare them for drawing.
 	for (auto drawable : m_Drawables)
 	{
+		// Generate the view matrix based on the camera's position.
+		m_Camera->Render();
+
+		// Get the world, view, and projection matrices from the camera and d3d objects.
+		m_Resources->GetWorldMatrix(worldMatrix);
+		m_Camera->GetViewMatrix(viewMatrix);
+		m_Resources->GetProjectionMatrix(projectionMatrix);
+
 		drawable->Render(m_Resources->GetDirect3DDeviceContext());
 
 		if (drawable->isInstanced())
