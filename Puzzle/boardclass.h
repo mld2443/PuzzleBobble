@@ -30,4 +30,3 @@ public:
 	void Shutdown() override;
 	void Render(ID3D11DeviceContext*) override;
 };
-
