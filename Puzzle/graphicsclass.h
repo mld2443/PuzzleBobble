@@ -7,7 +7,7 @@
 //////////////
 // INCLUDES //
 //////////////
-//#include <list>
+#include <list>
 #include <atlstr.h>
 
 
@@ -16,10 +16,10 @@
 ///////////////////////
 #include "resourcesclass.h"
 #include "cameraclass.h"
-//#include "boardclass.h"
+#include "boardclass.h"
 #include "triangleclass.h"
+#include "instanceshaderclass.h"
 #include "colorshaderclass.h"
-//#include "instanceshaderclass.h"
 #include "textclass.h"
 
 
@@ -53,7 +53,7 @@ private:
 	ResourcesClass*					m_Resources;
 	TextClass*						m_Text;
 	CameraClass*					m_Camera;
-//	std::list<DrawableInterface*>	m_Drawables;
-	DrawableInterface*				m_Triangle;
+	std::list<DrawableInterface*>	m_Drawables;
 	ColorShaderClass*				m_ColorShader;
+	InstanceShaderClass*			m_InstanceShader;
 };
