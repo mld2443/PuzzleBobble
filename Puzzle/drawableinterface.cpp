@@ -9,6 +9,7 @@ DrawableInterface::DrawableInterface()
 	m_vertexBuffer = nullptr;
 	m_indexBuffer = nullptr;
 	m_instanceBuffer = nullptr;
+	m_instanced = false;
 }
 
 
@@ -37,6 +38,12 @@ int DrawableInterface::GetIndexCount()
 int DrawableInterface::GetInstanceCount()
 {
 	return m_instanceCount;
+}
+
+
+bool DrawableInterface::isInstanced()
+{
+	return m_instanced;
 }
 
 
@@ -115,6 +122,9 @@ bool DrawableInterface::InitializeInstanceBuffer(ID3D11Device* device, InstanceT
 	HRESULT result;
 
 
+	// Set the flag indicating this drawable is instanced.
+	m_instanced = true;
+	
 	// Set the number of instances in the array.
 	m_instanceCount = instanceCount;
 

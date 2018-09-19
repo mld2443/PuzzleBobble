@@ -1,5 +1,5 @@
 ////////////////////////////////////////////////////////////////////////////////
-// Filename: boardclass.h
+// Filename: triangleclass.h
 ////////////////////////////////////////////////////////////////////////////////
 #pragma once
 
@@ -10,21 +10,15 @@
 #include "drawableinterface.h"
 
 
-///////////////
-// CONSTANTS //
-///////////////
-#define SQRT075 0.86602540378f
-
-
 ////////////////////////////////////////////////////////////////////////////////
-// Class name: BoardClass
+// Class name: TriangleClass
 ////////////////////////////////////////////////////////////////////////////////
-class BoardClass : public DrawableInterface
+class TriangleClass : public DrawableInterface
 {
 public:
-	BoardClass();
-	BoardClass(const BoardClass&);
-	~BoardClass();
+	TriangleClass();
+	TriangleClass(const TriangleClass&);
+	~TriangleClass();
 
 	bool Initialize(ID3D11Device*, ID3D11DeviceContext*) override;
 	void Shutdown() override;

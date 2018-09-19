@@ -1,10 +1,10 @@
 ////////////////////////////////////////////////////////////////////////////////
-// Filename: colorshaderclass.cpp
+// Filename: instanceshaderclass.cpp
 ////////////////////////////////////////////////////////////////////////////////
-#include "colorshaderclass.h"
+#include "instanceshaderclass.h"
 
 
-ColorShaderClass::ColorShaderClass()
+InstanceShaderClass::InstanceShaderClass()
 {
 	m_vertexShader = nullptr;
 	m_pixelShader = nullptr;
@@ -13,17 +13,17 @@ ColorShaderClass::ColorShaderClass()
 }
 
 
-ColorShaderClass::ColorShaderClass(const ColorShaderClass& other)
+InstanceShaderClass::InstanceShaderClass(const InstanceShaderClass& other)
 {
 }
 
 
-ColorShaderClass::~ColorShaderClass()
+InstanceShaderClass::~InstanceShaderClass()
 {
 }
 
 
-bool ColorShaderClass::Initialize(ID3D11Device* device)
+bool InstanceShaderClass::Initialize(ID3D11Device* device)
 {
 	bool result;
 
@@ -39,7 +39,7 @@ bool ColorShaderClass::Initialize(ID3D11Device* device)
 }
 
 
-void ColorShaderClass::Shutdown()
+void InstanceShaderClass::Shutdown()
 {
 	// Shutdown the vertex and pixel shaders as well as the related objects.
 	ShutdownShader();
@@ -48,7 +48,7 @@ void ColorShaderClass::Shutdown()
 }
 
 
-bool ColorShaderClass::Render(ID3D11DeviceContext* deviceContext, int indexCount, XMMATRIX worldMatrix, XMMATRIX viewMatrix,
+bool InstanceShaderClass::Render(ID3D11DeviceContext* deviceContext, int indexCountPerInstance, int instanceCount, XMMATRIX worldMatrix, XMMATRIX viewMatrix,
 	XMMATRIX projectionMatrix)
 {
 	bool result;
@@ -62,29 +62,29 @@ bool ColorShaderClass::Render(ID3D11DeviceContext* deviceContext, int indexCount
 	}
 
 	// Now render the prepared buffers with the shader.
-	RenderShader(deviceContext, indexCount);
+	RenderShader(deviceContext, indexCountPerInstance, instanceCount);
 
 	return true;
 }
 
 
-bool ColorShaderClass::InitializeShader(ID3D11Device* device)
+bool InstanceShaderClass::InitializeShader(ID3D11Device* device)
 {
 	HRESULT result;
-	D3D11_INPUT_ELEMENT_DESC polygonLayout[2];
+	D3D11_INPUT_ELEMENT_DESC polygonLayout[4];
 	unsigned int numElements;
 	D3D11_BUFFER_DESC matrixBufferDesc;
 
 
 	// Create the vertex shader from the header file provided by compiling VertexShader.hlsl.
-	result = device->CreateVertexShader(g_colorvs, sizeof(g_colorvs), nullptr, &m_vertexShader);
+	result = device->CreateVertexShader(g_instancevs, sizeof(g_instancevs), nullptr, &m_vertexShader);
 	if (FAILED(result))
 	{
 		return false;
 	}
 
 	// Create the pixel shader from the header file provided by compiling PixelShader.hlsl.
-	result = device->CreatePixelShader(g_colorps, sizeof(g_colorps), nullptr, &m_pixelShader);
+	result = device->CreatePixelShader(g_instanceps, sizeof(g_instanceps), nullptr, &m_pixelShader);
 	if (FAILED(result))
 	{
 		return false;
@@ -98,7 +98,7 @@ bool ColorShaderClass::InitializeShader(ID3D11Device* device)
 	polygonLayout[0].InputSlot =			0;
 	polygonLayout[0].AlignedByteOffset =	0;
 	polygonLayout[0].InputSlotClass =		D3D11_INPUT_PER_VERTEX_DATA;
-	polygonLayout[0].InstanceDataStepRate =	0;
+	polygonLayout[0].InstanceDataStepRate = 0;
 
 	polygonLayout[1].SemanticName =			"COLOR";
 	polygonLayout[1].SemanticIndex =		0;
@@ -106,25 +106,41 @@ bool ColorShaderClass::InitializeShader(ID3D11Device* device)
 	polygonLayout[1].InputSlot =			0;
 	polygonLayout[1].AlignedByteOffset =	D3D11_APPEND_ALIGNED_ELEMENT;
 	polygonLayout[1].InputSlotClass =		D3D11_INPUT_PER_VERTEX_DATA;
-	polygonLayout[1].InstanceDataStepRate =	0;
+	polygonLayout[1].InstanceDataStepRate = 0;
+
+	polygonLayout[2].SemanticName =			"POSITION";
+	polygonLayout[2].SemanticIndex =		1;
+	polygonLayout[2].Format =				DXGI_FORMAT_R32G32B32_FLOAT;
+	polygonLayout[2].InputSlot =			1;
+	polygonLayout[2].AlignedByteOffset =	0;
+	polygonLayout[2].InputSlotClass =		D3D11_INPUT_PER_INSTANCE_DATA;
+	polygonLayout[2].InstanceDataStepRate = 1;
+
+	polygonLayout[3].SemanticName =			"COLOR";
+	polygonLayout[3].SemanticIndex =		1;
+	polygonLayout[3].Format =				DXGI_FORMAT_R32G32B32A32_FLOAT;
+	polygonLayout[3].InputSlot =			1;
+	polygonLayout[3].AlignedByteOffset =	D3D11_APPEND_ALIGNED_ELEMENT;
+	polygonLayout[3].InputSlotClass =		D3D11_INPUT_PER_INSTANCE_DATA;
+	polygonLayout[3].InstanceDataStepRate = 1;
 
 	// Get a count of the elements in the layout.
 	numElements = sizeof(polygonLayout) / sizeof(polygonLayout[0]);
 
 	// Create the vertex input layout.
-	result = device->CreateInputLayout(polygonLayout, numElements, g_colorvs, sizeof(g_colorvs), &m_layout);
+	result = device->CreateInputLayout(polygonLayout, numElements, g_instancevs, sizeof(g_instancevs), &m_layout);
 	if (FAILED(result))
 	{
 		return false;
 	}
 
 	// Setup the description of the dynamic matrix constant buffer that is in the vertex shader.
-	matrixBufferDesc.Usage =				D3D11_USAGE_DYNAMIC;
-	matrixBufferDesc.ByteWidth =			sizeof(MatrixBufferType);
-	matrixBufferDesc.BindFlags =			D3D11_BIND_CONSTANT_BUFFER;
-	matrixBufferDesc.CPUAccessFlags =		D3D11_CPU_ACCESS_WRITE;
-	matrixBufferDesc.MiscFlags =			0;
-	matrixBufferDesc.StructureByteStride =	0;
+	matrixBufferDesc.Usage =			   D3D11_USAGE_DYNAMIC;
+	matrixBufferDesc.ByteWidth =		   sizeof(MatrixBufferType);
+	matrixBufferDesc.BindFlags =		   D3D11_BIND_CONSTANT_BUFFER;
+	matrixBufferDesc.CPUAccessFlags =	   D3D11_CPU_ACCESS_WRITE;
+	matrixBufferDesc.MiscFlags =		   0;
+	matrixBufferDesc.StructureByteStride = 0;
 
 	// Create the constant buffer pointer so we can access the vertex shader constant buffer from within this class.
 	result = device->CreateBuffer(&matrixBufferDesc, nullptr, &m_matrixBuffer);
@@ -137,7 +153,7 @@ bool ColorShaderClass::InitializeShader(ID3D11Device* device)
 }
 
 
-void ColorShaderClass::ShutdownShader()
+void InstanceShaderClass::ShutdownShader()
 {
 	// Release the matrix constant buffer.
 	if (m_matrixBuffer)
@@ -171,7 +187,7 @@ void ColorShaderClass::ShutdownShader()
 }
 
 
-bool ColorShaderClass::SetShaderParameters(ID3D11DeviceContext* deviceContext, XMMATRIX worldMatrix, XMMATRIX viewMatrix,
+bool InstanceShaderClass::SetShaderParameters(ID3D11DeviceContext* deviceContext, XMMATRIX worldMatrix, XMMATRIX viewMatrix,
 	XMMATRIX projectionMatrix)
 {
 	HRESULT result;
@@ -213,7 +229,7 @@ bool ColorShaderClass::SetShaderParameters(ID3D11DeviceContext* deviceContext, X
 }
 
 
-void ColorShaderClass::RenderShader(ID3D11DeviceContext* deviceContext, int indexCount)
+void InstanceShaderClass::RenderShader(ID3D11DeviceContext* deviceContext, int indexCountPerInstance, int instanceCount)
 {
 	// Set the vertex input layout.
 	deviceContext->IASetInputLayout(m_layout);
@@ -223,7 +239,7 @@ void ColorShaderClass::RenderShader(ID3D11DeviceContext* deviceContext, int inde
 	deviceContext->PSSetShader(m_pixelShader, nullptr, 0);
 
 	// Render the geometry.
-	deviceContext->DrawIndexed(indexCount, 0, 0);
+	deviceContext->DrawIndexedInstanced(indexCountPerInstance, instanceCount, 0, 0, 0);
 
 	return;
 }
