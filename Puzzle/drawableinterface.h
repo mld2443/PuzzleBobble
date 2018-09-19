@@ -24,6 +24,12 @@ protected:
 		XMFLOAT4 color;
 	};
 
+	struct InstanceType
+	{
+		XMFLOAT3 position;
+		XMFLOAT4 color;
+	};
+
 public:
 	DrawableInterface();
 	DrawableInterface(const DrawableInterface&);
@@ -33,18 +39,25 @@ public:
 	virtual void Shutdown() = 0;
 	virtual void Render(ID3D11DeviceContext*) = 0;
 
-	int GetIndexCount();
 	int GetVertexCount();
-	ID3D11Buffer * GetIndexBuffer();
-	ID3D11Buffer * GetVertexBuffer();
+	int GetIndexCount();
+	int GetInstanceCount();
+
+	bool isInstanced();
 
 protected:
-	bool InitializeBuffers(ID3D11Device*, VertexType*, int, unsigned long*, int);
+	bool InitializeVertexBuffer(ID3D11Device*, VertexType*, int);
+	bool InitializeIndexBuffer(ID3D11Device*, unsigned long*, int);
+	bool InitializeInstanceBuffer(ID3D11Device*, InstanceType*, int);
+
 	void ShutdownBuffers();
-	void RenderBuffers(ID3D11DeviceContext*);
+	
+	void RenderWithInstanceBuffer(ID3D11DeviceContext*);
+	void RenderWithoutInstanceBuffer(ID3D11DeviceContext*);
 
 private:
-	ID3D11Buffer *	m_vertexBuffer, *m_indexBuffer;
-	int				m_vertexCount, m_indexCount;
+	ID3D11Buffer *	m_vertexBuffer, *m_indexBuffer, *m_instanceBuffer;
+	int				m_vertexCount, m_indexCount, m_instanceCount;
+	bool			m_instanced;
 };
 
