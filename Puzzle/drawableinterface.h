@@ -43,6 +43,8 @@ public:
 	int GetIndexCount();
 	int GetInstanceCount();
 
+	bool isInstanced();
+
 protected:
 	bool InitializeVertexBuffer(ID3D11Device*, VertexType*, int);
 	bool InitializeIndexBuffer(ID3D11Device*, unsigned long*, int);
@@ -56,5 +58,6 @@ protected:
 private:
 	ID3D11Buffer *	m_vertexBuffer, *m_indexBuffer, *m_instanceBuffer;
 	int				m_vertexCount, m_indexCount, m_instanceCount;
+	bool			m_instanced;
 };
 

@@ -1,5 +1,5 @@
 ////////////////////////////////////////////////////////////////////////////////
-// Filename: colorshaderclass.h
+// Filename: instanceshaderclass.h
 ////////////////////////////////////////////////////////////////////////////////
 #pragma once
 
@@ -15,15 +15,15 @@
 ///////////////////////
 // MY CLASS INCLUDES //
 ///////////////////////
-#include "color.ps.h"
-#include "color.vs.h"
+#include "instance.ps.h"
+#include "instance.vs.h"
 
 using namespace DirectX;
 
 ////////////////////////////////////////////////////////////////////////////////
-// Class name: ColorShaderClass
+// Class name: InstanceShaderClass
 ////////////////////////////////////////////////////////////////////////////////
-class ColorShaderClass
+class InstanceShaderClass
 {
 private:
 	struct MatrixBufferType
@@ -34,20 +34,20 @@ private:
 	};
 
 public:
-	ColorShaderClass();
-	ColorShaderClass(const ColorShaderClass&);
-	~ColorShaderClass();
+	InstanceShaderClass();
+	InstanceShaderClass(const InstanceShaderClass&);
+	~InstanceShaderClass();
 
 	bool Initialize(ID3D11Device*);
 	void Shutdown();
-	bool Render(ID3D11DeviceContext*, int, XMMATRIX, XMMATRIX, XMMATRIX);
+	bool Render(ID3D11DeviceContext*, int, int, XMMATRIX, XMMATRIX, XMMATRIX);
 
 private:
 	bool InitializeShader(ID3D11Device*);
 	void ShutdownShader();
 
 	bool SetShaderParameters(ID3D11DeviceContext*, XMMATRIX, XMMATRIX, XMMATRIX);
-	void RenderShader(ID3D11DeviceContext*, int);
+	void RenderShader(ID3D11DeviceContext*, int, int);
 
 private:
 	ID3D11VertexShader*	m_vertexShader;

@@ -9,7 +9,7 @@ GraphicsClass::GraphicsClass()
 	m_Resources = nullptr;
 	m_Text = nullptr;
 	m_Camera = nullptr;
-	m_Geometry = nullptr;
+	m_Triangle = nullptr;
 	m_ColorShader = nullptr;
 }
 
@@ -75,18 +75,48 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	// Set the initial position of the camera.
 	m_Camera->SetPosition(0.0f, 0.0f, -5.0f);
 
-	// Create the model object.
-	m_Geometry = new BoardClass;
-	if (!m_Geometry)
+	//// Create the board object.
+	//m_Drawables.push_front(new BoardClass);
+	//if (!m_Drawables.front())
+	//{
+	//	return false;
+	//}
+
+	//// Initialize the board object.
+	//result = m_Drawables.front()->Initialize(m_Resources->GetDirect3DDevice(), m_Resources->GetDirect3DDeviceContext());
+	//if (!result)
+	//{
+	//	MessageBox(hwnd, L"Could not initialize the board object.", L"Error", MB_OK);
+	//	return false;
+	//}
+
+	//// Create the triangle object.
+	//m_Drawables.push_front(new TriangleClass);
+	//if (!m_Drawables.front())
+	//{
+	//	return false;
+	//}
+
+	//// Initialize the triangle object.
+	//result = m_Drawables.front()->Initialize(m_Resources->GetDirect3DDevice(), m_Resources->GetDirect3DDeviceContext());
+	//if (!result)
+	//{
+	//	MessageBox(hwnd, L"Could not initialize the triangle object.", L"Error", MB_OK);
+	//	return false;
+	//}
+
+	// Create the triangle object.
+	m_Triangle = new TriangleClass;
+	if (!m_Triangle)
 	{
 		return false;
 	}
 
-	// Initialize the model object.
-	result = m_Geometry->Initialize(m_Resources->GetDirect3DDevice(), m_Resources->GetDirect3DDeviceContext());
+	// Initialize the triangle object.
+	result = m_Triangle->Initialize(m_Resources->GetDirect3DDevice(), m_Resources->GetDirect3DDeviceContext());
 	if (!result)
 	{
-		MessageBox(hwnd, L"Could not initialize the model object.", L"Error", MB_OK);
+		MessageBox(hwnd, L"Could not initialize the triangle object.", L"Error", MB_OK);
 		return false;
 	}
 
@@ -119,12 +149,23 @@ void GraphicsClass::Shutdown()
 		m_ColorShader = nullptr;
 	}
 
-	// Release the model object.
-	if (m_Geometry)
+	//// Release the drawable objects.
+	//for (auto drawable : m_Drawables)
+	//{
+	//	if (drawable)
+	//	{
+	//		drawable->Shutdown();
+	//		delete drawable;
+	//		drawable = nullptr;
+	//	}
+	//}
+
+	// Release the triangle object.
+	if (m_Triangle)
 	{
-		m_Geometry->Shutdown();
-		delete m_Geometry;
-		m_Geometry = nullptr;
+		m_Triangle->Shutdown();
+		delete m_Triangle;
+		m_Triangle = nullptr;
 	}
 
 	// Release the camera object.
@@ -197,11 +238,23 @@ bool GraphicsClass::Render()
 	// Turn on alpha blending for the transparency to work.
 	m_Resources->TurnOnAlphaBlending();
 
-	// Put the model vertex and index buffers on the graphics pipeline to prepare them for drawing.
-	m_Geometry->Render(m_Resources->GetDirect3DDeviceContext());
+	//// Put the model vertex and index buffers on the graphics pipeline to prepare them for drawing.
+	//for (auto drawable : m_Drawables)
+	//{
+	//	drawable->Render(m_Resources->GetDirect3DDeviceContext());
+
+	//	// Render the model using the color shader.
+	//	result = m_ColorShader->Render(m_Resources->GetDirect3DDeviceContext(), drawable->GetIndexCount(), m_Geometry->GetInstanceCount(), worldMatrix, viewMatrix, projectionMatrix);
+	//	if (!result)
+	//	{
+	//		return false;
+	//	}
+	//}
+
+	m_Triangle->Render(m_Resources->GetDirect3DDeviceContext());
 
 	// Render the model using the color shader.
-	result = m_ColorShader->Render(m_Resources->GetDirect3DDeviceContext(), m_Geometry->GetIndexCount(), m_Geometry->GetInstanceCount(), worldMatrix, viewMatrix, projectionMatrix);
+	result = m_ColorShader->Render(m_Resources->GetDirect3DDeviceContext(), m_Triangle->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix);
 	if (!result)
 	{
 		return false;
