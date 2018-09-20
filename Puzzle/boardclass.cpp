@@ -377,6 +377,8 @@ int BoardClass::LoadLevel(char* filename)
 	// Read in the number of colors we will define for pieces.
 	fileReader >> colorCount;
 
+	// NOTE: We are aware that this could be more safely defined. 
+
 	// Read in color keys and RGBA values, then store in color map.
 	for (unsigned int i = 0; i < colorCount; i++) 
 	{
@@ -426,6 +428,8 @@ int BoardClass::LoadLevel(char* filename)
 
 			// Set the piece container in rowTraverse's color to the one matching the color key from token.
 			rowTraverse->color = color;
+
+			// NOTE: We are aware that we aren't checking to see if color is defined in the color map. 
 
 			// Move rowTraverse to the right.
 			rowTraverse = rowTraverse->rightNeighbor;
