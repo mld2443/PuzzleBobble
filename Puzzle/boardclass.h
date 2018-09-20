@@ -52,11 +52,12 @@ public:
 	void Render(ID3D11DeviceContext*) override;
 
 private:
-	bool InitializeBoard(unsigned int, unsigned int);
+	void CreateGeometry(VertexType*, unsigned long*);
+	int InitializeBoard(unsigned int, unsigned int);
 	void ShutdownBoard();
 	bool LoadLevel(char*);
 
 private:
-	std::map<char, XMFLOAT4> m_colors;
-	PieceType* m_level;
+	std::map<char, XMFLOAT4>	m_colors;
+	PieceType*					m_level;
 };
