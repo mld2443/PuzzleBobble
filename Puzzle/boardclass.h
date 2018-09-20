@@ -11,6 +11,7 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <functional>
 
 
 ///////////////////////
@@ -59,5 +60,5 @@ private:
 
 private:
 	std::map<char, XMFLOAT4>	m_colors;
-	PieceType*					m_level;
+	PieceType*					m_board;
 };

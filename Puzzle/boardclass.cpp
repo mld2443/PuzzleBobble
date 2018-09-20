@@ -196,8 +196,8 @@ int BoardClass::InitializeBoard(unsigned int maxRowWidth, unsigned int rows)
 	pieceCount = 0;
 
 	// Create the first piece container in the top left corner of the board.
-	m_level = new PieceType;
-	if (!m_level)
+	m_board = new PieceType;
+	if (!m_board)
 	{
 		return 0;
 	}
@@ -205,7 +205,7 @@ int BoardClass::InitializeBoard(unsigned int maxRowWidth, unsigned int rows)
 	pieceCount++;
 
 	// Set columnTraverse to the first piece container of the board.
-	columnTraverse = m_level;
+	columnTraverse = m_board;
 
 	// Iterate down left side of board.
 	for (unsigned int i = 0; i < rows; i++)
@@ -303,7 +303,47 @@ int BoardClass::InitializeBoard(unsigned int maxRowWidth, unsigned int rows)
 
 void BoardClass::ShutdownBoard()
 {
+	std::function<void(PieceType*)> traverseDown, traverseRight;
+	
 
+	// Lambda function to recursively traverse down left column of board.
+	traverseDown = [&traverseDown, &traverseRight](PieceType* start)
+	{
+		// First see if there is a left branch to traverse down.
+		if (start->lowerLeftNeighbor)
+		{
+			traverseDown(start->lowerLeftNeighbor);
+		}
+		// Else check to see if there is a right branch to traverse down.
+		else if (start->lowerRightNeighbor)
+		{
+			traverseDown(start->lowerRightNeighbor);
+		}
+		
+		// Traverse and delete the current row.
+		traverseRight(start);
+
+		return;
+	};
+
+	// Lambda function to recursively traverse right through a row of board and recursively delete piece containers.
+	traverseRight = [&traverseRight](PieceType* start)
+	{
+		// Traverse right if possible.
+		if (start->rightNeighbor)
+		{
+			traverseRight(start->rightNeighbor);
+		}
+		
+		// Delete piece container.
+		delete start;
+
+		return;
+	};
+
+	// Begin traversing board and deleting piece containers.
+	traverseDown(m_board);
+	
 	return;
 }
 
