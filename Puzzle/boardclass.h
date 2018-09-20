@@ -56,7 +56,7 @@ private:
 	void CreateGeometry(VertexType*, unsigned long*);
 	int InitializeBoard(unsigned int, unsigned int);
 	void ShutdownBoard();
-	bool LoadLevel(char*);
+	int LoadLevel(char*);
 
 private:
 	std::map<char, XMFLOAT4>	m_colors;

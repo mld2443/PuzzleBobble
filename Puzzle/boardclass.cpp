@@ -28,14 +28,16 @@ bool BoardClass::Initialize(ID3D11Device* device, ID3D11DeviceContext* deviceCon
 	int vertexCount, indexCount, instanceCount;
 
 
-	// Set the number of vertices, indices, and instances in the arrays.
-	vertexCount = 7;
-	indexCount = 18;
-	instanceCount = InitializeBoard(4,4);
+	// Load level in from file and get number of piece containers.
+	instanceCount = LoadLevel("../Puzzle/data/level.txt");
 	if (instanceCount == 0)
 	{
 		return false;
 	}
+
+	// Set the number of vertices, indices, and instances in the arrays.
+	vertexCount = 7;
+	indexCount = 18;
 
 	// Create the vertex array.
 	vertices = new VertexType[vertexCount];
@@ -183,7 +185,7 @@ void BoardClass::CreateGeometry(VertexType* vertices, unsigned long* indices)
 int BoardClass::InitializeBoard(unsigned int maxRowWidth, unsigned int rows)
 {
 	PieceType* rowTraverse, * columnTraverse;
-	int rowWidth, pieceCount;
+	unsigned int rowWidth, pieceCount;
 
 
 	// Fail if board dimensions too small.
@@ -348,19 +350,97 @@ void BoardClass::ShutdownBoard()
 }
 
 
-bool BoardClass::LoadLevel(char* filename)
+int BoardClass::LoadLevel(char* filename)
 {
-	bool result;
-	int colorCount, maxRowWidth;
+	unsigned int colorCount, maxRowWidth, numRows, pieceCount;
+	char colorKey;
+	XMFLOAT4 colorValues;
+	PieceType* rowTraverse, *columnTraverse;
 	std::ifstream fileReader;
 	std::string token;
 
 
+	// Open level file for reading.
 	fileReader = std::ifstream(filename);
 	if (!fileReader)
 	{
-		return false;
+		return 0;
 	}
 
-	return true;
+	// Read in the first token in the line, which should be the word "colors."
+	fileReader >> token;
+	if (token.compare("colors") != 0)
+	{
+		return 0;
+	}
+
+	// Read in the number of colors we will define for pieces.
+	fileReader >> colorCount;
+
+	// Read in color keys and RGBA values, then store in color map.
+	for (unsigned int i = 0; i < colorCount; i++) 
+	{
+		fileReader >> colorKey >> colorValues.x >> colorValues.y >> colorValues.z >> colorValues.w;
+
+		m_colors[colorKey] = colorValues;
+	}
+
+	// Add a blank color to color map for empty spaces.
+	m_colors['_'] = XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f);
+
+	// Read in the next token from the file, which should be the word "dimensions."
+	fileReader >> token;
+	if (token.compare("dimensions") != 0)
+	{
+		return 0;
+	}
+
+	// Read in the maximum row width and number of rows for the board.
+	fileReader >> maxRowWidth >> numRows >> std::ws;
+
+	// Initialize the board and get the number of piece containers created.
+	pieceCount = InitializeBoard(maxRowWidth, numRows);
+	if (pieceCount == 0)
+	{
+		return 0;
+	}
+
+	// Set a pointer to the top of the left column on the board for board traversal.
+	columnTraverse = m_board;
+
+	while (!fileReader.eof())
+	{
+		// Get a string of color keys from the file.
+		getline(fileReader, token);
+
+		// Set a row traversal pointer to start at the left side of the board for the given row.
+		rowTraverse = columnTraverse;
+
+		for (char color : token)
+		{
+			// If rowTraverse points to a null piece container, we have an error and need to fail out.
+			if (!rowTraverse) 
+			{
+				return 0;
+			}
+
+			// Set the piece container in rowTraverse's color to the one matching the color key from token.
+			rowTraverse->color = color;
+
+			// Move rowTraverse to the right.
+			rowTraverse = rowTraverse->rightNeighbor;
+		}
+
+		// Move columnTraverse down a row, either to the left if moving from an even row to an odd row, or right for the opposite.
+		if (columnTraverse->lowerLeftNeighbor)
+		{
+			columnTraverse = columnTraverse->lowerLeftNeighbor;
+		}
+		else
+		{
+			columnTraverse = columnTraverse->lowerRightNeighbor;
+		}
+	}
+
+	return pieceCount;
 }
