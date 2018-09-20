@@ -12,6 +12,9 @@
     <Filter Include="Shader Files">
       <UniqueIdentifier>{ac92963f-ed22-4c6e-834b-1685ea22e88b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Data">
+      <UniqueIdentifier>{fdd74246-e294-4ff8-84bd-b3f44a09bcbe}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -117,5 +120,10 @@
     <FxCompile Include="instance.vs.hlsl">
       <Filter>Shader Files</Filter>
     </FxCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="data\level.txt">
+      <Filter>Data</Filter>
+    </Text>
   </ItemGroup>
 </Project>
