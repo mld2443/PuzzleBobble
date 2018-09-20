@@ -50,9 +50,6 @@
     <ClCompile Include="boardclass.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="piececlass.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="colorshaderclass.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -95,9 +92,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="boardclass.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="piececlass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="colorshaderclass.h">

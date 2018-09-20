@@ -144,12 +144,17 @@ bool BoardClass::Initialize(ID3D11Device* device, ID3D11DeviceContext* deviceCon
 	indices = nullptr;
 	instances = nullptr;
 
+	InitializeBoard(4, 4);
+
 	return true;
 }
 
 
 void BoardClass::Shutdown()
 {
+	// Clear and shutdown the level.
+	ShutdownBoard();
+
 	// Shutdown the vertex and index buffers.
 	ShutdownBuffers();
 
@@ -163,4 +168,136 @@ void BoardClass::Render(ID3D11DeviceContext* deviceContext)
 	RenderWithInstanceBuffer(deviceContext);
 
 	return;
+}
+
+
+bool BoardClass::InitializeBoard(unsigned int maxRowWidth, unsigned int rows)
+{
+	PieceType* rowTraverse, * columnTraverse;
+	int rowWidth;
+
+
+	// Fail if board dimensions too small.
+	if (maxRowWidth < 2 || rows == 0)
+	{
+		return false;
+	}
+
+	// Create the first piece container in the top left corner of the board.
+	m_level = new PieceType;
+	if (!m_level)
+	{
+		return false;
+	}
+
+	// Set columnTraverse to the first piece container of the board.
+	columnTraverse = m_level;
+
+	// Iterate down left side of board.
+	for (int i = 0; i < rows; i++)
+	{
+		// Set rowTraverse to the far left position in this row.
+		rowTraverse = columnTraverse;
+
+		// Determine the width of the current row (maxRowWidth if an even row, maxRowWidth-1 if odd).
+		rowWidth = maxRowWidth - (i % 2);
+
+		// Iterate over current row.
+		for (int j = 0; j < rowWidth; j++)
+		{
+			// Set the color of the current piece container to empty.
+			rowTraverse->color = '_';
+
+			// Assuming rowTraverse isn't the first piece container in a row, link it to its upper neighbors.
+			if (i > 0 && j > 0)
+			{
+				// Assign rowTraverse's upper left neighbor and back again.
+				rowTraverse->upperLeftNeighbor = rowTraverse->leftNeighbor->upperRightNeighbor;
+				rowTraverse->upperLeftNeighbor->lowerRightNeighbor = rowTraverse;
+
+				// If there is an upper right neighbor available to assign, assign it to rowTraverse and back again.
+				if (rowTraverse->upperLeftNeighbor->rightNeighbor) 
+				{
+					rowTraverse->upperRightNeighbor = rowTraverse->upperLeftNeighbor->rightNeighbor;
+					rowTraverse->upperRightNeighbor->lowerLeftNeighbor = rowTraverse;
+				}
+			}
+
+			// If we aren't at the end of the current row, create a new piece container.
+			if (j < rowWidth - 1)
+			{
+				// Create a new piece container to the right of rowTraverse and link the two.
+				rowTraverse->rightNeighbor = new PieceType;
+				if (!rowTraverse->rightNeighbor)
+				{
+					return false;
+				}
+				rowTraverse->rightNeighbor->leftNeighbor = rowTraverse;
+
+				// Move rowTraverse to the next piece container.
+				rowTraverse = rowTraverse->rightNeighbor;
+			}
+		}
+
+		// If we aren't on the last row, we want to make a new one.
+		if (i < rows - 1)
+		{
+			// We are moving from an odd numbered row to an even numbered row.
+			if (i % 2)
+			{
+				// Create a new piece container to the lower left of columnTraverse and link the two.
+				columnTraverse->lowerLeftNeighbor = new PieceType;
+				if (!columnTraverse->lowerLeftNeighbor)
+				{
+					return false;
+				}
+				columnTraverse->lowerLeftNeighbor->upperRightNeighbor = columnTraverse;
+
+				// Move columnTraverse down to the next row.
+				columnTraverse = columnTraverse->lowerLeftNeighbor;
+			}
+			// We are moving from an even numbered row to an odd numbered row.
+			else
+			{
+				// Create a new piece container to the lower right of columnTraverse and link the two.
+				columnTraverse->lowerRightNeighbor = new PieceType;
+				if (!columnTraverse->lowerRightNeighbor)
+				{
+					return false;
+				}
+				columnTraverse->lowerRightNeighbor->upperLeftNeighbor = columnTraverse;
+
+				// Link that new piece container to columnTraverse's right neighbor.
+				columnTraverse->rightNeighbor->lowerLeftNeighbor = columnTraverse->lowerRightNeighbor;
+				columnTraverse->lowerRightNeighbor->upperRightNeighbor = columnTraverse->rightNeighbor;
+
+				// Move columnTraverse down to next row.
+				columnTraverse = columnTraverse->lowerRightNeighbor;
+			}
+		}
+	}
+
+	return true;
+}
+
+void BoardClass::ShutdownBoard()
+{
+	return;
+}
+
+bool BoardClass::LoadLevel(char* filename)
+{
+	bool result;
+	int colorCount, maxRowWidth;
+	std::ifstream fileReader;
+	std::string token;
+
+
+	fileReader = std::ifstream(filename);
+	if (!fileReader)
+	{
+		return false;
+	}
+
+	return true;
 }
