@@ -55,51 +55,51 @@ bool BoardClass::Initialize(ID3D11Device* device, ID3D11DeviceContext* deviceCon
 	}
 
 	// Load the vertex array with data.
-	vertices[0].position =	XMFLOAT3(0.0f, 0.0f, 0.0f);	// Center.
+	vertices[0].position =	XMFLOAT3(0.0f, 0.0f, 0.0f);			// Center.
 	vertices[0].color =		XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
 
-	vertices[1].position =	XMFLOAT3(0.5f, SQRT075, 0.0f);	// Top right.
-	vertices[1].color =		XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f);
+	vertices[1].position =	XMFLOAT3(0.0f, 1.0f, 0.0f);			// Top.
+	vertices[1].color =		XMFLOAT4(0.6f, 0.6f, 0.6f, 1.0f);
 
-	vertices[2].position =	XMFLOAT3(1.0f, 0.0f, 0.0f);		// Right.
-	vertices[2].color =		XMFLOAT4(0.6f, 0.6f, 0.6f, 1.0f);
+	vertices[2].position =	XMFLOAT3(SQRT075, 0.5f, 0.0f);		// Top Right.
+	vertices[2].color =		XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f);
 
-	vertices[3].position =	XMFLOAT3(0.5f, -SQRT075, 0.0f);	// Bottom right.
-	vertices[3].color =		XMFLOAT4(0.4f, 0.4f, 0.4f, 1.0f);
+	vertices[3].position =	XMFLOAT3(SQRT075, -0.5f, 0.0f);		// Bottom right.
+	vertices[3].color =		XMFLOAT4(0.6f, 0.6f, 0.6f, 1.0f);
 
-	vertices[4].position =	XMFLOAT3(-0.5f, -SQRT075, 0.0f);	// Bottom left.
-	vertices[4].color =		XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f);
+	vertices[4].position =	XMFLOAT3(0.0f, -1.0f, 0.0f);		// Bottom.
+	vertices[4].color =		XMFLOAT4(0.4f, 0.4f, 0.4f, 1.0f);
 
-	vertices[5].position =	XMFLOAT3(-1.0f, 0.0f, 0.0f);		// Left.
-	vertices[5].color =		XMFLOAT4(0.4f, 0.4f, 0.4f, 1.0f);
+	vertices[5].position =	XMFLOAT3(-SQRT075, -0.5f, 0.0f);	// Bottom left.
+	vertices[5].color =		XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f);
 
-	vertices[6].position =	XMFLOAT3(-0.5f, SQRT075, 0.0f);	// Top left.
-	vertices[6].color =		XMFLOAT4(0.6f, 0.6f, 0.6f, 1.0f);
+	vertices[6].position =	XMFLOAT3(-SQRT075, 0.5f, 0.0f);		// Top left.
+	vertices[6].color =		XMFLOAT4(0.4f, 0.4f, 0.4f, 1.0f);
 
 	// Load the index array with data.
 	indices[0] = 0;  // Center.
-	indices[1] = 1;  // Top Right.
-	indices[2] = 2;  // Right.
+	indices[1] = 1;  // Top.
+	indices[2] = 2;  // Top right.
 
 	indices[3] = 0;  // Center.
-	indices[4] = 2;  // Right.
+	indices[4] = 2;  // Top right.
 	indices[5] = 3;  // Bottom right.
 
 	indices[6] = 0;  // Center.
 	indices[7] = 3;  // Bottom right.
-	indices[8] = 4;  // Bottom left.
+	indices[8] = 4;  // Bottom.
 
 	indices[9] = 0;  // Center.
-	indices[10] = 4;  // Bottom left.
-	indices[11] = 5;  // Left.
+	indices[10] = 4;  // Bottom.
+	indices[11] = 5;  // Bottom left.
 
 	indices[12] = 0;  // Center.
-	indices[13] = 5;  // Left.
+	indices[13] = 5;  // Bottom left.
 	indices[14] = 6;  // Top left.
 
 	indices[15] = 0;  // Center.
 	indices[16] = 6;  // Top left.
-	indices[17] = 1;  // Top right.
+	indices[17] = 1;  // Top.
 
 	// Load the instance array with data.
 	instances[0].position =	XMFLOAT3(-1.5f, -1.5f, 5.0f);
