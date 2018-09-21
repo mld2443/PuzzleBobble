@@ -8,16 +8,15 @@
 // INCLUDES //
 //////////////
 #include <map>
-#include <iostream>
 #include <fstream>
 #include <string>
-#include <functional>
 
 
 ///////////////////////
 // MY CLASS INCLUDES //
 ///////////////////////
 #include "drawableinterface.h"
+#include "boardstateclass.h"
 
 
 ///////////////
@@ -31,18 +30,6 @@
 ////////////////////////////////////////////////////////////////////////////////
 class BoardClass : public DrawableInterface
 {
-private:
-	struct PieceType
-	{
-		char color =					'_';
-		PieceType* upperLeftNeighbor =	nullptr;
-		PieceType* upperRightNeighbor =	nullptr;
-		PieceType* rightNeighbor =		nullptr;
-		PieceType* lowerRightNeighbor =	nullptr;
-		PieceType* lowerLeftNeighbor =	nullptr;
-		PieceType* leftNeighbor =		nullptr;
-	};
-
 public:
 	BoardClass();
 	BoardClass(const BoardClass&);
@@ -53,12 +40,10 @@ public:
 	void Render(ID3D11DeviceContext*) override;
 
 private:
+	bool LoadLevel(char*);
 	void CreateGeometry(VertexType*, unsigned long*);
-	int InitializeBoard(unsigned int, unsigned int);
-	void ShutdownBoard();
-	int LoadLevel(char*);
 
 private:
 	std::map<char, XMFLOAT4>	m_colors;
-	PieceType*					m_board;
+	BoardStateClass*			m_boardState;
 };
