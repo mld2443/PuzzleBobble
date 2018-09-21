@@ -73,16 +73,16 @@ bool BoardClass::Initialize(ID3D11Device* device, ID3D11DeviceContext* deviceCon
 	CreateGeometry(vertices, indices);
 
 	// Load the instance array with data.
-	instances[0].position =	XMFLOAT3(-1.5f, -1.5f, 5.0f);
+	instances[0].position =	XMFLOAT3(-1.5f, -1.5f, 0.0f);
 	instances[0].color =	XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f);
 
-	instances[1].position =	XMFLOAT3(-1.5f, 1.5f, 5.0f);
+	instances[1].position =	XMFLOAT3(-1.5f, 1.5f, 0.0f);
 	instances[1].color =	XMFLOAT4(0.0f, 0.0f, 1.0f, 1.0f);
 
-	instances[2].position =	XMFLOAT3(1.5f, -1.5f, 5.0f);
+	instances[2].position =	XMFLOAT3(1.5f, -1.5f, 0.0f);
 	instances[2].color =	XMFLOAT4(0.0f, 1.0f, 0.0f, 1.0f);
 
-	instances[3].position =	XMFLOAT3(1.5f, 1.5f, 5.0f);
+	instances[3].position =	XMFLOAT3(1.5f, 1.5f, 0.0f);
 	instances[3].color =	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
 
 	// Initialize the vertex buffer.
