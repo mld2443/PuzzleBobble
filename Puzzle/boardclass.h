@@ -23,6 +23,7 @@
 // CONSTANTS //
 ///////////////
 #define SQRT075 0.86602540378f
+#define SQRT3 1.73205080757f
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -41,6 +42,7 @@ public:
 
 private:
 	bool LoadLevel(char*);
+	void LoadInstances(InstanceType*);
 	void CreateGeometry(VertexType*, unsigned long*);
 
 private:

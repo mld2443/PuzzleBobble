@@ -4,71 +4,6 @@
 #include "boardstateclass.h"
 
 
-BoardStateClass::PieceIterator::PieceIterator() : row(nullptr), pos(nullptr)
-{
-}
-
-
-BoardStateClass::PieceIterator::PieceIterator(SpaceType* space) : row(space), pos(space)
-{
-}
-
-
-BoardStateClass::PieceIterator::PieceIterator(const PieceIterator& other) : row(other.row), pos(other.pos)
-{
-}
-
-
-BoardStateClass::PieceIterator& BoardStateClass::PieceIterator::operator++()
-{
-	if (pos->rightNeighbor)
-		pos = pos->rightNeighbor;
-	else
-		NextRow();
-	return *this;
-}
-
-
-BoardStateClass::PieceIterator BoardStateClass::PieceIterator::operator++(int)
-{
-	PieceIterator old(*this);
-	operator++();
-	return old;
-}
-
-
-bool BoardStateClass::PieceIterator::operator==(const PieceIterator& rhs) const
-{
-	return pos == rhs.pos;
-}
-
-
-bool BoardStateClass::PieceIterator::operator!=(const PieceIterator& rhs) const
-{
-	return pos != rhs.pos;
-}
-
-
-BoardStateClass::SpaceType& BoardStateClass::PieceIterator::operator*()
-{
-	return *pos;
-}
-
-
-void BoardStateClass::PieceIterator::NextRow()
-{
-	if (row->lowerLeftNeighbor)
-	{
-		row = row->lowerLeftNeighbor;
-	}
-	else
-	{
-		row = row->lowerRightNeighbor;
-	}
-	pos = row;
-}
-
-
 BoardStateClass::BoardStateClass()
 {
 	m_topLeft = nullptr;
@@ -87,29 +22,28 @@ BoardStateClass::~BoardStateClass()
 
 bool BoardStateClass::Initialize(std::ifstream& fileReader)
 {
-	SpaceType* rowTraverse, *columnTraverse;
+	SpaceType *traverseDown, *traverseRight;
 	std::string line;
-	unsigned int maxRowWidth, numRows;
 	bool result;
 
 
 	// Read in the next line from the file, which should determine the dimensions.
 	// NOTE: This could be more safely defined. 
-	fileReader >> line >> maxRowWidth >> numRows >> std::ws;
+	fileReader >> line >> m_maxWidth >> m_height >> std::ws;
 	if (line.compare("dimensions") != 0)
 	{
 		return false;
 	}
 
 	// Initialize the board and get the number of piece containers created.
-	result = AllocateBoard(maxRowWidth, numRows);
+	result = AllocateBoard();
 	if (!result)
 	{
 		return false;
 	}
 
 	// Set a pointer to the top of the left column on the board for board traversal.
-	columnTraverse = m_topLeft;
+	traverseDown = m_topLeft;
 
 	while (!fileReader.eof())
 	{
@@ -117,33 +51,32 @@ bool BoardStateClass::Initialize(std::ifstream& fileReader)
 		getline(fileReader, line);
 
 		// Set a row traversal pointer to start at the left side of the board for the given row.
-		rowTraverse = columnTraverse;
+		traverseRight = traverseDown;
 
 		for (char color : line)
 		{
-			// If rowTraverse points to a null piece container, we have an error and need to fail out.
-			if (!rowTraverse)
+			// If traverseRight points to a null piece container, we have an error and need to fail out.
+			if (!traverseRight)
 			{
 				return false;
 			}
 
-			// Set the piece container in rowTraverse's color to the one matching the color key from line.
+			// Set the piece container in traverseRight's color to the one matching the color key from line.
 			// NOTE: We aren't checking to see if color is defined in the color map.
-			rowTraverse->color = color;
+			traverseRight->color = color;
 
-
-			// Move rowTraverse to the right.
-			rowTraverse = rowTraverse->rightNeighbor;
+			// Move traverseRight to the right.
+			traverseRight = traverseRight->rightNeighbor;
 		}
 
-		// Move columnTraverse down a row, either to the left if moving from an even row to an odd row, or right for the opposite.
-		if (columnTraverse->lowerLeftNeighbor)
+		// Move traverseDown down a row, either to the left if moving from an even row to an odd row, or right for the opposite.
+		if (traverseDown->lowerLeftNeighbor)
 		{
-			columnTraverse = columnTraverse->lowerLeftNeighbor;
+			traverseDown = traverseDown->lowerLeftNeighbor;
 		}
 		else
 		{
-			columnTraverse = columnTraverse->lowerRightNeighbor;
+			traverseDown = traverseDown->lowerRightNeighbor;
 		}
 	}
 
@@ -198,32 +131,38 @@ void BoardStateClass::Shutdown()
 }
 
 
-std::size_t BoardStateClass::size()
+std::size_t BoardStateClass::GetSize()
 {
 	return m_size;
 }
 
 
-BoardStateClass::PieceIterator BoardStateClass::begin()
+std::size_t BoardStateClass::GetMaxWidth()
 {
-	return PieceIterator(m_topLeft);
+	return m_maxWidth;
 }
 
 
-BoardStateClass::PieceIterator BoardStateClass::end()
+std::size_t BoardStateClass::GetHeight()
 {
-	return PieceIterator();
+	return m_height;
 }
 
 
-bool BoardStateClass::AllocateBoard(unsigned int maxRowWidth, unsigned int rows)
+BoardStateClass::SpaceType* BoardStateClass::GetTopLeft()
+{
+	return m_topLeft;
+}
+
+
+bool BoardStateClass::AllocateBoard()
 {
 	SpaceType* rowTraverse, *columnTraverse;
 	unsigned int rowWidth;
 
 
 	// Fail if board dimensions too small.
-	if (maxRowWidth < 2 || rows == 0)
+	if (m_maxWidth < 2 || m_height == 0)
 	{
 		return false;
 	}
@@ -240,17 +179,17 @@ bool BoardStateClass::AllocateBoard(unsigned int maxRowWidth, unsigned int rows)
 
 	++m_size;
 
-	// Set columnTraverse to the first space of the board.
+	// Set traverseDown to the first space of the board.
 	columnTraverse = m_topLeft;
 
 	// Iterate down left side of board.
-	for (unsigned int i = 0; i < rows; i++)
+	for (unsigned int i = 0; i < m_height; i++)
 	{
-		// Set rowTraverse to the far left position in this row.
+		// Set traverseRight to the far left position in this row.
 		rowTraverse = columnTraverse;
 
 		// Determine the width of the current row (maxRowWidth if an even row, maxRowWidth-1 if odd).
-		rowWidth = maxRowWidth - (i % 2);
+		rowWidth = m_maxWidth - (i % 2);
 
 		// Iterate over current row.
 		for (unsigned int j = 0; j < rowWidth; j++)
@@ -258,14 +197,14 @@ bool BoardStateClass::AllocateBoard(unsigned int maxRowWidth, unsigned int rows)
 			// Set the color of the current space to empty.
 			rowTraverse->color = '_';
 
-			// Assuming rowTraverse isn't the first space in a row, link it to its upper neighbors.
+			// Assuming traverseRight isn't the first space in a row, link it to its upper neighbors.
 			if (i > 0 && j > 0)
 			{
-				// Assign rowTraverse's upper left neighbor and back again.
+				// Assign traverseRight's upper left neighbor and back again.
 				rowTraverse->upperLeftNeighbor = rowTraverse->leftNeighbor->upperRightNeighbor;
 				rowTraverse->upperLeftNeighbor->lowerRightNeighbor = rowTraverse;
 
-				// If there is an upper right neighbor available to assign, assign it to rowTraverse and back again.
+				// If there is an upper right neighbor available to assign, assign it to traverseRight and back again.
 				if (rowTraverse->upperLeftNeighbor->rightNeighbor)
 				{
 					rowTraverse->upperRightNeighbor = rowTraverse->upperLeftNeighbor->rightNeighbor;
@@ -276,7 +215,7 @@ bool BoardStateClass::AllocateBoard(unsigned int maxRowWidth, unsigned int rows)
 			// If we aren't at the end of the current row, create a new space.
 			if (j < rowWidth - 1)
 			{
-				// Create a new space to the right of rowTraverse and link the two.
+				// Create a new space to the right of traverseRight and link the two.
 				rowTraverse->rightNeighbor = new SpaceType;
 				if (!rowTraverse->rightNeighbor)
 				{
@@ -284,7 +223,7 @@ bool BoardStateClass::AllocateBoard(unsigned int maxRowWidth, unsigned int rows)
 				}
 				rowTraverse->rightNeighbor->leftNeighbor = rowTraverse;
 
-				// Move rowTraverse to the next space.
+				// Move traverseRight to the next space.
 				rowTraverse = rowTraverse->rightNeighbor;
 
 				++m_size;
@@ -292,12 +231,12 @@ bool BoardStateClass::AllocateBoard(unsigned int maxRowWidth, unsigned int rows)
 		}
 
 		// If we aren't on the last row, we want to make a new one.
-		if (i < rows - 1)
+		if (i < m_height - 1)
 		{
 			// We are moving from an odd numbered row to an even numbered row.
 			if (i % 2)
 			{
-				// Create a new space to the lower left of columnTraverse and link the two.
+				// Create a new space to the lower left of traverseDown and link the two.
 				columnTraverse->lowerLeftNeighbor = new SpaceType;
 				if (!columnTraverse->lowerLeftNeighbor)
 				{
@@ -305,7 +244,7 @@ bool BoardStateClass::AllocateBoard(unsigned int maxRowWidth, unsigned int rows)
 				}
 				columnTraverse->lowerLeftNeighbor->upperRightNeighbor = columnTraverse;
 
-				// Move columnTraverse down to the next row.
+				// Move traverseDown down to the next row.
 				columnTraverse = columnTraverse->lowerLeftNeighbor;
 
 				++m_size;
@@ -313,7 +252,7 @@ bool BoardStateClass::AllocateBoard(unsigned int maxRowWidth, unsigned int rows)
 			// We are moving from an even numbered row to an odd numbered row.
 			else
 			{
-				// Create a new space to the lower right of columnTraverse and link the two.
+				// Create a new space to the lower right of traverseDown and link the two.
 				columnTraverse->lowerRightNeighbor = new SpaceType;
 				if (!columnTraverse->lowerRightNeighbor)
 				{
@@ -321,11 +260,11 @@ bool BoardStateClass::AllocateBoard(unsigned int maxRowWidth, unsigned int rows)
 				}
 				columnTraverse->lowerRightNeighbor->upperLeftNeighbor = columnTraverse;
 
-				// Link that new space to columnTraverse's right neighbor.
+				// Link that new space to traverseDown's right neighbor.
 				columnTraverse->rightNeighbor->lowerLeftNeighbor = columnTraverse->lowerRightNeighbor;
 				columnTraverse->lowerRightNeighbor->upperRightNeighbor = columnTraverse->rightNeighbor;
 
-				// Move columnTraverse down to next row.
+				// Move traverseDown down to next row.
 				columnTraverse = columnTraverse->lowerRightNeighbor;
 
 				++m_size;

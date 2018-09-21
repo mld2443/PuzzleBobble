@@ -10,7 +10,6 @@
 #include <fstream>
 #include <string>
 #include <functional>
-#include <iterator>
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -18,7 +17,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 class BoardStateClass
 {
-private:
+public:
 	struct SpaceType
 	{
 		char color =					'_';
@@ -31,28 +30,6 @@ private:
 	};
 
 public:
-	class PieceIterator : public std::iterator<std::input_iterator_tag, SpaceType>
-	{
-	public:
-		PieceIterator();
-		PieceIterator(SpaceType*);
-		PieceIterator(const PieceIterator&);
-
-		PieceIterator& operator++();
-		PieceIterator operator++(int);
-
-		bool operator==(const PieceIterator&) const;
-		bool operator!=(const PieceIterator&) const;
-
-		SpaceType& operator*();
-
-		void NextRow();
-
-	private:
-		SpaceType *row, *pos;
-	};
-
-public:
 	BoardStateClass();
 	BoardStateClass(const BoardStateClass&);
 	~BoardStateClass();
@@ -60,15 +37,16 @@ public:
 	bool Initialize(std::ifstream&);
 	void Shutdown();
 
-	std::size_t size();
+	std::size_t GetSize();
+	std::size_t GetMaxWidth();
+	std::size_t GetHeight();
 
-	PieceIterator begin();
-	PieceIterator end();
-
-private:
-	bool AllocateBoard(unsigned int, unsigned int);
+	SpaceType* GetTopLeft();
 
 private:
-	std::size_t	m_size;
+	bool AllocateBoard();
+
+private:
+	std::size_t	m_size, m_maxWidth, m_height;
 	SpaceType*	m_topLeft;
 };

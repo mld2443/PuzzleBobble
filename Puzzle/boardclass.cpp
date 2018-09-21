@@ -46,7 +46,7 @@ bool BoardClass::Initialize(ID3D11Device* device, ID3D11DeviceContext* deviceCon
 	// Set the number of vertices, indices, and instances in the arrays.
 	vertexCount = 7;
 	indexCount = 18;
-	instanceCount = m_boardState->size();
+	instanceCount = m_boardState->GetSize();
 
 	// Create the vertex array.
 	vertices = new VertexType[vertexCount];
@@ -73,17 +73,7 @@ bool BoardClass::Initialize(ID3D11Device* device, ID3D11DeviceContext* deviceCon
 	CreateGeometry(vertices, indices);
 
 	// Load the instance array with data.
-	instances[0].position =	XMFLOAT3(-1.5f, -1.5f, 0.0f);
-	instances[0].color =	XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f);
-
-	instances[1].position =	XMFLOAT3(-1.5f, 1.5f, 0.0f);
-	instances[1].color =	XMFLOAT4(0.0f, 0.0f, 1.0f, 1.0f);
-
-	instances[2].position =	XMFLOAT3(1.5f, -1.5f, 0.0f);
-	instances[2].color =	XMFLOAT4(0.0f, 1.0f, 0.0f, 1.0f);
-
-	instances[3].position =	XMFLOAT3(1.5f, 1.5f, 0.0f);
-	instances[3].color =	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
+	LoadInstances(instances);
 
 	// Initialize the vertex buffer.
 	result = InitializeVertexBuffer(device, vertices, vertexCount);
@@ -187,6 +177,69 @@ bool BoardClass::LoadLevel(char* filename)
 	fileReader.close();
 
 	return true;
+}
+
+
+void BoardClass::LoadInstances(InstanceType* instances)
+{
+	unsigned int index;
+	float boardWidth, boardHeight, positionX, positionY, stepX, stepY;
+	BoardStateClass::SpaceType *traverseDown, *traverseRight;
+
+
+	// Set the default values for our indices and prospective positions.
+	index = 0;
+
+	// Set the stepping distance.
+	stepX = 2.1f * SQRT075;
+	stepY = 0.5f * stepX * SQRT3;
+
+	// Calculate the width between centers of the farthest apart spaces.
+	boardWidth = (float)(m_boardState->GetMaxWidth() - 1) * stepX;
+	boardHeight = (float)(m_boardState->GetHeight() - 1) * stepY;
+
+	// Offset the starting position so the whole board appears centered.
+	positionX = -0.5f * boardWidth;
+	positionY = 0.5f * boardHeight;
+
+	// Start the traversal of our board.
+	traverseDown = m_boardState->GetTopLeft();
+
+	while (traverseDown)
+	{
+		// Set a row traversal pointer to start at the left side of the board for the given row.
+		traverseRight = traverseDown;
+
+		while (traverseRight)
+		{
+			instances[index].position =	XMFLOAT3(positionX, positionY, 0.0f);
+			instances[index].color =	m_colors[traverseRight->color];
+
+			// Move our Space pointer right one space.
+			traverseRight = traverseRight->rightNeighbor;
+
+			// Move our prospective position coordinates right one space.
+			positionX += stepX;
+
+			index++;
+		}
+
+		// Move our prospective position coordinates down to the next row.
+		positionX -= stepX * ((float)m_boardState->GetMaxWidth() - 0.5f);
+		positionY -= stepY;
+
+		// Move traverseDown down a row, either to the left if moving from an even row to an odd row, or right for the opposite.
+		if (traverseDown->lowerLeftNeighbor)
+		{
+			traverseDown = traverseDown->lowerLeftNeighbor;
+		}
+		else
+		{
+			traverseDown = traverseDown->lowerRightNeighbor;
+		}
+	}
+
+	return;
 }
 
 

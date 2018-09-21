@@ -73,7 +73,7 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	}
 
 	// Set the initial parameters of the camera.
-	m_Camera->SetPosition(0.0f, 0.0f, -15.0f);
+	m_Camera->SetPosition(0.0f, 0.0f, -20.0f);
 	m_Camera->SetLookDirection(0.0f, 0.0f, 1.0f);
 
 	// Create the triangle object.
