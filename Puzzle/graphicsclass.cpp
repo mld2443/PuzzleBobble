@@ -258,7 +258,7 @@ bool GraphicsClass::Render()
 		{
 			// Render the drawable using the color shader.
 			result = m_ColorShader->Render(m_Resources->GetDirect3DDeviceContext(), drawable->GetIndexCount(),
-										   worldMatrix, viewMatrix, projectionMatrix);
+										   1, worldMatrix, viewMatrix, projectionMatrix);
 			if (!result)
 			{
 				return false;

@@ -31,6 +31,7 @@
     <ClCompile Include="inputclass.cpp" />
     <ClCompile Include="graphicsclass.cpp" />
     <ClCompile Include="colorshaderclass.cpp" />
+    <ClCompile Include="shaderinterface.cpp" />
     <ClCompile Include="systemclass.cpp" />
     <ClCompile Include="textclass.cpp" />
     <ClCompile Include="timerclass.cpp" />
@@ -48,6 +49,7 @@
     <ClInclude Include="graphicsclass.h" />
     <ClInclude Include="inputclass.h" />
     <ClInclude Include="colorshaderclass.h" />
+    <ClInclude Include="shaderinterface.h" />
     <ClInclude Include="systemclass.h" />
     <ClInclude Include="textclass.h" />
     <ClInclude Include="timerclass.h" />
