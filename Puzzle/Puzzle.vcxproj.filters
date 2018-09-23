@@ -12,6 +12,9 @@
     <Filter Include="Shader Files">
       <UniqueIdentifier>{ac92963f-ed22-4c6e-834b-1685ea22e88b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Data">
+      <UniqueIdentifier>{fdd74246-e294-4ff8-84bd-b3f44a09bcbe}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -50,9 +53,6 @@
     <ClCompile Include="boardclass.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="piececlass.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="colorshaderclass.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -60,6 +60,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="instanceshaderclass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="boardstateclass.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -97,9 +100,6 @@
     <ClInclude Include="boardclass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="piececlass.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="colorshaderclass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -107,6 +107,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="instanceshaderclass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="boardstateclass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -123,5 +126,10 @@
     <FxCompile Include="instance.vs.hlsl">
       <Filter>Shader Files</Filter>
     </FxCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="data\level.txt">
+      <Filter>Data</Filter>
+    </Text>
   </ItemGroup>
 </Project>
