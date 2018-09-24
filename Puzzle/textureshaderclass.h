@@ -1,5 +1,5 @@
 ////////////////////////////////////////////////////////////////////////////////
-// Filename: instanceshaderclass.h
+// Filename: textureshaderclass.h
 ////////////////////////////////////////////////////////////////////////////////
 #pragma once
 
@@ -8,19 +8,19 @@
 // MY CLASS INCLUDES //
 ///////////////////////
 #include "shaderinterface.h"
-#include "instance.ps.h"
-#include "instance.vs.h"
+#include "texture.ps.h"
+#include "texture.vs.h"
 
 
 ////////////////////////////////////////////////////////////////////////////////
-// Class name: InstanceShaderClass
+// Class name: TextureShaderClass
 ////////////////////////////////////////////////////////////////////////////////
-class InstanceShaderClass : public ShaderInterface
+class TextureShaderClass : public ShaderInterface
 {
 public:
-	InstanceShaderClass();
-	InstanceShaderClass(const InstanceShaderClass&);
-	~InstanceShaderClass();
+	TextureShaderClass();
+	TextureShaderClass(const TextureShaderClass&);
+	~TextureShaderClass();
 
 	bool Initialize(ID3D11Device*) override;
 	void Shutdown() override;

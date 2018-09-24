@@ -11,7 +11,6 @@
 #include "color.ps.h"
 #include "color.vs.h"
 
-using namespace DirectX;
 
 ////////////////////////////////////////////////////////////////////////////////
 // Class name: ColorShaderClass

@@ -20,15 +20,15 @@ cbuffer MatrixBuffer
 struct VertexInputType
 {
 	float4 position : POSITION0;
-	float4 color : COLOR0;
+	float2 tex : TEXCOORD0;
 	float4 instancePosition : POSITION1;
-	float4 instanceColor: COLOR1;
+	float2 instanceTex: TEXCOORD1;
 };
 
 struct PixelInputType
 {
 	float4 position : SV_POSITION;
-	float4 color : COLOR;
+	float2 tex : TEXCOORD0;
 };
 
 
@@ -54,10 +54,8 @@ PixelInputType VSMain(VertexInputType input)
 	output.position = mul(output.position, projectionMatrix);
 
 	// Store the input color for the pixel shader to use.
-	output.color.x = input.color.x * input.instanceColor.x;
-	output.color.y = input.color.y * input.instanceColor.y;
-	output.color.z = input.color.z * input.instanceColor.z;
-	output.color.w = input.color.w * input.instanceColor.w;
+	output.tex.x = input.tex.x + input.instanceTex.x;
+	output.tex.y = input.tex.y + input.instanceTex.y;
 
 	return output;
 }

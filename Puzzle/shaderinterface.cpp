@@ -10,6 +10,7 @@ ShaderInterface::ShaderInterface()
 	m_pixelShader = nullptr;
 	m_layout = nullptr;
 	m_matrixBuffer = nullptr;
+	m_sampleState = nullptr;
 }
 
 
@@ -24,13 +25,14 @@ ShaderInterface::~ShaderInterface()
 
 
 bool ShaderInterface::Render(ID3D11DeviceContext* deviceContext, int indexCountPerInstance, int instanceCount, 
-							 XMMATRIX worldMatrix, XMMATRIX viewMatrix, XMMATRIX projectionMatrix)
+							 XMMATRIX worldMatrix, XMMATRIX viewMatrix, XMMATRIX projectionMatrix,
+							 ID3D11ShaderResourceView* texture)
 {
 	bool result;
 
 
 	// Set the shader parameters that it will use for rendering.
-	result = SetShaderParameters(deviceContext, worldMatrix, viewMatrix, projectionMatrix);
+	result = SetShaderParameters(deviceContext, worldMatrix, viewMatrix, projectionMatrix, texture);
 	if (!result)
 	{
 		return false;
@@ -42,6 +44,9 @@ bool ShaderInterface::Render(ID3D11DeviceContext* deviceContext, int indexCountP
 	// Set the vertex and pixel shaders that will be used to render this triangle.
 	deviceContext->VSSetShader(m_vertexShader, nullptr, 0);
 	deviceContext->PSSetShader(m_pixelShader, nullptr, 0);
+
+	// Set the sampler state in the pixel shader.
+	deviceContext->PSSetSamplers(0, 1, &m_sampleState);
 
 	// Now draw the prepared buffers with the shader.
 	DrawShader(deviceContext, indexCountPerInstance, instanceCount);
@@ -57,6 +62,7 @@ bool ShaderInterface::InitializeShader(ID3D11Device* device,
 {
 	HRESULT result;
 	D3D11_BUFFER_DESC matrixBufferDesc;
+	D3D11_SAMPLER_DESC samplerDesc;
 
 
 	// Create the vertex shader from the header file provided by compiling VertexShader.hlsl.
@@ -95,12 +101,41 @@ bool ShaderInterface::InitializeShader(ID3D11Device* device,
 		return false;
 	}
 
-	return true;
+		// Create a texture sampler state description.
+	samplerDesc.Filter =			D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+	samplerDesc.AddressU =			D3D11_TEXTURE_ADDRESS_WRAP;
+	samplerDesc.AddressV =			D3D11_TEXTURE_ADDRESS_WRAP;
+	samplerDesc.AddressW =			D3D11_TEXTURE_ADDRESS_WRAP;
+	samplerDesc.MipLODBias =		0.0f;
+	samplerDesc.MaxAnisotropy =		1;
+	samplerDesc.ComparisonFunc =	D3D11_COMPARISON_ALWAYS;
+	samplerDesc.BorderColor[0] =	0;
+	samplerDesc.BorderColor[1] =	0;
+	samplerDesc.BorderColor[2] =	0;
+	samplerDesc.BorderColor[3] =	0;
+	samplerDesc.MinLOD =			0;
+	samplerDesc.MaxLOD =			D3D11_FLOAT32_MAX;
+
+	// Create the texture sampler state.
+	result = device->CreateSamplerState(&samplerDesc, &m_sampleState);
+	if (FAILED(result))
+	{
+		return false;
+	}
+
+return true;
 }
 
 
 void ShaderInterface::ShutdownShader()
 {
+	// Release the sampler state.
+	if (m_sampleState)
+	{
+		m_sampleState->Release();
+		m_sampleState = nullptr;
+	}
+
 	// Release the matrix constant buffer.
 	if (m_matrixBuffer)
 	{
@@ -133,8 +168,9 @@ void ShaderInterface::ShutdownShader()
 }
 
 
-bool ShaderInterface::SetShaderParameters(ID3D11DeviceContext* deviceContext, XMMATRIX worldMatrix, XMMATRIX viewMatrix,
-	XMMATRIX projectionMatrix)
+bool ShaderInterface::SetShaderParameters(ID3D11DeviceContext* deviceContext,
+										  XMMATRIX worldMatrix, XMMATRIX viewMatrix, XMMATRIX projectionMatrix,
+										  ID3D11ShaderResourceView* texture)
 {
 	HRESULT result;
 	D3D11_MAPPED_SUBRESOURCE mappedResource;
@@ -170,6 +206,9 @@ bool ShaderInterface::SetShaderParameters(ID3D11DeviceContext* deviceContext, XM
 
 	// Finally set the constant buffer in the vertex shader with the updated values.
 	deviceContext->VSSetConstantBuffers(bufferNumber, 1, &m_matrixBuffer);
+
+	// Set shader texture resource in the pixel shader.
+	deviceContext->PSSetShaderResources(0, 1, &texture);
 
 	return true;
 }
