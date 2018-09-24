@@ -44,8 +44,8 @@ bool BoardClass::Initialize(ID3D11Device* device, ID3D11DeviceContext* deviceCon
 	}
 
 	// Set the number of vertices, indices, and instances in the arrays.
-	vertexCount = 7;
-	indexCount = 18;
+	vertexCount = 4;
+	indexCount = 6;
 	instanceCount = m_boardState->GetSize();
 
 	// Create the vertex array.
@@ -105,12 +105,25 @@ bool BoardClass::Initialize(ID3D11Device* device, ID3D11DeviceContext* deviceCon
 	indices = nullptr;
 	instances = nullptr;
 
+	// Load the texture for this model.
+	result = LoadTexture(device, deviceContext, "../Puzzle/data/pieces.tga");
+	if (!result)
+	{
+		return false;
+	}
+
 	return true;
 }
 
 
 void BoardClass::Shutdown()
 {
+	// Release our texture.
+	ReleaseTexture();
+
+	// Shutdown the vertex and index buffers.
+	ShutdownBuffers();
+
 	// Clear and shutdown the level.
 	if (m_boardState)
 	{
@@ -118,9 +131,6 @@ void BoardClass::Shutdown()
 		delete m_boardState;
 		m_boardState = nullptr;
 	}
-
-	// Shutdown the vertex and index buffers.
-	ShutdownBuffers();
 
 	return;
 }
@@ -151,24 +161,15 @@ bool BoardClass::LoadLevel(char* filename)
 		return false;
 	}
 
-	// Read in the first word of the line, which should state the number of colors.
-	// NOTE: This could be more safely defined. 
-	fileReader >> line >> colorCount;
-	if (line.compare("colors") != 0)
-	{
-		return false;
-	}
-
-	// Read in color keys and RGBA values, then store in color map.
-	for (unsigned int i = 0; i < colorCount; i++)
-	{
-		fileReader >> colorKey >> colorValues.x >> colorValues.y >> colorValues.z >> colorValues.w;
-
-		m_colors[colorKey] = colorValues;
-	}
-
-	// Add a blank color to color map for empty spaces.
-	m_colors['_'] = XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f);
+	// Add all colors to color map.
+	m_colors['r'] = XMFLOAT2(0.0f, 0.0f);
+	m_colors['o'] = XMFLOAT2(0.25f, 0.0f);
+	m_colors['y'] = XMFLOAT2(0.5f, 0.0f);
+	m_colors['g'] = XMFLOAT2(0.75f, 0.0f);
+	m_colors['b'] = XMFLOAT2(0.0f, 0.25f);
+	m_colors['i'] = XMFLOAT2(0.25f, 0.25f);
+	m_colors['v'] = XMFLOAT2(0.5f, 0.25f);
+	m_colors['_'] = XMFLOAT2(0.75f, 0.25f);
 
 	// The board state will use the rest of the file to load in the starting state.
 	m_boardState->Initialize(fileReader);
@@ -213,7 +214,7 @@ void BoardClass::LoadInstances(InstanceType* instances)
 		while (traverseRight)
 		{
 			instances[index].position =	XMFLOAT3(positionX, positionY, 0.0f);
-			instances[index].color =	m_colors[traverseRight->color];
+			instances[index].tex =		m_colors[traverseRight->color];
 
 			// Move our Space pointer right one space.
 			traverseRight = traverseRight->rightNeighbor;
@@ -246,49 +247,24 @@ void BoardClass::LoadInstances(InstanceType* instances)
 void BoardClass::CreateGeometry(VertexType* vertices, unsigned long* indices)
 {
 	// Load the vertex array with data.
-	vertices[0].position = XMFLOAT3(0.0f, 0.0f, 0.0f);			// Center.
-	vertices[0].color = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
+	vertices[0].position =	XMFLOAT3(-1.0f, 1.0f, 0.0f);		// Top left.
+	vertices[0].tex =		XMFLOAT2(0.0f, 0.0f);
 
-	vertices[1].position = XMFLOAT3(0.0f, 1.0f, 0.0f);			// Top.
-	vertices[1].color = XMFLOAT4(0.6f, 0.6f, 0.6f, 1.0f);
+	vertices[1].position =	XMFLOAT3(1.0f, 1.0f, 0.0f);			// Top right.
+	vertices[1].tex =		XMFLOAT2(0.25f, 0.0f);
 
-	vertices[2].position = XMFLOAT3(SQRT075, 0.5f, 0.0f);		// Top Right.
-	vertices[2].color = XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f);
+	vertices[2].position =	XMFLOAT3(1.0f, -1.0f, 0.0f);		// Bottom right.
+	vertices[2].tex =		XMFLOAT2(0.25f, 0.25f);
 
-	vertices[3].position = XMFLOAT3(SQRT075, -0.5f, 0.0f);		// Bottom right.
-	vertices[3].color = XMFLOAT4(0.6f, 0.6f, 0.6f, 1.0f);
-
-	vertices[4].position = XMFLOAT3(0.0f, -1.0f, 0.0f);		// Bottom.
-	vertices[4].color = XMFLOAT4(0.4f, 0.4f, 0.4f, 1.0f);
-
-	vertices[5].position = XMFLOAT3(-SQRT075, -0.5f, 0.0f);	// Bottom left.
-	vertices[5].color = XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f);
-
-	vertices[6].position = XMFLOAT3(-SQRT075, 0.5f, 0.0f);		// Top left.
-	vertices[6].color = XMFLOAT4(0.4f, 0.4f, 0.4f, 1.0f);
+	vertices[3].position =	XMFLOAT3(-1.0f, -1.0f, 0.0f);		// Bottom left.
+	vertices[3].tex =		XMFLOAT2(0.0f, 0.25f);
 
 	// Load the index array with data.
-	indices[0] = 0;  // Center.
-	indices[1] = 1;  // Top.
-	indices[2] = 2;  // Top right.
+	indices[0] = 0;  // Top left.
+	indices[1] = 1;  // Top right.
+	indices[2] = 2;  // Bottom right.
 
-	indices[3] = 0;  // Center.
-	indices[4] = 2;  // Top right.
-	indices[5] = 3;  // Bottom right.
-
-	indices[6] = 0;  // Center.
-	indices[7] = 3;  // Bottom right.
-	indices[8] = 4;  // Bottom.
-
-	indices[9] = 0;  // Center.
-	indices[10] = 4;  // Bottom.
-	indices[11] = 5;  // Bottom left.
-
-	indices[12] = 0;  // Center.
-	indices[13] = 5;  // Bottom left.
-	indices[14] = 6;  // Top left.
-
-	indices[15] = 0;  // Center.
-	indices[16] = 6;  // Top left.
-	indices[17] = 1;  // Top.
+	indices[3] = 0;  // Top left.
+	indices[4] = 2;  // Bottom right.
+	indices[5] = 3;  // Bottom left.
 }

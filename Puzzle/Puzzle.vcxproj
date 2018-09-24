@@ -160,6 +160,10 @@
   <ItemGroup>
     <Text Include="data\level.txt" />
   </ItemGroup>
+  <ItemGroup>
+    <Image Include="data\background.tga" />
+    <Image Include="data\pieces.tga" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
     <ProjectGuid>{2831A385-0416-4423-B800-359FD354E2A0}</ProjectGuid>

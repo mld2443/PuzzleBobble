@@ -46,6 +46,6 @@ private:
 	void CreateGeometry(VertexType*, unsigned long*);
 
 private:
-	std::map<char, XMFLOAT4>	m_colors;
+	std::map<char, XMFLOAT2>	m_colors;
 	BoardStateClass*			m_boardState;
 };

@@ -10,6 +10,12 @@
 #include <d3d11.h>
 #include <directxmath.h>
 
+
+///////////////////////
+// MY CLASS INCLUDES //
+///////////////////////
+#include "textureclass.h"
+
 using namespace DirectX;
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -21,13 +27,13 @@ protected:
 	struct VertexType
 	{
 		XMFLOAT3 position;
-		XMFLOAT4 color;
+		XMFLOAT2 tex;
 	};
 
 	struct InstanceType
 	{
 		XMFLOAT3 position;
-		XMFLOAT4 color;
+		XMFLOAT2 tex;
 	};
 
 public:
@@ -42,6 +48,7 @@ public:
 	int GetVertexCount();
 	int GetIndexCount();
 	int GetInstanceCount();
+	ID3D11ShaderResourceView* GetTexture();
 
 	bool isInstanced();
 
@@ -55,9 +62,12 @@ protected:
 	void RenderWithInstanceBuffer(ID3D11DeviceContext*);
 	void RenderWithoutInstanceBuffer(ID3D11DeviceContext*);
 
+	bool LoadTexture(ID3D11Device*, ID3D11DeviceContext*, char*);
+	void ReleaseTexture();
+
 private:
-	ID3D11Buffer *	m_vertexBuffer, *m_indexBuffer, *m_instanceBuffer;
+	TextureClass*	m_Texture;
+	ID3D11Buffer	*m_vertexBuffer, *m_indexBuffer, *m_instanceBuffer;
 	int				m_vertexCount, m_indexCount, m_instanceCount;
-	bool			m_instanced;
 };
 

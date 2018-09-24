@@ -156,4 +156,12 @@
       <Filter>Data</Filter>
     </Text>
   </ItemGroup>
+  <ItemGroup>
+    <Image Include="data\background.tga">
+      <Filter>Data</Filter>
+    </Image>
+    <Image Include="data\pieces.tga">
+      <Filter>Data</Filter>
+    </Image>
+  </ItemGroup>
 </Project>
