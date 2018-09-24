@@ -192,7 +192,7 @@ void BoardClass::LoadInstances(InstanceType* instances)
 	index = 0;
 
 	// Set the stepping distance.
-	stepX = 2.1f * SQRT075;
+	stepX = 2.1f;
 	stepY = 0.5f * stepX * SQRT3;
 
 	// Calculate the width between centers of the farthest apart spaces.
