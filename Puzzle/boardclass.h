@@ -10,6 +10,7 @@
 #include <map>
 #include <fstream>
 #include <string>
+#include <vector>
 
 
 ///////////////////////
@@ -41,8 +42,8 @@ public:
 
 private:
 	bool LoadLevel(char*);
-	void LoadInstances(InstanceType*);
-	void CreateGeometry(VertexType*, unsigned long*);
+	void LoadInstances(std::vector<InstanceType>&);
+	void CreateGeometry(std::vector<VertexType>&, std::vector<unsigned long>&);
 
 private:
 	std::map<char, XMFLOAT2>	m_colors;
