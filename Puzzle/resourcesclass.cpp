@@ -356,7 +356,12 @@ bool ResourcesClass::InitializeDirect3D(int screenWidth, int screenHeight, bool 
 
 	// This flag adds support for surfaces with a different color channel ordering
 	// than the API default. It is required for compatibility with Direct2D.
-	creationFlags = D3D11_CREATE_DEVICE_BGRA_SUPPORT | D3D11_CREATE_DEVICE_DEBUG;
+	creationFlags = D3D11_CREATE_DEVICE_BGRA_SUPPORT;
+
+	// Enable device debugging in debug builds.
+#if defined(_DEBUG)
+	creationFlags |= D3D11_CREATE_DEVICE_DEBUG;
+#endif
 
 	// Set the feature level to a version of DirectX 11.
 	D3D_FEATURE_LEVEL featureLevels[] =
