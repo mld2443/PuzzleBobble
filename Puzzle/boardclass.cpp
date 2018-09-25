@@ -111,9 +111,9 @@ void BoardClass::Render(ID3D11DeviceContext* deviceContext)
 
 bool BoardClass::LoadLevel(char* filename)
 {
-	//unsigned int colorCount;
-	//char colorKey;
-	//XMFLOAT4 colorValues;
+	unsigned int colorCount;
+	char colorKey;
+	XMFLOAT3 colorValues;
 	std::ifstream fileReader;
 	std::string line;
 
@@ -125,16 +125,21 @@ bool BoardClass::LoadLevel(char* filename)
 		return false;
 	}
 
-	// Add all colors to color map.
-	m_colors['r'] = XMFLOAT3(0.0f / 6.0f, 1.0f, 1.0f);
-	m_colors['y'] = XMFLOAT3(1.0f / 6.0f, 1.0f, 1.0f);
-	m_colors['g'] = XMFLOAT3(2.0f / 6.0f, 1.0f, 1.0f);
-	m_colors['c'] = XMFLOAT3(3.0f / 6.0f, 1.0f, 1.0f);
-	m_colors['b'] = XMFLOAT3(4.0f / 6.0f, 1.0f, 1.0f);
-	m_colors['m'] = XMFLOAT3(5.0f / 6.0f, 1.0f, 1.0f);
-	m_colors['w'] = XMFLOAT3(0.0f / 6.0f, 0.0f, 1.0f);
-	m_colors['l'] = XMFLOAT3(0.0f / 6.0f, 0.0f, 0.7f);
-	m_colors['d'] = XMFLOAT3(0.0f / 6.0f, 0.0f, 0.3f);
+	// Read in the first word of the line, which should state the number of colors.
+	// NOTE: This could be more safely defined. 
+	fileReader >> line >> colorCount;
+	if (line.compare("colors") != 0)
+	{
+		return false;
+	}
+
+	// Read in color keys and RGBA values, then store in color map.
+	for (unsigned int i = 0; i < colorCount; i++)
+	{
+		fileReader >> colorKey >> colorValues.x >> colorValues.y >> colorValues.z;
+
+		m_colors[colorKey] = colorValues;
+	}
 
 	// The board state will use the rest of the file to load in the starting state.
 	m_boardState->Initialize(fileReader);
@@ -144,6 +149,8 @@ bool BoardClass::LoadLevel(char* filename)
 
 	return true;
 }
+
+
 
 
 void BoardClass::LoadInstances(std::vector<InstanceType>& instances)
@@ -177,8 +184,8 @@ void BoardClass::LoadInstances(std::vector<InstanceType>& instances)
 		{
 			if (traverseRight->color != '_')
 			{
-				tempInstance.position = XMFLOAT3(positionX, positionY, 0.0f);
-				tempInstance.HSV = m_colors[traverseRight->color];
+				tempInstance.position =	XMFLOAT3(positionX, positionY, 0.0f);
+				tempInstance.HSV =		m_colors[traverseRight->color];
 				instances.push_back(tempInstance);
 			}
 
