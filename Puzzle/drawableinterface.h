@@ -33,7 +33,7 @@ protected:
 	struct InstanceType
 	{
 		XMFLOAT3 position;
-		XMFLOAT2 tex;
+		XMFLOAT3 HSV;
 	};
 
 public:

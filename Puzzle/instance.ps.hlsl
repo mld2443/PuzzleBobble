@@ -16,8 +16,32 @@ SamplerState SampleType;
 struct PixelInputType
 {
 	float4 position : SV_POSITION;
+	float3 HSV : COLOR;
 	float2 tex : TEXCOORD0;
 };
+
+
+////////////////////////////////////////////////////////////////////////////////
+// Color Conversions
+////////////////////////////////////////////////////////////////////////////////
+
+// NOTE: Color Functions courtesy of Ian Taylor
+// http://www.chilliant.com/rgb2hsv.html
+
+float3 HUEtoRGB(in float H)
+{
+	float R = abs(H * 6.0f - 3.0f) - 1.0f;
+	float G = 2.0f - abs(H * 6.0f - 2.0f);
+	float B = 2.0f - abs(H * 6.0f - 4.0f);
+	return saturate(float3(R, G, B));
+}
+
+
+float3 HSVtoRGB(in float3 HSV)
+{
+	float3 RGB = HUEtoRGB(HSV.x);
+	return ((RGB - 1) * HSV.y + 1) * HSV.z;
+}
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -25,11 +49,22 @@ struct PixelInputType
 ////////////////////////////////////////////////////////////////////////////////
 float4 PSMain(PixelInputType input) : SV_TARGET
 {
-	float4 textureColor;
+	float4 textureHSVA, outputRGBA;
+	float3 tempRGB;
 
 
-	// Sample the pixel color from the texture using the sampler at this texture coordinate location.
-	textureColor = shaderTexture.Sample(SampleType, input.tex);
+	// Sample the texture using the sampler at this texture coordinate location.
+	textureHSVA = shaderTexture.Sample(SampleType, input.tex);
 
-	return textureColor;
+	// Modify the saturation and value of our pixel color using the instance input colors.
+	textureHSVA.y *= input.HSV.y;
+	textureHSVA.z *= input.HSV.z;
+
+	// Calculate the RGB values of our pixel from the input HSV
+	tempRGB = HSVtoRGB(float3(input.HSV.x, textureHSVA.yz));
+
+	// Combine the RGB we just got with our alpha channel to get the final color.
+	outputRGBA = float4(tempRGB, textureHSVA.w);
+
+	return outputRGBA;
 }

@@ -1,5 +1,7 @@
 dimensions 8 8
 rrggyybb
 rrggyyb
-rrggyybb
-rggyyb
+ccmmccmm
+cmmccmm
+wwddlldd
+wddlldd

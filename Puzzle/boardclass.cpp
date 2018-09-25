@@ -70,7 +70,7 @@ bool BoardClass::Initialize(ID3D11Device* device, ID3D11DeviceContext* deviceCon
 	}
 
 	// Load the texture for this model.
-	result = LoadTexture(device, deviceContext, "../Puzzle/data/pieces.tga");
+	result = LoadTexture(device, deviceContext, "../Puzzle/data/piece.tga");
 	if (!result)
 	{
 		return false;
@@ -111,9 +111,9 @@ void BoardClass::Render(ID3D11DeviceContext* deviceContext)
 
 bool BoardClass::LoadLevel(char* filename)
 {
-	unsigned int colorCount;
-	char colorKey;
-	XMFLOAT4 colorValues;
+	//unsigned int colorCount;
+	//char colorKey;
+	//XMFLOAT4 colorValues;
 	std::ifstream fileReader;
 	std::string line;
 
@@ -126,14 +126,15 @@ bool BoardClass::LoadLevel(char* filename)
 	}
 
 	// Add all colors to color map.
-	m_colors['r'] = XMFLOAT2(0.0f, 0.0f);
-	m_colors['o'] = XMFLOAT2(0.25f, 0.0f);
-	m_colors['y'] = XMFLOAT2(0.5f, 0.0f);
-	m_colors['g'] = XMFLOAT2(0.75f, 0.0f);
-	m_colors['b'] = XMFLOAT2(0.0f, 0.25f);
-	m_colors['i'] = XMFLOAT2(0.25f, 0.25f);
-	m_colors['v'] = XMFLOAT2(0.5f, 0.25f);
-	m_colors['_'] = XMFLOAT2(0.75f, 0.25f);
+	m_colors['r'] = XMFLOAT3(0.0f / 6.0f, 1.0f, 1.0f);
+	m_colors['y'] = XMFLOAT3(1.0f / 6.0f, 1.0f, 1.0f);
+	m_colors['g'] = XMFLOAT3(2.0f / 6.0f, 1.0f, 1.0f);
+	m_colors['c'] = XMFLOAT3(3.0f / 6.0f, 1.0f, 1.0f);
+	m_colors['b'] = XMFLOAT3(4.0f / 6.0f, 1.0f, 1.0f);
+	m_colors['m'] = XMFLOAT3(5.0f / 6.0f, 1.0f, 1.0f);
+	m_colors['w'] = XMFLOAT3(0.0f / 6.0f, 0.0f, 1.0f);
+	m_colors['l'] = XMFLOAT3(0.0f / 6.0f, 0.0f, 0.7f);
+	m_colors['d'] = XMFLOAT3(0.0f / 6.0f, 0.0f, 0.3f);
 
 	// The board state will use the rest of the file to load in the starting state.
 	m_boardState->Initialize(fileReader);
@@ -177,7 +178,7 @@ void BoardClass::LoadInstances(std::vector<InstanceType>& instances)
 			if (traverseRight->color != '_')
 			{
 				tempInstance.position = XMFLOAT3(positionX, positionY, 0.0f);
-				tempInstance.tex = m_colors[traverseRight->color];
+				tempInstance.HSV = m_colors[traverseRight->color];
 				instances.push_back(tempInstance);
 			}
 
@@ -218,15 +219,15 @@ void BoardClass::CreateGeometry(std::vector<VertexType>& vertices, std::vector<u
 	vertices.push_back(vertex);
 
 	vertex.position =	XMFLOAT3(1.0f, 1.0f, 0.0f);		// Top right.
-	vertex.tex =		XMFLOAT2(0.25f, 0.0f);
+	vertex.tex =		XMFLOAT2(1.0f, 0.0f);
 	vertices.push_back(vertex);
 
 	vertex.position =	XMFLOAT3(1.0f, -1.0f, 0.0f);	// Bottom right.
-	vertex.tex =		XMFLOAT2(0.25f, 0.25f);
+	vertex.tex =		XMFLOAT2(1.0f, 1.0f);
 	vertices.push_back(vertex);
 
 	vertex.position =	XMFLOAT3(-1.0f, -1.0f, 0.0f);	// Bottom left.
-	vertex.tex =		XMFLOAT2(0.0f, 0.25f);
+	vertex.tex =		XMFLOAT2(0.0f, 1.0f);
 	vertices.push_back(vertex);
 
 	// Load the index array with data.
