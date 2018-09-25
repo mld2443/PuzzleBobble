@@ -148,7 +148,7 @@
     <Image Include="data\background.tga">
       <Filter>Data</Filter>
     </Image>
-    <Image Include="data\pieces.tga">
+    <Image Include="data\HSVA-Piece.tga">
       <Filter>Data</Filter>
     </Image>
   </ItemGroup>

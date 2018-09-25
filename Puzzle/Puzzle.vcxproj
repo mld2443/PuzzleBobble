@@ -128,7 +128,7 @@
   </ItemGroup>
   <ItemGroup>
     <Image Include="data\background.tga" />
-    <Image Include="data\pieces.tga" />
+    <Image Include="data\HSVA-Piece.tga" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
