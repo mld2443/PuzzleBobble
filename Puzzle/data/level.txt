@@ -1,4 +1,4 @@
-colors 9
+colors 7
 r 0.0 1.0 1.0
 y 0.16 1.0 1.0
 g 0.33 1.0 1.0
@@ -6,12 +6,19 @@ c 0.5 1.0 1.0
 b 0.66 1.0 1.0
 m 0.83 1.0 1.0
 w 0.0 0.0 1.0
-l 0.0 0.0 0.7
-d 0.0 0.0 0.3
-dimensions 8 8
+dimensions 8 15
 rrggyybb
 rrggyyb
 ccmmccmm
 cmmccmm
-wwddlldd
-wddlldd
+wwwwwwww
+wwwwwww
+wwwwwwww
+wwwwwww
+wwwwwwww
+wwwwwww
+wwwwwwww
+wwwwwww
+wwwwwwww
+wwwwwww
+___w____

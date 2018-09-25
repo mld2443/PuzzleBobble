@@ -23,6 +23,7 @@
 ///////////////
 // CONSTANTS //
 ///////////////
+#define PIECEWIDTH 0.5f
 #define SQRT3 1.73205080757f
 
 

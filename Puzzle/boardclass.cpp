@@ -161,7 +161,7 @@ void BoardClass::LoadInstances(std::vector<InstanceType>& instances)
 
 
 	// Set the stepping distance.
-	stepX = 2.1f;
+	stepX = 2.1f * PIECEWIDTH;
 	stepY = 0.5f * stepX * SQRT3;
 
 	// Calculate the width between centers of the farthest apart spaces.
@@ -221,19 +221,19 @@ void BoardClass::CreateGeometry(std::vector<VertexType>& vertices, std::vector<u
 
 
 	// Load the vertex array with data.
-	vertex.position =	XMFLOAT3(-1.0f, 1.0f, 0.0f);	// Top left.
+	vertex.position =	XMFLOAT3(-PIECEWIDTH, PIECEWIDTH, 0.0f);	// Top left.
 	vertex.tex =		XMFLOAT2(0.0f, 0.0f);
 	vertices.push_back(vertex);
 
-	vertex.position =	XMFLOAT3(1.0f, 1.0f, 0.0f);		// Top right.
+	vertex.position =	XMFLOAT3(PIECEWIDTH, PIECEWIDTH, 0.0f);		// Top right.
 	vertex.tex =		XMFLOAT2(1.0f, 0.0f);
 	vertices.push_back(vertex);
 
-	vertex.position =	XMFLOAT3(1.0f, -1.0f, 0.0f);	// Bottom right.
+	vertex.position =	XMFLOAT3(PIECEWIDTH, -PIECEWIDTH, 0.0f);	// Bottom right.
 	vertex.tex =		XMFLOAT2(1.0f, 1.0f);
 	vertices.push_back(vertex);
 
-	vertex.position =	XMFLOAT3(-1.0f, -1.0f, 0.0f);	// Bottom left.
+	vertex.position =	XMFLOAT3(-PIECEWIDTH, -PIECEWIDTH, 0.0f);	// Bottom left.
 	vertex.tex =		XMFLOAT2(0.0f, 1.0f);
 	vertices.push_back(vertex);
 
