@@ -143,7 +143,7 @@
     <Text Include="data\level.txt">
       <Filter>Data</Filter>
     </Text>
-    <Text Include="colors.txt">
+    <Text Include="data\colors.txt">
       <Filter>Data</Filter>
     </Text>
   </ItemGroup>

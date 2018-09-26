@@ -124,7 +124,7 @@
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
-    <Text Include="colors.txt" />
+    <Text Include="data\colors.txt" />
     <Text Include="data\level.txt" />
   </ItemGroup>
   <ItemGroup>

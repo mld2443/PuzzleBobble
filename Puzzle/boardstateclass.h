@@ -34,7 +34,7 @@ public:
 	BoardStateClass(const BoardStateClass&);
 	~BoardStateClass();
 
-	bool Initialize(std::ifstream&);
+	bool Initialize(char*);
 	void Shutdown();
 
 	std::size_t GetSize();

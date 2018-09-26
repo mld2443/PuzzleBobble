@@ -92,21 +92,6 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd, Boa
 		return false;
 	}
 
-	//// Create the board object.
-	//m_Drawables.push_back(new BoardClass);
-	//if (!m_Drawables.back())
-	//{
-	//	return false;
-	//}
-
-	//// Initialize the board object.
-	//result = m_Drawables.back()->Initialize(m_Resources->GetDirect3DDevice(), m_Resources->GetDirect3DDeviceContext());
-	//if (!result)
-	//{
-	//	MessageBox(hwnd, L"Could not initialize the board object.", L"Error", MB_OK);
-	//	return false;
-	//}
-
 	// Create the board object.
 	m_Board = new BoardClass();
 	if (!m_Board)
@@ -123,7 +108,7 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd, Boa
 	}
 
 	// Initialize the board object's level.
-	result = m_Board->InitializeLevel(m_Resources->GetDirect3DDevice(), "../Puzzle/data/level.txt", boardState);
+	result = m_Board->InitializeLevel(m_Resources->GetDirect3DDevice(), "../Puzzle/data/colors.txt", boardState);
 	if (!result)
 	{
 		MessageBox(hwnd, L"Could not initialize the board state object.", L"Error", MB_OK);

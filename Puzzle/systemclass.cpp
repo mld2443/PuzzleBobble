@@ -60,6 +60,13 @@ bool SystemClass::Initialize()
 		return false;
 	}
 
+	// Initialize the board state object. This will handle all operations related to game logic on the board.
+	result = m_BoardState->Initialize("../Puzzle/data/level.txt");
+	if (!m_BoardState)
+	{
+		return false;
+	}
+
 	// Create the graphics object.  This object will handle rendering all the graphics for this application.
 	m_Graphics = new GraphicsClass;
 	if (!m_Graphics)

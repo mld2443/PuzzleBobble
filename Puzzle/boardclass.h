@@ -44,8 +44,8 @@ public:
 	bool InitializeLevel(ID3D11Device*, char*, BoardStateClass*);
 
 private:
-	bool LoadLevel(char*, BoardStateClass*);
-	void LoadInstances(std::vector<InstanceType>&, BoardStateClass*);
+	bool LoadColors(char*);
+	bool LoadInstances(std::vector<InstanceType>&, BoardStateClass*);
 	void CreateGeometry(std::vector<VertexType>&, std::vector<unsigned long>&);
 
 private:

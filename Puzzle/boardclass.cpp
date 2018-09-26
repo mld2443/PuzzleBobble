@@ -82,15 +82,18 @@ bool BoardClass::InitializeLevel(ID3D11Device* device, char* filename, BoardStat
 
 
 	// Load level in from file and get number of piece containers.
-	//result = LoadLevel("../Puzzle/data/level.txt", boardState);
-	result = LoadLevel(filename, boardState);
+	result = LoadColors(filename);
 	if (!result)
 	{
 		return false;
 	}
 
 	// Load the instance array with data.
-	LoadInstances(instances, boardState);
+	result = LoadInstances(instances, boardState);
+	if (!result)
+	{
+		return false;
+	}
 
 	// Initialize the instance buffer.
 	result = InitializeInstanceBuffer(device, instances.data(), instances.size());
@@ -103,7 +106,7 @@ bool BoardClass::InitializeLevel(ID3D11Device* device, char* filename, BoardStat
 }
 
 
-bool BoardClass::LoadLevel(char* filename, BoardStateClass* boardState)
+bool BoardClass::LoadColors(char* filename)
 {
 	unsigned int colorCount;
 	char colorKey;
@@ -127,16 +130,13 @@ bool BoardClass::LoadLevel(char* filename, BoardStateClass* boardState)
 		return false;
 	}
 
-	// Read in color keys and RGBA values, then store in color map.
+	// Read in color keys and HSV values, then store in color map.
 	for (unsigned int i = 0; i < colorCount; i++)
 	{
 		fileReader >> colorKey >> colorValues.x >> colorValues.y >> colorValues.z;
 
 		m_colors[colorKey] = colorValues;
 	}
-
-	// The board state will use the rest of the file to load in the starting state.
-	//boardState->Initialize(fileReader);
 
 	// Close our file now that we're done with it.
 	fileReader.close();
@@ -145,7 +145,7 @@ bool BoardClass::LoadLevel(char* filename, BoardStateClass* boardState)
 }
 
 
-void BoardClass::LoadInstances(std::vector<InstanceType>& instances, BoardStateClass* boardState)
+bool BoardClass::LoadInstances(std::vector<InstanceType>& instances, BoardStateClass* boardState)
 {
 	float boardWidth, boardHeight, positionX, positionY, stepX, stepY;
 	BoardStateClass::SpaceType *traverseDown, *traverseRight;
@@ -176,6 +176,13 @@ void BoardClass::LoadInstances(std::vector<InstanceType>& instances, BoardStateC
 		{
 			if (traverseRight->color != '_')
 			{
+				// Check to make sure the Space pointer's color is in the board's color map.
+				if (m_colors.find(traverseRight->color) == m_colors.end())
+				{
+					return false;
+				}
+
+				// If the Space pointer's color is not blank, create an instance in its position.
 				tempInstance.position =	XMFLOAT3(positionX, positionY, 0.0f);
 				tempInstance.HSV =		m_colors[traverseRight->color];
 				instances.push_back(tempInstance);
@@ -203,7 +210,7 @@ void BoardClass::LoadInstances(std::vector<InstanceType>& instances, BoardStateC
 		}
 	}
 
-	return;
+	return true;
 }
 
 

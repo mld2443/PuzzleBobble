@@ -20,12 +20,20 @@ BoardStateClass::~BoardStateClass()
 }
 
 
-bool BoardStateClass::Initialize(std::ifstream& fileReader)
+bool BoardStateClass::Initialize(char* filename)
 {
 	SpaceType *traverseDown, *traverseRight;
 	std::string line;
+	std::ifstream fileReader;
 	bool result;
 
+
+	// Open file for reading.
+	fileReader = std::ifstream(filename);
+	if (!fileReader)
+	{
+		return false;
+	}
 
 	// Read in the next line from the file, which should determine the dimensions.
 	// NOTE: This could be more safely defined. 
@@ -62,7 +70,6 @@ bool BoardStateClass::Initialize(std::ifstream& fileReader)
 			}
 
 			// Set the piece container in traverseRight's color to the one matching the color key from line.
-			// NOTE: We aren't checking to see if color is defined in the color map.
 			traverseRight->color = color;
 
 			// Move traverseRight to the right.
