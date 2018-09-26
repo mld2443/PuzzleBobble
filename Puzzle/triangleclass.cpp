@@ -28,8 +28,8 @@ bool TriangleClass::Initialize(ID3D11Device* device, ID3D11DeviceContext* device
 
 
 	// Set the number of vertices, indices, and instances in the arrays.
-	vertexCount = 7;
-	indexCount = 18;
+	vertexCount = 4;
+	indexCount = 6;
 
 	// Create the vertex array.
 	vertices = new VertexType[vertexCount];
@@ -46,19 +46,26 @@ bool TriangleClass::Initialize(ID3D11Device* device, ID3D11DeviceContext* device
 	}
 
 	// Load the vertex array with data.
-	vertices[0].position =	XMFLOAT3(-1.0f, -1.0f, 0.0f);	// Left.
-	vertices[0].color =		XMFLOAT4(0.0f, 1.0f, 1.0f, 1.0f);
+	vertices[0].position =	XMFLOAT3(-10.0f, 10.0f, 0.1f);	// Top left.
+	vertices[0].tex =		XMFLOAT2(0.0f, 0.0f);
 
-	vertices[1].position =	XMFLOAT3(0.0f, 1.0f, 0.0f);		// Top.
-	vertices[1].color =		XMFLOAT4(1.0f, 0.0f, 1.0f, 1.0f);
+	vertices[1].position =	XMFLOAT3(10.0f, 10.0f, 0.1f);	// Top right.
+	vertices[1].tex =		XMFLOAT2(1.0f, 0.0f);
 
-	vertices[2].position =	XMFLOAT3(1.0f, -1.0f, 0.0f);	// Right.
-	vertices[2].color =		XMFLOAT4(1.0f, 1.0f, 0.0f, 1.0f);
+	vertices[2].position =	XMFLOAT3(10.0f, -10.0f, 0.1f);	// Bottom right.
+	vertices[2].tex =		XMFLOAT2(1.0f, 1.0f);
+
+	vertices[3].position =	XMFLOAT3(-10.0f, -10.0f, 0.1f);	// Bottom left.
+	vertices[3].tex =		XMFLOAT2(0.0f, 1.0f);
 
 	// Load the index array with data.
-	indices[0] = 0;  // Left.
-	indices[1] = 1;  // Top.
-	indices[2] = 2;  // Right.
+	indices[0] = 0;  // Top left.
+	indices[1] = 1;  // Top right.
+	indices[2] = 2;  // Bottom right.
+
+	indices[3] = 0;  // Top left.
+	indices[4] = 2;  // Bottom right.
+	indices[5] = 3;  // Bottom left.
 
 	// Initialize the vertex buffer.
 	result = InitializeVertexBuffer(device, vertices, vertexCount);
@@ -82,12 +89,22 @@ bool TriangleClass::Initialize(ID3D11Device* device, ID3D11DeviceContext* device
 	vertices = nullptr;
 	indices = nullptr;
 
+	// Load the texture for this model.
+	result = LoadTexture(device, deviceContext, "../Puzzle/data/background.tga");
+	if (!result)
+	{
+		return false;
+	}
+
 	return true;
 }
 
 
 void TriangleClass::Shutdown()
 {
+	// Release our texture.
+	ReleaseTexture();
+
 	// Shutdown the vertex and index buffers.
 	ShutdownBuffers();
 

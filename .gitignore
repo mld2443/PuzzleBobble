@@ -330,9 +330,7 @@ ASALocalRun/
 
 # Local History for Visual Studio
 .localhistory/
-/Puzzle/VertexShader.h
-/Puzzle/PixelShader.h
-/Puzzle/instance.ps.h
-/Puzzle/instance.vs.h
-/Puzzle/color.ps.h
-/Puzzle/color.vs.h
+
+# Compiled shader header files
+*.ps.h
+*.vs.h

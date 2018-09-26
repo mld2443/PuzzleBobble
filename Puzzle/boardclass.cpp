@@ -23,10 +23,9 @@ BoardClass::~BoardClass()
 bool BoardClass::Initialize(ID3D11Device* device, ID3D11DeviceContext* deviceContext)
 {
 	bool result;
-	VertexType* vertices;
-	unsigned long* indices;
-	InstanceType* instances;
-	int vertexCount, indexCount, instanceCount;
+	std::vector<VertexType> vertices;
+	std::vector<unsigned long> indices;
+	std::vector<InstanceType> instances;
 
 
 	// Create the board state object.
@@ -43,32 +42,6 @@ bool BoardClass::Initialize(ID3D11Device* device, ID3D11DeviceContext* deviceCon
 		return false;
 	}
 
-	// Set the number of vertices, indices, and instances in the arrays.
-	vertexCount = 7;
-	indexCount = 18;
-	instanceCount = m_boardState->GetSize();
-
-	// Create the vertex array.
-	vertices = new VertexType[vertexCount];
-	if (!vertices)
-	{
-		return false;
-	}
-
-	// Create the index array.
-	indices = new unsigned long[indexCount];
-	if (!indices)
-	{
-		return false;
-	}
-
-	// Create the instance array.
-	instances = new InstanceType[instanceCount];
-	if (!instances)
-	{
-		return false;
-	}
-
 	// Create piece geometry.
 	CreateGeometry(vertices, indices);
 
@@ -76,34 +49,32 @@ bool BoardClass::Initialize(ID3D11Device* device, ID3D11DeviceContext* deviceCon
 	LoadInstances(instances);
 
 	// Initialize the vertex buffer.
-	result = InitializeVertexBuffer(device, vertices, vertexCount);
+	result = InitializeVertexBuffer(device, vertices.data(), vertices.size());
 	if (!result)
 	{
 		return false;
 	}
 
-	// Initialize the vertex and index buffers.
-	result = InitializeIndexBuffer(device, indices, indexCount);
+	// Initialize the index buffer.
+	result = InitializeIndexBuffer(device, indices.data(), indices.size());
 	if (!result)
 	{
 		return false;
 	}
 
 	// Initialize the instance buffer.
-	result = InitializeInstanceBuffer(device, instances, instanceCount);
+	result = InitializeInstanceBuffer(device, instances.data(), instances.size());
 	if (!result)
 	{
 		return false;
 	}
 
-	// Release the arrays now that the buffers have been created and loaded.
-	delete[] vertices;
-	delete[] indices;
-	delete[] instances;
-
-	vertices = nullptr;
-	indices = nullptr;
-	instances = nullptr;
+	// Load the texture for this model.
+	result = LoadTexture(device, deviceContext, "../Puzzle/data/piece.tga");
+	if (!result)
+	{
+		return false;
+	}
 
 	return true;
 }
@@ -111,6 +82,12 @@ bool BoardClass::Initialize(ID3D11Device* device, ID3D11DeviceContext* deviceCon
 
 void BoardClass::Shutdown()
 {
+	// Release our texture.
+	ReleaseTexture();
+
+	// Shutdown the vertex and index buffers.
+	ShutdownBuffers();
+
 	// Clear and shutdown the level.
 	if (m_boardState)
 	{
@@ -118,9 +95,6 @@ void BoardClass::Shutdown()
 		delete m_boardState;
 		m_boardState = nullptr;
 	}
-
-	// Shutdown the vertex and index buffers.
-	ShutdownBuffers();
 
 	return;
 }
@@ -139,7 +113,7 @@ bool BoardClass::LoadLevel(char* filename)
 {
 	unsigned int colorCount;
 	char colorKey;
-	XMFLOAT4 colorValues;
+	XMFLOAT3 colorValues;
 	std::ifstream fileReader;
 	std::string line;
 
@@ -162,13 +136,10 @@ bool BoardClass::LoadLevel(char* filename)
 	// Read in color keys and RGBA values, then store in color map.
 	for (unsigned int i = 0; i < colorCount; i++)
 	{
-		fileReader >> colorKey >> colorValues.x >> colorValues.y >> colorValues.z >> colorValues.w;
+		fileReader >> colorKey >> colorValues.x >> colorValues.y >> colorValues.z;
 
 		m_colors[colorKey] = colorValues;
 	}
-
-	// Add a blank color to color map for empty spaces.
-	m_colors['_'] = XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f);
 
 	// The board state will use the rest of the file to load in the starting state.
 	m_boardState->Initialize(fileReader);
@@ -180,18 +151,17 @@ bool BoardClass::LoadLevel(char* filename)
 }
 
 
-void BoardClass::LoadInstances(InstanceType* instances)
+
+
+void BoardClass::LoadInstances(std::vector<InstanceType>& instances)
 {
-	unsigned int index;
 	float boardWidth, boardHeight, positionX, positionY, stepX, stepY;
 	BoardStateClass::SpaceType *traverseDown, *traverseRight;
+	InstanceType tempInstance;
 
-
-	// Set the default values for our indices and prospective positions.
-	index = 0;
 
 	// Set the stepping distance.
-	stepX = 2.1f * SQRT075;
+	stepX = 2.1f * PIECEWIDTH;
 	stepY = 0.5f * stepX * SQRT3;
 
 	// Calculate the width between centers of the farthest apart spaces.
@@ -212,16 +182,18 @@ void BoardClass::LoadInstances(InstanceType* instances)
 
 		while (traverseRight)
 		{
-			instances[index].position =	XMFLOAT3(positionX, positionY, 0.0f);
-			instances[index].color =	m_colors[traverseRight->color];
+			if (traverseRight->color != '_')
+			{
+				tempInstance.position =	XMFLOAT3(positionX, positionY, 0.0f);
+				tempInstance.HSV =		m_colors[traverseRight->color];
+				instances.push_back(tempInstance);
+			}
 
 			// Move our Space pointer right one space.
 			traverseRight = traverseRight->rightNeighbor;
 
 			// Move our prospective position coordinates right one space.
 			positionX += stepX;
-
-			index++;
 		}
 
 		// Move our prospective position coordinates down to the next row.
@@ -243,52 +215,34 @@ void BoardClass::LoadInstances(InstanceType* instances)
 }
 
 
-void BoardClass::CreateGeometry(VertexType* vertices, unsigned long* indices)
+void BoardClass::CreateGeometry(std::vector<VertexType>& vertices, std::vector<unsigned long>& indices)
 {
+	VertexType vertex;
+
+
 	// Load the vertex array with data.
-	vertices[0].position = XMFLOAT3(0.0f, 0.0f, 0.0f);			// Center.
-	vertices[0].color = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
+	vertex.position =	XMFLOAT3(-PIECEWIDTH, PIECEWIDTH, 0.0f);	// Top left.
+	vertex.tex =		XMFLOAT2(0.0f, 0.0f);
+	vertices.push_back(vertex);
 
-	vertices[1].position = XMFLOAT3(0.0f, 1.0f, 0.0f);			// Top.
-	vertices[1].color = XMFLOAT4(0.6f, 0.6f, 0.6f, 1.0f);
+	vertex.position =	XMFLOAT3(PIECEWIDTH, PIECEWIDTH, 0.0f);		// Top right.
+	vertex.tex =		XMFLOAT2(1.0f, 0.0f);
+	vertices.push_back(vertex);
 
-	vertices[2].position = XMFLOAT3(SQRT075, 0.5f, 0.0f);		// Top Right.
-	vertices[2].color = XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f);
+	vertex.position =	XMFLOAT3(PIECEWIDTH, -PIECEWIDTH, 0.0f);	// Bottom right.
+	vertex.tex =		XMFLOAT2(1.0f, 1.0f);
+	vertices.push_back(vertex);
 
-	vertices[3].position = XMFLOAT3(SQRT075, -0.5f, 0.0f);		// Bottom right.
-	vertices[3].color = XMFLOAT4(0.6f, 0.6f, 0.6f, 1.0f);
-
-	vertices[4].position = XMFLOAT3(0.0f, -1.0f, 0.0f);		// Bottom.
-	vertices[4].color = XMFLOAT4(0.4f, 0.4f, 0.4f, 1.0f);
-
-	vertices[5].position = XMFLOAT3(-SQRT075, -0.5f, 0.0f);	// Bottom left.
-	vertices[5].color = XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f);
-
-	vertices[6].position = XMFLOAT3(-SQRT075, 0.5f, 0.0f);		// Top left.
-	vertices[6].color = XMFLOAT4(0.4f, 0.4f, 0.4f, 1.0f);
+	vertex.position =	XMFLOAT3(-PIECEWIDTH, -PIECEWIDTH, 0.0f);	// Bottom left.
+	vertex.tex =		XMFLOAT2(0.0f, 1.0f);
+	vertices.push_back(vertex);
 
 	// Load the index array with data.
-	indices[0] = 0;  // Center.
-	indices[1] = 1;  // Top.
-	indices[2] = 2;  // Top right.
+	indices.push_back(0);	// Top left.
+	indices.push_back(1);	// Top right.
+	indices.push_back(2);	// Bottom right.
 
-	indices[3] = 0;  // Center.
-	indices[4] = 2;  // Top right.
-	indices[5] = 3;  // Bottom right.
-
-	indices[6] = 0;  // Center.
-	indices[7] = 3;  // Bottom right.
-	indices[8] = 4;  // Bottom.
-
-	indices[9] = 0;  // Center.
-	indices[10] = 4;  // Bottom.
-	indices[11] = 5;  // Bottom left.
-
-	indices[12] = 0;  // Center.
-	indices[13] = 5;  // Bottom left.
-	indices[14] = 6;  // Top left.
-
-	indices[15] = 0;  // Center.
-	indices[16] = 6;  // Top left.
-	indices[17] = 1;  // Top.
+	indices.push_back(0);	// Top left.
+	indices.push_back(2);	// Bottom right.
+	indices.push_back(3);	// Bottom left.
 }

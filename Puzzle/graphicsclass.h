@@ -19,7 +19,7 @@
 #include "boardclass.h"
 #include "triangleclass.h"
 #include "instanceshaderclass.h"
-#include "colorshaderclass.h"
+#include "textureshaderclass.h"
 #include "textclass.h"
 
 
@@ -54,6 +54,6 @@ private:
 	TextClass*						m_Text;
 	CameraClass*					m_Camera;
 	std::list<DrawableInterface*>	m_Drawables;
-	ColorShaderClass*				m_ColorShader;
+	TextureShaderClass*				m_TextureShader;
 	InstanceShaderClass*			m_InstanceShader;
 };

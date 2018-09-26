@@ -9,7 +9,7 @@ GraphicsClass::GraphicsClass()
 	m_Resources = nullptr;
 	m_Text = nullptr;
 	m_Camera = nullptr;
-	m_ColorShader = nullptr;
+	m_TextureShader = nullptr;
 	m_InstanceShader = nullptr;
 }
 
@@ -87,7 +87,7 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	result = m_Drawables.back()->Initialize(m_Resources->GetDirect3DDevice(), m_Resources->GetDirect3DDeviceContext());
 	if (!result)
 	{
-		MessageBox(hwnd, L"Could not initialize the triangle object.", L"Error", MB_OK);
+		MessageBox(hwnd, L"Could not initialize the background object.", L"Error", MB_OK);
 		return false;
 	}
 
@@ -122,14 +122,14 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	}
 
 	// Create the color shader object.
-	m_ColorShader = new ColorShaderClass;
-	if (!m_ColorShader)
+	m_TextureShader = new TextureShaderClass;
+	if (!m_TextureShader)
 	{
 		return false;
 	}
 
 	// Initialize the color shader object.
-	result = m_ColorShader->Initialize(m_Resources->GetDirect3DDevice());
+	result = m_TextureShader->Initialize(m_Resources->GetDirect3DDevice());
 	if (!result)
 	{
 		MessageBox(hwnd, L"Could not initialize the color shader object.", L"Error", MB_OK);
@@ -151,11 +151,11 @@ void GraphicsClass::Shutdown()
 	}
 
 	// Release the color shader object.
-	if (m_ColorShader)
+	if (m_TextureShader)
 	{
-		m_ColorShader->Shutdown();
-		delete m_ColorShader;
-		m_ColorShader = nullptr;
+		m_TextureShader->Shutdown();
+		delete m_TextureShader;
+		m_TextureShader = nullptr;
 	}
 
 	// Release the drawable objects.
@@ -229,7 +229,7 @@ bool GraphicsClass::Render()
 	m_Resources->BeginScene(0.2f, 0.2f, 0.2f, 1.0f);
 
 	// Turn on alpha blending for the transparency to work.
-	//m_Resources->TurnOnAlphaBlending();
+	m_Resources->TurnOnAlphaBlending();
 
 	// Put the drawable buffers on the appropriate graphics pipeline to prepare them for drawing.
 	for (auto drawable : m_Drawables)
@@ -248,7 +248,7 @@ bool GraphicsClass::Render()
 		{
 			// Render the drawable using the instance shader.
 			result = m_InstanceShader->Render(m_Resources->GetDirect3DDeviceContext(), drawable->GetIndexCount(),
-											  drawable->GetInstanceCount(), worldMatrix, viewMatrix, projectionMatrix);
+											  drawable->GetInstanceCount(), worldMatrix, viewMatrix, projectionMatrix, drawable->GetTexture());
 			if (!result)
 			{
 				return false;
@@ -257,8 +257,8 @@ bool GraphicsClass::Render()
 		else
 		{
 			// Render the drawable using the color shader.
-			result = m_ColorShader->Render(m_Resources->GetDirect3DDeviceContext(), drawable->GetIndexCount(),
-										   worldMatrix, viewMatrix, projectionMatrix);
+			result = m_TextureShader->Render(m_Resources->GetDirect3DDeviceContext(), drawable->GetIndexCount(),
+											 1, worldMatrix, viewMatrix, projectionMatrix, drawable->GetTexture());
 			if (!result)
 			{
 				return false;
@@ -270,7 +270,7 @@ bool GraphicsClass::Render()
 	m_Text->Render(m_Resources->GetDirect2DDeviceContext());
 
 	// Turn off alpha blending.
-	//m_Resources->TurnOffAlphaBlending();
+	m_Resources->TurnOffAlphaBlending();
 
 	// Present the rendered scene to the screen.
 	m_Resources->EndScene();

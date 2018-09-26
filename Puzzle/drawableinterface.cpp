@@ -6,10 +6,11 @@
 
 DrawableInterface::DrawableInterface()
 {
+	m_Texture = nullptr;
 	m_vertexBuffer = nullptr;
 	m_indexBuffer = nullptr;
 	m_instanceBuffer = nullptr;
-	m_instanced = false;
+	m_instanceCount = 0;
 }
 
 
@@ -41,9 +42,16 @@ int DrawableInterface::GetInstanceCount()
 }
 
 
+ID3D11ShaderResourceView* DrawableInterface::GetTexture()
+{
+	return m_Texture->GetTexture();
+}
+
+
+
 bool DrawableInterface::isInstanced()
 {
-	return m_instanced;
+	return m_instanceCount > 0;
 }
 
 
@@ -122,9 +130,6 @@ bool DrawableInterface::InitializeInstanceBuffer(ID3D11Device* device, InstanceT
 	HRESULT result;
 
 
-	// Set the flag indicating this drawable is instanced.
-	m_instanced = true;
-	
 	// Set the number of instances in the array.
 	m_instanceCount = instanceCount;
 
@@ -229,6 +234,43 @@ void DrawableInterface::RenderWithoutInstanceBuffer(ID3D11DeviceContext* deviceC
 
 	// Set the type of primitive that should be rendered from this vertex buffer, in this case triangles.
 	deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
+	return;
+}
+
+
+bool DrawableInterface::LoadTexture(ID3D11Device* device, ID3D11DeviceContext* deviceContext, char* filename)
+{
+	bool result;
+
+
+	// Create the texture object.
+	m_Texture = new TextureClass;
+	if (!m_Texture)
+	{
+		return false;
+	}
+
+	// Initialize the texture object.
+	result = m_Texture->Initialize(device, deviceContext, filename);
+	if (!result)
+	{
+		return false;
+	}
+
+	return true;
+}
+
+
+void DrawableInterface::ReleaseTexture()
+{
+	// Release the texture object.
+	if (m_Texture)
+	{
+		m_Texture->Shutdown();
+		delete m_Texture;
+		m_Texture = nullptr;
+	}
 
 	return;
 }

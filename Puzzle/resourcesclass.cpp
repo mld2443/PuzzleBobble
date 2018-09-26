@@ -358,6 +358,11 @@ bool ResourcesClass::InitializeDirect3D(int screenWidth, int screenHeight, bool 
 	// than the API default. It is required for compatibility with Direct2D.
 	creationFlags = D3D11_CREATE_DEVICE_BGRA_SUPPORT;
 
+	// Enable device debugging in debug builds.
+#if defined(_DEBUG)
+	creationFlags |= D3D11_CREATE_DEVICE_DEBUG;
+#endif
+
 	// Set the feature level to a version of DirectX 11.
 	D3D_FEATURE_LEVEL featureLevels[] =
 	{
@@ -420,7 +425,7 @@ bool ResourcesClass::InitializeDirect3D(int screenWidth, int screenHeight, bool 
 	// Set up the description of the stencil state.
 	depthStencilDesc.DepthEnable =		true;
 	depthStencilDesc.DepthWriteMask =	D3D11_DEPTH_WRITE_MASK_ALL;
-	depthStencilDesc.DepthFunc =		D3D11_COMPARISON_LESS;
+	depthStencilDesc.DepthFunc =		D3D11_COMPARISON_LESS_EQUAL;
 
 	depthStencilDesc.StencilEnable =	true;
 	depthStencilDesc.StencilReadMask =	0xFF;
