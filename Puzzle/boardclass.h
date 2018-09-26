@@ -41,12 +41,13 @@ public:
 	void Shutdown() override;
 	void Render(ID3D11DeviceContext*) override;
 
+	bool InitializeLevel(ID3D11Device*, char*, BoardStateClass*);
+
 private:
-	bool LoadLevel(char*);
-	void LoadInstances(std::vector<InstanceType>&);
+	bool LoadLevel(char*, BoardStateClass*);
+	void LoadInstances(std::vector<InstanceType>&, BoardStateClass*);
 	void CreateGeometry(std::vector<VertexType>&, std::vector<unsigned long>&);
 
 private:
 	std::map<char, XMFLOAT3>	m_colors;
-	BoardStateClass*		m_boardState;
 };

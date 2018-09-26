@@ -11,6 +11,7 @@ GraphicsClass::GraphicsClass()
 	m_Camera = nullptr;
 	m_TextureShader = nullptr;
 	m_InstanceShader = nullptr;
+	m_Board = nullptr;
 }
 
 
@@ -24,7 +25,7 @@ GraphicsClass::~GraphicsClass()
 }
 
 
-bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
+bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd, BoardStateClass* boardState)
 {
 	bool result;
 
@@ -91,18 +92,47 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 		return false;
 	}
 
+	//// Create the board object.
+	//m_Drawables.push_back(new BoardClass);
+	//if (!m_Drawables.back())
+	//{
+	//	return false;
+	//}
+
+	//// Initialize the board object.
+	//result = m_Drawables.back()->Initialize(m_Resources->GetDirect3DDevice(), m_Resources->GetDirect3DDeviceContext());
+	//if (!result)
+	//{
+	//	MessageBox(hwnd, L"Could not initialize the board object.", L"Error", MB_OK);
+	//	return false;
+	//}
+
 	// Create the board object.
-	m_Drawables.push_back(new BoardClass);
-	if (!m_Drawables.back())
+	m_Board = new BoardClass();
+	if (!m_Board)
 	{
 		return false;
 	}
 
 	// Initialize the board object.
-	result = m_Drawables.back()->Initialize(m_Resources->GetDirect3DDevice(), m_Resources->GetDirect3DDeviceContext());
+	result = m_Board->Initialize(m_Resources->GetDirect3DDevice(), m_Resources->GetDirect3DDeviceContext());
 	if (!result)
 	{
 		MessageBox(hwnd, L"Could not initialize the board object.", L"Error", MB_OK);
+		return false;
+	}
+
+	// Initialize the board object's level.
+	result = m_Board->InitializeLevel(m_Resources->GetDirect3DDevice(), "../Puzzle/data/level.txt", boardState);
+	if (!result)
+	{
+		MessageBox(hwnd, L"Could not initialize the board state object.", L"Error", MB_OK);
+	}
+
+	// Add the board to the list of drawables.
+	m_Drawables.push_back(m_Board);
+	if (!m_Drawables.back())
+	{
 		return false;
 	}
 
@@ -142,20 +172,20 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 
 void GraphicsClass::Shutdown()
 {
-	// Release the instance shader object.
-	if (m_InstanceShader)
-	{
-		m_InstanceShader->Shutdown();
-		delete m_InstanceShader;
-		m_InstanceShader = nullptr;
-	}
-
 	// Release the color shader object.
 	if (m_TextureShader)
 	{
 		m_TextureShader->Shutdown();
 		delete m_TextureShader;
 		m_TextureShader = nullptr;
+	}
+
+	// Release the instance shader object.
+	if (m_InstanceShader)
+	{
+		m_InstanceShader->Shutdown();
+		delete m_InstanceShader;
+		m_InstanceShader = nullptr;
 	}
 
 	// Release the drawable objects.
@@ -167,6 +197,13 @@ void GraphicsClass::Shutdown()
 			delete drawable;
 			drawable = nullptr;
 		}
+	}
+
+	// Release the board object.
+	if (m_Board)
+	{
+		// We don't need to call shutdown or delete; they were already done in the block for drawables above.
+		m_Board = nullptr;
 	}
 
 	// Release the camera object.

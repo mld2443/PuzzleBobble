@@ -24,6 +24,7 @@
 #include "fpsclass.h"
 #include "cpuclass.h"
 #include "timerclass.h"
+#include "boardstateclass.h"
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -52,11 +53,12 @@ private:
 	HINSTANCE	m_hinstance;
 	HWND		m_hwnd;
 
-	InputClass*		m_Input;
-	GraphicsClass*	m_Graphics;
-	FpsClass*		m_Fps;
-	CpuClass*		m_Cpu;
-	TimerClass*		m_Timer;
+	InputClass*			m_Input;
+	GraphicsClass*		m_Graphics;
+	FpsClass*			m_Fps;
+	CpuClass*			m_Cpu;
+	TimerClass*			m_Timer;
+	BoardStateClass*	m_BoardState;
 };
 
 

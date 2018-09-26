@@ -6,7 +6,6 @@
 
 BoardClass::BoardClass() : DrawableInterface()
 {
-	m_boardState = nullptr;
 }
 
 
@@ -25,28 +24,10 @@ bool BoardClass::Initialize(ID3D11Device* device, ID3D11DeviceContext* deviceCon
 	bool result;
 	std::vector<VertexType> vertices;
 	std::vector<unsigned long> indices;
-	std::vector<InstanceType> instances;
 
-
-	// Create the board state object.
-	m_boardState = new BoardStateClass;
-	if (!m_boardState)
-	{
-		return false;
-	}
-
-	// Load level in from file and get number of piece containers.
-	result = LoadLevel("../Puzzle/data/level.txt");
-	if (!result)
-	{
-		return false;
-	}
 
 	// Create piece geometry.
 	CreateGeometry(vertices, indices);
-
-	// Load the instance array with data.
-	LoadInstances(instances);
 
 	// Initialize the vertex buffer.
 	result = InitializeVertexBuffer(device, vertices.data(), vertices.size());
@@ -62,14 +43,7 @@ bool BoardClass::Initialize(ID3D11Device* device, ID3D11DeviceContext* deviceCon
 		return false;
 	}
 
-	// Initialize the instance buffer.
-	result = InitializeInstanceBuffer(device, instances.data(), instances.size());
-	if (!result)
-	{
-		return false;
-	}
-
-	// Load the texture for this model.
+	// Load the texture for pieces.
 	result = LoadTexture(device, deviceContext, "../Puzzle/data/piece.tga");
 	if (!result)
 	{
@@ -88,14 +62,6 @@ void BoardClass::Shutdown()
 	// Shutdown the vertex and index buffers.
 	ShutdownBuffers();
 
-	// Clear and shutdown the level.
-	if (m_boardState)
-	{
-		m_boardState->Shutdown();
-		delete m_boardState;
-		m_boardState = nullptr;
-	}
-
 	return;
 }
 
@@ -109,7 +75,35 @@ void BoardClass::Render(ID3D11DeviceContext* deviceContext)
 }
 
 
-bool BoardClass::LoadLevel(char* filename)
+bool BoardClass::InitializeLevel(ID3D11Device* device, char* filename, BoardStateClass* boardState)
+{
+	bool result;
+	std::vector<InstanceType> instances;
+
+
+	// Load level in from file and get number of piece containers.
+	//result = LoadLevel("../Puzzle/data/level.txt", boardState);
+	result = LoadLevel(filename, boardState);
+	if (!result)
+	{
+		return false;
+	}
+
+	// Load the instance array with data.
+	LoadInstances(instances, boardState);
+
+	// Initialize the instance buffer.
+	result = InitializeInstanceBuffer(device, instances.data(), instances.size());
+	if (!result)
+	{
+		return false;
+	}
+
+	return true;
+}
+
+
+bool BoardClass::LoadLevel(char* filename, BoardStateClass* boardState)
 {
 	unsigned int colorCount;
 	char colorKey;
@@ -142,7 +136,7 @@ bool BoardClass::LoadLevel(char* filename)
 	}
 
 	// The board state will use the rest of the file to load in the starting state.
-	m_boardState->Initialize(fileReader);
+	//boardState->Initialize(fileReader);
 
 	// Close our file now that we're done with it.
 	fileReader.close();
@@ -151,9 +145,7 @@ bool BoardClass::LoadLevel(char* filename)
 }
 
 
-
-
-void BoardClass::LoadInstances(std::vector<InstanceType>& instances)
+void BoardClass::LoadInstances(std::vector<InstanceType>& instances, BoardStateClass* boardState)
 {
 	float boardWidth, boardHeight, positionX, positionY, stepX, stepY;
 	BoardStateClass::SpaceType *traverseDown, *traverseRight;
@@ -165,15 +157,15 @@ void BoardClass::LoadInstances(std::vector<InstanceType>& instances)
 	stepY = 0.5f * stepX * SQRT3;
 
 	// Calculate the width between centers of the farthest apart spaces.
-	boardWidth = (float)(m_boardState->GetMaxWidth() - 1) * stepX;
-	boardHeight = (float)(m_boardState->GetHeight() - 1) * stepY;
+	boardWidth = (float)(boardState->GetMaxWidth() - 1) * stepX;
+	boardHeight = (float)(boardState->GetHeight() - 1) * stepY;
 
 	// Offset the starting position so the whole board appears centered.
 	positionX = -0.5f * boardWidth;
 	positionY = 0.5f * boardHeight;
 
 	// Start the traversal of our board.
-	traverseDown = m_boardState->GetTopLeft();
+	traverseDown = boardState->GetTopLeft();
 
 	while (traverseDown)
 	{
@@ -197,7 +189,7 @@ void BoardClass::LoadInstances(std::vector<InstanceType>& instances)
 		}
 
 		// Move our prospective position coordinates down to the next row.
-		positionX -= stepX * ((float)m_boardState->GetMaxWidth() - 0.5f);
+		positionX -= stepX * ((float)boardState->GetMaxWidth() - 0.5f);
 		positionY -= stepY;
 
 		// Move traverseDown down a row, either to the left if moving from an even row to an odd row, or right for the opposite.

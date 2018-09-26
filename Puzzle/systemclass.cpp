@@ -11,6 +11,7 @@ SystemClass::SystemClass()
 	m_Fps = nullptr;
 	m_Cpu = nullptr;
 	m_Timer = nullptr;
+	m_BoardState = nullptr;
 }
 
 
@@ -52,6 +53,13 @@ bool SystemClass::Initialize()
 		return false;
 	}
 
+	// Create the board state object.
+	m_BoardState = new BoardStateClass;
+	if (!m_BoardState)
+	{
+		return false;
+	}
+
 	// Create the graphics object.  This object will handle rendering all the graphics for this application.
 	m_Graphics = new GraphicsClass;
 	if (!m_Graphics)
@@ -60,7 +68,7 @@ bool SystemClass::Initialize()
 	}
 
 	// Initialize the graphics object.
-	result = m_Graphics->Initialize(screenWidth, screenHeight, m_hwnd);
+	result = m_Graphics->Initialize(screenWidth, screenHeight, m_hwnd, m_BoardState);
 	if (!result)
 	{
 		return false;
@@ -135,6 +143,14 @@ void SystemClass::Shutdown()
 		m_Graphics->Shutdown();
 		delete m_Graphics;
 		m_Graphics = nullptr;
+	}
+
+	// Clear and shutdown the level.
+	if (m_BoardState)
+	{
+		m_BoardState->Shutdown();
+		delete m_BoardState;
+		m_BoardState = nullptr;
 	}
 
 	// Release the input object.

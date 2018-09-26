@@ -42,7 +42,7 @@ public:
 	GraphicsClass(const GraphicsClass&);
 	~GraphicsClass();
 
-	bool Initialize(int, int, HWND);
+	bool Initialize(int, int, HWND, BoardStateClass*);
 	void Shutdown();
 	bool Frame(float, int, float);
 
@@ -54,6 +54,7 @@ private:
 	TextClass*						m_Text;
 	CameraClass*					m_Camera;
 	std::list<DrawableInterface*>	m_Drawables;
+	BoardClass*						m_Board;
 	TextureShaderClass*				m_TextureShader;
 	InstanceShaderClass*			m_InstanceShader;
 };
