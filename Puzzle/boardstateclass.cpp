@@ -22,6 +22,59 @@ BoardStateClass::~BoardStateClass()
 
 bool BoardStateClass::Initialize(char* filename)
 {
+	return LoadLevel(filename);
+}
+
+
+void BoardStateClass::Shutdown()
+{
+	std::function<void(SpaceType*)> traverseDown, traverseRight;
+
+
+	// Lambda function to recursively traverse down left column of board.
+	traverseDown = [&traverseDown, &traverseRight](SpaceType* start)
+	{
+		// First see if there is a left branch to traverse down.
+		if (start->lowerLeftNeighbor)
+		{
+			traverseDown(start->lowerLeftNeighbor);
+		}
+		// Else check to see if there is a right branch to traverse down.
+		else if (start->lowerRightNeighbor)
+		{
+			traverseDown(start->lowerRightNeighbor);
+		}
+
+		// Traverse and delete the current row.
+		traverseRight(start);
+
+		return;
+	};
+
+	// Lambda function to recursively traverse right through a row of board and recursively delete piece containers.
+	traverseRight = [&traverseRight](SpaceType* start)
+	{
+		// Traverse right if possible.
+		if (start->rightNeighbor)
+		{
+			traverseRight(start->rightNeighbor);
+		}
+
+		// Delete piece container.
+		delete start;
+
+		return;
+	};
+
+	// Begin traversing board and deleting piece containers.
+	traverseDown(m_topLeft);
+
+	return;
+}
+
+
+bool BoardStateClass::LoadLevel(char* filename)
+{
 	SpaceType *traverseDown, *traverseRight;
 	std::string line;
 	std::ifstream fileReader;
@@ -88,53 +141,6 @@ bool BoardStateClass::Initialize(char* filename)
 	}
 
 	return true;
-}
-
-
-void BoardStateClass::Shutdown()
-{
-	std::function<void(SpaceType*)> traverseDown, traverseRight;
-
-
-	// Lambda function to recursively traverse down left column of board.
-	traverseDown = [&traverseDown, &traverseRight](SpaceType* start)
-	{
-		// First see if there is a left branch to traverse down.
-		if (start->lowerLeftNeighbor)
-		{
-			traverseDown(start->lowerLeftNeighbor);
-		}
-		// Else check to see if there is a right branch to traverse down.
-		else if (start->lowerRightNeighbor)
-		{
-			traverseDown(start->lowerRightNeighbor);
-		}
-
-		// Traverse and delete the current row.
-		traverseRight(start);
-
-		return;
-	};
-
-	// Lambda function to recursively traverse right through a row of board and recursively delete piece containers.
-	traverseRight = [&traverseRight](SpaceType* start)
-	{
-		// Traverse right if possible.
-		if (start->rightNeighbor)
-		{
-			traverseRight(start->rightNeighbor);
-		}
-
-		// Delete piece container.
-		delete start;
-
-		return;
-	};
-
-	// Begin traversing board and deleting piece containers.
-	traverseDown(m_topLeft);
-
-	return;
 }
 
 

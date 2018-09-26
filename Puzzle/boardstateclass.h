@@ -37,6 +37,8 @@ public:
 	bool Initialize(char*);
 	void Shutdown();
 
+	bool LoadLevel(char *);
+
 	std::size_t GetSize();
 	std::size_t GetMaxWidth();
 	std::size_t GetHeight();
