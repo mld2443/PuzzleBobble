@@ -182,7 +182,7 @@ bool BoardClass::CreateInstances(ID3D11Device* device, StateClass* state)
 	}
 
 	// Set up a piece a the bottom of the board for the player to position.
-	positionX = -0.5f * boardWidth + (stepX * state->GetCurrentPosition());
+	positionX = -0.5f * boardWidth + (stepX * state->GetCurrentPosition()) + 0.5f * (state->GetHeight() % 2);
 	positionY = -0.5f * boardHeight;
 
 	// Add this piece to the instance buffer to be drawn.
