@@ -44,7 +44,7 @@ bool BoardClass::Initialize(ID3D11Device* device, ID3D11DeviceContext* deviceCon
 	}
 
 	// Load the texture for pieces.
-	result = LoadTexture(device, deviceContext, "../Puzzle/data/piece.tga");
+	result = LoadTexture(device, deviceContext, PIECEPATH);
 	if (!result)
 	{
 		return false;

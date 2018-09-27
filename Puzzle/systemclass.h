@@ -10,6 +10,12 @@
 #define WIN64_LEAN_AND_MEAN
 
 
+///////////////
+// FILEPATHS //
+///////////////
+#define LEVELPATH "../Puzzle/data/level.txt"
+
+
 //////////////
 // INCLUDES //
 //////////////

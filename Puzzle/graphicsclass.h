@@ -24,6 +24,12 @@
 #include "triangleclass.h"
 
 
+///////////////
+// FILEPATHS //
+///////////////
+#define COLORSPATH "../Puzzle/data/colors.txt"
+
+
 /////////////
 // GLOBALS //
 /////////////

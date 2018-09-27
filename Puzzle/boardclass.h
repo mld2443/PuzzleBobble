@@ -4,6 +4,12 @@
 #pragma once
 
 
+///////////////
+// FILEPATHS //
+///////////////
+#define PIECEPATH "../Puzzle/data/piece.tga"
+
+
 //////////////
 // INCLUDES //
 //////////////

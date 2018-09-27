@@ -61,7 +61,7 @@ bool SystemClass::Initialize()
 	}
 
 	// Initialize the board state object. This will handle all operations related to game logic on the board.
-	result = m_State->Initialize("../Puzzle/data/level.txt");
+	result = m_State->Initialize(LEVELPATH);
 	if (!m_State)
 	{
 		return false;

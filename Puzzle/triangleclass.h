@@ -4,6 +4,12 @@
 #pragma once
 
 
+///////////////
+// FILEPATHS //
+///////////////
+#define BACKGROUNDPATH "../Puzzle/data/background.tga"
+
+
 ///////////////////////
 // MY CLASS INCLUDES //
 ///////////////////////

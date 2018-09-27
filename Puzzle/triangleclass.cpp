@@ -90,7 +90,7 @@ bool TriangleClass::Initialize(ID3D11Device* device, ID3D11DeviceContext* device
 	indices = nullptr;
 
 	// Load the texture for this model.
-	result = LoadTexture(device, deviceContext, "../Puzzle/data/background.tga");
+	result = LoadTexture(device, deviceContext, BACKGROUNDPATH);
 	if (!result)
 	{
 		return false;
