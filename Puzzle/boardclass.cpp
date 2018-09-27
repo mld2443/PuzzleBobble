@@ -75,37 +75,6 @@ void BoardClass::Render(ID3D11DeviceContext* deviceContext)
 }
 
 
-bool BoardClass::InitializeLevel(ID3D11Device* device, char* filename, StateClass* state)
-{
-	bool result;
-	std::vector<InstanceType> instances;
-
-
-	// Load level in from file and get number of piece containers.
-	result = LoadColors(filename);
-	if (!result)
-	{
-		return false;
-	}
-
-	// Load the instance array with data.
-	result = LoadInstances(instances, state);
-	if (!result)
-	{
-		return false;
-	}
-
-	// Initialize the instance buffer.
-	result = InitializeInstanceBuffer(device, instances.data(), (int) instances.size());
-	if (!result)
-	{
-		return false;
-	}
-
-	return true;
-}
-
-
 bool BoardClass::LoadColors(char* filename)
 {
 	unsigned int colorCount;
@@ -145,11 +114,13 @@ bool BoardClass::LoadColors(char* filename)
 }
 
 
-bool BoardClass::LoadInstances(std::vector<InstanceType>& instances, StateClass* state)
+bool BoardClass::CreateInstances(ID3D11Device* device, StateClass* state)
 {
+	std::vector<InstanceType> instances;
 	float boardWidth, boardHeight, positionX, positionY, stepX, stepY;
 	StateClass::SpaceType *traverseDown, *traverseRight;
 	InstanceType tempInstance;
+	bool result;
 
 
 	// Set the stepping distance.
@@ -210,12 +181,21 @@ bool BoardClass::LoadInstances(std::vector<InstanceType>& instances, StateClass*
 		}
 	}
 
+	// Set up a piece a the bottom of the board for the player to position.
 	positionX = -0.5f * boardWidth + (stepX * state->GetCurrentPosition());
 	positionY = -0.5f * boardHeight;
 
+	// Add this piece to the instance buffer to be drawn.
 	tempInstance.position =	XMFLOAT3(positionX, positionY, 0.0f);
 	tempInstance.HSV =		m_colors[state->GetCurrentColor()];
 	instances.push_back(tempInstance);
+
+	// Finally initialize the instance buffer.
+	result = InitializeInstanceBuffer(device, instances.data(), (int)instances.size());
+	if (!result)
+	{
+		return false;
+	}
 
 	return true;
 }

@@ -51,7 +51,7 @@ public:
 
 	bool Initialize(int, int, HWND, StateClass*);
 	void Shutdown();
-	bool Frame(float, int, float);
+	bool Frame(float, int, float, StateClass*);
 
 private:
 	bool Render();

@@ -107,11 +107,11 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd, Sta
 		return false;
 	}
 
-	// Initialize the board object's level.
-	result = m_Board->InitializeLevel(m_Resources->GetDirect3DDevice(), "../Puzzle/data/colors.txt", state);
+	// Load the board's colors from file.
+	result = m_Board->LoadColors(COLORSPATH);
 	if (!result)
 	{
-		MessageBox(hwnd, L"Could not initialize the board state object.", L"Error", MB_OK);
+		MessageBox(hwnd, L"Could not load the board colors from file.", L"Error", MB_OK);
 	}
 
 	// Add the board to the list of drawables.
@@ -218,7 +218,7 @@ void GraphicsClass::Shutdown()
 }
 
 
-bool GraphicsClass::Frame(float fps, int cpu, float frameTime)
+bool GraphicsClass::Frame(float fps, int cpu, float frameTime, StateClass* state)
 {
 	bool result;
 	CString stats;
@@ -229,6 +229,13 @@ bool GraphicsClass::Frame(float fps, int cpu, float frameTime)
 	
 	// Set the stats text string for our text object.
 	m_Text->SetTextString(stats.GetString());
+
+	// Initialize the board object's level.
+	result = m_Board->CreateInstances(m_Resources->GetDirect3DDevice(), state);
+	if (!result)
+	{
+		return false;
+	}
 
 	// Render the graphics scene.
 	result = Render();
