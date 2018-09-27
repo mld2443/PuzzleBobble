@@ -19,7 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="boardstateclass.cpp" />
+    <ClCompile Include="stateclass.cpp" />
     <ClCompile Include="cameraclass.cpp" />
     <ClCompile Include="cpuclass.cpp" />
     <ClCompile Include="drawableinterface.cpp" />
@@ -39,7 +39,7 @@
     <ClCompile Include="triangleclass.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="boardstateclass.h" />
+    <ClInclude Include="stateclass.h" />
     <ClInclude Include="cameraclass.h" />
     <ClInclude Include="cpuclass.h" />
     <ClInclude Include="drawableinterface.h" />

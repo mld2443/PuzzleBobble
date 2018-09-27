@@ -1,32 +1,32 @@
 ////////////////////////////////////////////////////////////////////////////////
-// Filename: boardstateclass.cpp
+// Filename: stateclass.cpp
 ////////////////////////////////////////////////////////////////////////////////
-#include "boardstateclass.h"
+#include "stateclass.h"
 
 
-BoardStateClass::BoardStateClass()
+StateClass::StateClass()
 {
 	m_topLeft = nullptr;
 }
 
 
-BoardStateClass::BoardStateClass(const BoardStateClass& other)
+StateClass::StateClass(const StateClass& other)
 {
 }
 
 
-BoardStateClass::~BoardStateClass()
+StateClass::~StateClass()
 {
 }
 
 
-bool BoardStateClass::Initialize(char* filename)
+bool StateClass::Initialize(char* filename)
 {
 	return LoadLevel(filename);
 }
 
 
-void BoardStateClass::Shutdown()
+void StateClass::Shutdown()
 {
 	std::function<void(SpaceType*)> traverseDown, traverseRight;
 
@@ -73,7 +73,7 @@ void BoardStateClass::Shutdown()
 }
 
 
-bool BoardStateClass::LoadLevel(char* filename)
+bool StateClass::LoadLevel(char* filename)
 {
 	SpaceType *traverseDown, *traverseRight;
 	std::string line;
@@ -144,31 +144,31 @@ bool BoardStateClass::LoadLevel(char* filename)
 }
 
 
-std::size_t BoardStateClass::GetSize()
+std::size_t StateClass::GetSize()
 {
 	return m_size;
 }
 
 
-std::size_t BoardStateClass::GetMaxWidth()
+std::size_t StateClass::GetMaxWidth()
 {
 	return m_maxWidth;
 }
 
 
-std::size_t BoardStateClass::GetHeight()
+std::size_t StateClass::GetHeight()
 {
 	return m_height;
 }
 
 
-BoardStateClass::SpaceType* BoardStateClass::GetTopLeft()
+StateClass::SpaceType* StateClass::GetTopLeft()
 {
 	return m_topLeft;
 }
 
 
-bool BoardStateClass::AllocateBoard()
+bool StateClass::AllocateBoard()
 {
 	SpaceType* rowTraverse, *columnTraverse;
 	unsigned int rowWidth;

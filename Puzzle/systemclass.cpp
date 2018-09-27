@@ -54,7 +54,7 @@ bool SystemClass::Initialize()
 	}
 
 	// Create the board state object.
-	m_BoardState = new BoardStateClass;
+	m_BoardState = new StateClass;
 	if (!m_BoardState)
 	{
 		return false;
@@ -89,7 +89,7 @@ bool SystemClass::Initialize()
 	}
 
 	// Initialize the fps object.
-	m_Fps->Initialize(1.0);
+	m_Fps->Initialize(1.0f);
 
 	// Create the cpu object.
 	m_Cpu = new CpuClass;
@@ -298,7 +298,7 @@ void SystemClass::InitializeWindows(int& screenWidth, int& screenHeight)
 	m_hinstance = GetModuleHandle(NULL);
 
 	// Give the application a name.
-	m_applicationName = L"Engine";
+	m_applicationName = L"Puzzle";
 
 	// Setup the windows class with default settings.
 	wc.style =		   CS_HREDRAW | CS_VREDRAW | CS_OWNDC;
@@ -328,8 +328,8 @@ void SystemClass::InitializeWindows(int& screenWidth, int& screenHeight)
 		memset(&dmScreenSettings, 0, sizeof(dmScreenSettings));
 		dmScreenSettings.dmSize =		sizeof(dmScreenSettings);
 		dmScreenSettings.dmPelsWidth =	(unsigned long)screenWidth;
-		dmScreenSettings.dmPelsHeight = (unsigned long)screenHeight;
-		dmScreenSettings.dmBitsPerPel = 32;
+		dmScreenSettings.dmPelsHeight =	(unsigned long)screenHeight;
+		dmScreenSettings.dmBitsPerPel =	32;
 		dmScreenSettings.dmFields =		DM_BITSPERPEL | DM_PELSWIDTH | DM_PELSHEIGHT;
 
 		// Change the display settings to full screen.

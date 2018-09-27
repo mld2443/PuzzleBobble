@@ -24,7 +24,7 @@
 #include "fpsclass.h"
 #include "cpuclass.h"
 #include "timerclass.h"
-#include "boardstateclass.h"
+#include "stateclass.h"
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -58,7 +58,7 @@ private:
 	FpsClass*			m_Fps;
 	CpuClass*			m_Cpu;
 	TimerClass*			m_Timer;
-	BoardStateClass*	m_BoardState;
+	StateClass*	m_BoardState;
 };
 
 

@@ -42,7 +42,7 @@ public:
 	GraphicsClass(const GraphicsClass&);
 	~GraphicsClass();
 
-	bool Initialize(int, int, HWND, BoardStateClass*);
+	bool Initialize(int, int, HWND, StateClass*);
 	void Shutdown();
 	bool Frame(float, int, float);
 

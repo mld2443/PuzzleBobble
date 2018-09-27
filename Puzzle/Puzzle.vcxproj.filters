@@ -59,9 +59,6 @@
     <ClCompile Include="instanceshaderclass.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="boardstateclass.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="shaderinterface.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -69,6 +66,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="textureshaderclass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="stateclass.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -112,9 +112,6 @@
     <ClInclude Include="instanceshaderclass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="boardstateclass.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="shaderinterface.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -122,6 +119,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="textureshaderclass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="stateclass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

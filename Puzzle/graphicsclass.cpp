@@ -25,7 +25,7 @@ GraphicsClass::~GraphicsClass()
 }
 
 
-bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd, BoardStateClass* boardState)
+bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd, StateClass* boardState)
 {
 	bool result;
 

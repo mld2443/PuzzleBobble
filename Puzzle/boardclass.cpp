@@ -75,7 +75,7 @@ void BoardClass::Render(ID3D11DeviceContext* deviceContext)
 }
 
 
-bool BoardClass::InitializeLevel(ID3D11Device* device, char* filename, BoardStateClass* boardState)
+bool BoardClass::InitializeLevel(ID3D11Device* device, char* filename, StateClass* boardState)
 {
 	bool result;
 	std::vector<InstanceType> instances;
@@ -145,10 +145,10 @@ bool BoardClass::LoadColors(char* filename)
 }
 
 
-bool BoardClass::LoadInstances(std::vector<InstanceType>& instances, BoardStateClass* boardState)
+bool BoardClass::LoadInstances(std::vector<InstanceType>& instances, StateClass* boardState)
 {
 	float boardWidth, boardHeight, positionX, positionY, stepX, stepY;
-	BoardStateClass::SpaceType *traverseDown, *traverseRight;
+	StateClass::SpaceType *traverseDown, *traverseRight;
 	InstanceType tempInstance;
 
 
