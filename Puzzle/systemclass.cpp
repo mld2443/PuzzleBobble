@@ -11,7 +11,7 @@ SystemClass::SystemClass()
 	m_Fps = nullptr;
 	m_Cpu = nullptr;
 	m_Timer = nullptr;
-	m_BoardState = nullptr;
+	m_State = nullptr;
 }
 
 
@@ -54,15 +54,15 @@ bool SystemClass::Initialize()
 	}
 
 	// Create the board state object.
-	m_BoardState = new StateClass;
-	if (!m_BoardState)
+	m_State = new StateClass;
+	if (!m_State)
 	{
 		return false;
 	}
 
 	// Initialize the board state object. This will handle all operations related to game logic on the board.
-	result = m_BoardState->Initialize("../Puzzle/data/level.txt");
-	if (!m_BoardState)
+	result = m_State->Initialize("../Puzzle/data/level.txt");
+	if (!m_State)
 	{
 		return false;
 	}
@@ -75,7 +75,7 @@ bool SystemClass::Initialize()
 	}
 
 	// Initialize the graphics object.
-	result = m_Graphics->Initialize(screenWidth, screenHeight, m_hwnd, m_BoardState);
+	result = m_Graphics->Initialize(screenWidth, screenHeight, m_hwnd, m_State);
 	if (!result)
 	{
 		return false;
@@ -153,11 +153,11 @@ void SystemClass::Shutdown()
 	}
 
 	// Clear and shutdown the level.
-	if (m_BoardState)
+	if (m_State)
 	{
-		m_BoardState->Shutdown();
-		delete m_BoardState;
-		m_BoardState = nullptr;
+		m_State->Shutdown();
+		delete m_State;
+		m_State = nullptr;
 	}
 
 	// Release the input object.

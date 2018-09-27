@@ -75,7 +75,7 @@ void BoardClass::Render(ID3D11DeviceContext* deviceContext)
 }
 
 
-bool BoardClass::InitializeLevel(ID3D11Device* device, char* filename, StateClass* boardState)
+bool BoardClass::InitializeLevel(ID3D11Device* device, char* filename, StateClass* state)
 {
 	bool result;
 	std::vector<InstanceType> instances;
@@ -89,7 +89,7 @@ bool BoardClass::InitializeLevel(ID3D11Device* device, char* filename, StateClas
 	}
 
 	// Load the instance array with data.
-	result = LoadInstances(instances, boardState);
+	result = LoadInstances(instances, state);
 	if (!result)
 	{
 		return false;
@@ -145,7 +145,7 @@ bool BoardClass::LoadColors(char* filename)
 }
 
 
-bool BoardClass::LoadInstances(std::vector<InstanceType>& instances, StateClass* boardState)
+bool BoardClass::LoadInstances(std::vector<InstanceType>& instances, StateClass* state)
 {
 	float boardWidth, boardHeight, positionX, positionY, stepX, stepY;
 	StateClass::SpaceType *traverseDown, *traverseRight;
@@ -157,15 +157,15 @@ bool BoardClass::LoadInstances(std::vector<InstanceType>& instances, StateClass*
 	stepY = 0.5f * stepX * SQRT3;
 
 	// Calculate the width between centers of the farthest apart spaces.
-	boardWidth = (float)(boardState->GetMaxWidth() - 1) * stepX;
-	boardHeight = (float)(boardState->GetHeight() - 1) * stepY;
+	boardWidth = (float)(state->GetMaxWidth() - 1) * stepX;
+	boardHeight = (float)(state->GetHeight() - 1) * stepY;
 
 	// Offset the starting position so the whole board appears centered.
 	positionX = -0.5f * boardWidth;
 	positionY = 0.5f * boardHeight;
 
 	// Start the traversal of our board.
-	traverseDown = boardState->GetTopLeft();
+	traverseDown = state->GetTopLeft();
 
 	while (traverseDown)
 	{
@@ -196,7 +196,7 @@ bool BoardClass::LoadInstances(std::vector<InstanceType>& instances, StateClass*
 		}
 
 		// Move our prospective position coordinates down to the next row.
-		positionX -= stepX * ((float)boardState->GetMaxWidth() - 0.5f);
+		positionX -= stepX * ((float)state->GetMaxWidth() - 0.5f);
 		positionY -= stepY;
 
 		// Move traverseDown down a row, either to the left if moving from an even row to an odd row, or right for the opposite.

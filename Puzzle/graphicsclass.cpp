@@ -25,7 +25,7 @@ GraphicsClass::~GraphicsClass()
 }
 
 
-bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd, StateClass* boardState)
+bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd, StateClass* state)
 {
 	bool result;
 
@@ -108,7 +108,7 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd, Sta
 	}
 
 	// Initialize the board object's level.
-	result = m_Board->InitializeLevel(m_Resources->GetDirect3DDevice(), "../Puzzle/data/colors.txt", boardState);
+	result = m_Board->InitializeLevel(m_Resources->GetDirect3DDevice(), "../Puzzle/data/colors.txt", state);
 	if (!result)
 	{
 		MessageBox(hwnd, L"Could not initialize the board state object.", L"Error", MB_OK);

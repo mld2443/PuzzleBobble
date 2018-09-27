@@ -17,7 +17,7 @@
 // MY CLASS INCLUDES //
 ///////////////////////
 #include "drawableinterface.h"
-#include "boardstateclass.h"
+#include "stateclass.h"
 
 
 ///////////////

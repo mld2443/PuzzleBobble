@@ -14,13 +14,14 @@
 ///////////////////////
 // MY CLASS INCLUDES //
 ///////////////////////
-#include "resourcesclass.h"
-#include "cameraclass.h"
 #include "boardclass.h"
-#include "triangleclass.h"
+#include "cameraclass.h"
 #include "instanceshaderclass.h"
-#include "textureshaderclass.h"
+#include "resourcesclass.h"
+#include "stateclass.h"
 #include "textclass.h"
+#include "textureshaderclass.h"
+#include "triangleclass.h"
 
 
 /////////////
