@@ -22,12 +22,22 @@ StateClass::~StateClass()
 
 bool StateClass::Initialize(char* filename)
 {
+	bool result;
+
+
+	// Load the level description from file.
+	result = LoadLevel(filename);
+	if (!result)
+	{
+		return false;
+	}
+
 	// Set default starting values for our current piece and next piece color.
 	m_currentColor = 'r';
 	m_nextColor = 'b';
-	m_currentPosition = 0.0f;
+	m_currentPosition = 0.5f * (float)(m_height % 2);
 
-	return LoadLevel(filename);
+	return true;
 }
 
 
@@ -194,7 +204,7 @@ StateClass::SpaceType* StateClass::GetTopLeft()
 bool StateClass::MoveLeft()
 {
 	// Check to see if we're currently at the leftmost position.
-	if (m_currentPosition <= 0.0f)
+	if (m_currentPosition < 1.0f)
 	{
 		return false;
 	}
@@ -209,7 +219,7 @@ bool StateClass::MoveLeft()
 bool StateClass::MoveRight()
 {
 	// Check to see if we're currently at the rightmost position.
-	if (m_currentPosition >= (m_maxWidth - (m_height % 2) - 1))
+	if (m_currentPosition >= (float)(m_maxWidth - (m_height % 2) - 1))
 	{
 		return false;
 	}
