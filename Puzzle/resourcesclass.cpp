@@ -668,7 +668,8 @@ bool ResourcesClass::InitializeDirect2D()
 
 bool ResourcesClass::InitializeDirectWrite()
 {
-	bool result;
+	HRESULT result;
+
 
 	// Create a DirectWrite Factory to create layouts and formats with.
 	result = DWriteCreateFactory(DWRITE_FACTORY_TYPE_SHARED, __uuidof(IDWriteFactory4), (IUnknown **)&m_directWriteFactory);

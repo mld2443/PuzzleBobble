@@ -30,14 +30,14 @@ bool BoardClass::Initialize(ID3D11Device* device, ID3D11DeviceContext* deviceCon
 	CreateGeometry(vertices, indices);
 
 	// Initialize the vertex buffer.
-	result = InitializeVertexBuffer(device, vertices.data(), vertices.size());
+	result = InitializeVertexBuffer(device, vertices.data(), (int) vertices.size());
 	if (!result)
 	{
 		return false;
 	}
 
 	// Initialize the index buffer.
-	result = InitializeIndexBuffer(device, indices.data(), indices.size());
+	result = InitializeIndexBuffer(device, indices.data(), (int) indices.size());
 	if (!result)
 	{
 		return false;
@@ -96,7 +96,7 @@ bool BoardClass::InitializeLevel(ID3D11Device* device, char* filename, StateClas
 	}
 
 	// Initialize the instance buffer.
-	result = InitializeInstanceBuffer(device, instances.data(), instances.size());
+	result = InitializeInstanceBuffer(device, instances.data(), (int) instances.size());
 	if (!result)
 	{
 		return false;

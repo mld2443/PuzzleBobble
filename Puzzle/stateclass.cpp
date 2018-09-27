@@ -202,7 +202,7 @@ bool StateClass::AllocateBoard()
 		rowTraverse = columnTraverse;
 
 		// Determine the width of the current row (maxRowWidth if an even row, maxRowWidth-1 if odd).
-		rowWidth = m_maxWidth - (i % 2);
+		rowWidth = (unsigned int) m_maxWidth - (i % 2);
 
 		// Iterate over current row.
 		for (unsigned int j = 0; j < rowWidth; j++)
