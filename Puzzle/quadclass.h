@@ -1,5 +1,5 @@
 ////////////////////////////////////////////////////////////////////////////////
-// Filename: triangleclass.h
+// Filename: quadclass.h
 ////////////////////////////////////////////////////////////////////////////////
 #pragma once
 
@@ -17,14 +17,14 @@
 
 
 ////////////////////////////////////////////////////////////////////////////////
-// Class name: TriangleClass
+// Class name: QuadClass
 ////////////////////////////////////////////////////////////////////////////////
-class TriangleClass : public DrawableInterface
+class QuadClass : public DrawableInterface
 {
 public:
-	TriangleClass();
-	TriangleClass(const TriangleClass&);
-	~TriangleClass();
+	QuadClass();
+	QuadClass(const QuadClass&);
+	~QuadClass();
 
 	bool Initialize(ID3D11Device*, ID3D11DeviceContext*) override;
 	void Shutdown() override;

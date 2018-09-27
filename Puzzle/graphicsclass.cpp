@@ -9,9 +9,10 @@ GraphicsClass::GraphicsClass()
 	m_Resources = nullptr;
 	m_Text = nullptr;
 	m_Camera = nullptr;
+	m_Background = nullptr;
+	m_Board = nullptr;
 	m_TextureShader = nullptr;
 	m_InstanceShader = nullptr;
-	m_Board = nullptr;
 }
 
 
@@ -78,14 +79,14 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd, Sta
 	m_Camera->SetLookDirection(0.0f, 0.0f, 1.0f);
 
 	// Create the triangle object.
-	m_Drawables.push_back(new TriangleClass);
-	if (!m_Drawables.back())
+	m_Background = new QuadClass;
+	if (!m_Background)
 	{
 		return false;
 	}
 
 	// Initialize the triangle object.
-	result = m_Drawables.back()->Initialize(m_Resources->GetDirect3DDevice(), m_Resources->GetDirect3DDeviceContext());
+	result = m_Background->Initialize(m_Resources->GetDirect3DDevice(), m_Resources->GetDirect3DDeviceContext());
 	if (!result)
 	{
 		MessageBox(hwnd, L"Could not initialize the background object.", L"Error", MB_OK);
@@ -112,13 +113,6 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd, Sta
 	if (!result)
 	{
 		MessageBox(hwnd, L"Could not load the board colors from file.", L"Error", MB_OK);
-	}
-
-	// Add the board to the list of drawables.
-	m_Drawables.push_back(m_Board);
-	if (!m_Drawables.back())
-	{
-		return false;
 	}
 
 	// Create the instance shader object.
@@ -173,21 +167,19 @@ void GraphicsClass::Shutdown()
 		m_InstanceShader = nullptr;
 	}
 
-	// Release the drawable objects.
-	for (auto drawable : m_Drawables)
+	// Release the background model object.
+	if (m_Background)
 	{
-		if (drawable)
-		{
-			drawable->Shutdown();
-			delete drawable;
-			drawable = nullptr;
-		}
+		m_Background->Shutdown();
+		delete m_Background;
+		m_Background = nullptr;
 	}
 
 	// Release the board object.
 	if (m_Board)
 	{
-		// We don't need to call shutdown or delete; they were already done in the block for drawables above.
+		m_Board->Shutdown();
+		delete m_Board;
 		m_Board = nullptr;
 	}
 
@@ -260,39 +252,34 @@ bool GraphicsClass::Render()
 	// Turn on alpha blending for the transparency to work.
 	m_Resources->TurnOnAlphaBlending();
 
-	// Put the drawable buffers on the appropriate graphics pipeline to prepare them for drawing.
-	for (auto drawable : m_Drawables)
+	// Generate the view matrix based on the camera's position.
+	m_Camera->Render();
+
+	// Get the world, view, and projection matrices from the camera and d3d objects.
+	m_Resources->GetWorldMatrix(worldMatrix);
+	m_Camera->GetViewMatrix(viewMatrix);
+	m_Resources->GetProjectionMatrix(projectionMatrix);
+
+	// Submit our background geometry buffers to the device for rendering.
+	m_Background->Render(m_Resources->GetDirect3DDeviceContext());
+
+	// Render the Background using the texture shader.
+	result = m_TextureShader->Render(m_Resources->GetDirect3DDeviceContext(), m_Background->GetIndexCount(), 1, 
+									worldMatrix, viewMatrix, projectionMatrix, m_Background->GetTexture());
+	if (!result)
 	{
-		// Generate the view matrix based on the camera's position.
-		m_Camera->Render();
+		return false;
+	}
 
-		// Get the world, view, and projection matrices from the camera and d3d objects.
-		m_Resources->GetWorldMatrix(worldMatrix);
-		m_Camera->GetViewMatrix(viewMatrix);
-		m_Resources->GetProjectionMatrix(projectionMatrix);
+	// Submit our board geometry buffers to the device for rendering.
+	m_Board->Render(m_Resources->GetDirect3DDeviceContext());
 
-		drawable->Render(m_Resources->GetDirect3DDeviceContext());
-
-		if (drawable->isInstanced())
-		{
-			// Render the drawable using the instance shader.
-			result = m_InstanceShader->Render(m_Resources->GetDirect3DDeviceContext(), drawable->GetIndexCount(),
-											  drawable->GetInstanceCount(), worldMatrix, viewMatrix, projectionMatrix, drawable->GetTexture());
-			if (!result)
-			{
-				return false;
-			}
-		}
-		else
-		{
-			// Render the drawable using the color shader.
-			result = m_TextureShader->Render(m_Resources->GetDirect3DDeviceContext(), drawable->GetIndexCount(),
-											 1, worldMatrix, viewMatrix, projectionMatrix, drawable->GetTexture());
-			if (!result)
-			{
-				return false;
-			}
-		}
+	// Render the board using the instance shader.
+	result = m_InstanceShader->Render(m_Resources->GetDirect3DDeviceContext(), m_Board->GetIndexCount(), m_Board->GetInstanceCount(), 
+									worldMatrix, viewMatrix, projectionMatrix, m_Board->GetTexture());
+	if (!result)
+	{
+		return false;
 	}
 
 	// Render text on the screen.

@@ -191,7 +191,7 @@ StateClass::SpaceType* StateClass::GetTopLeft()
 }
 
 
-bool StateClass::moveLeft()
+bool StateClass::MoveLeft()
 {
 	// Check to see if we're currently at the leftmost position.
 	if (m_currentPosition <= 0.0f)
@@ -206,7 +206,7 @@ bool StateClass::moveLeft()
 }
 
 
-bool StateClass::moveRight()
+bool StateClass::MoveRight()
 {
 	// Check to see if we're currently at the rightmost position.
 	if (m_currentPosition >= (m_maxWidth - (m_height % 2) - 1))

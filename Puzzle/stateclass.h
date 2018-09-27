@@ -48,8 +48,8 @@ public:
 
 	SpaceType* GetTopLeft();
 
-	bool moveLeft();
-	bool moveRight();
+	bool MoveLeft();
+	bool MoveRight();
 
 private:
 	bool AllocateBoard();

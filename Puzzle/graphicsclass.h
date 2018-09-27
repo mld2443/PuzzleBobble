@@ -7,7 +7,6 @@
 //////////////
 // INCLUDES //
 //////////////
-#include <list>
 #include <atlstr.h>
 
 
@@ -21,7 +20,7 @@
 #include "stateclass.h"
 #include "textclass.h"
 #include "textureshaderclass.h"
-#include "triangleclass.h"
+#include "quadclass.h"
 
 
 ///////////////
@@ -57,11 +56,11 @@ private:
 	bool Render();
 
 private:
-	ResourcesClass*					m_Resources;
-	TextClass*						m_Text;
-	CameraClass*					m_Camera;
-	std::list<DrawableInterface*>	m_Drawables;
-	BoardClass*						m_Board;
-	TextureShaderClass*				m_TextureShader;
-	InstanceShaderClass*			m_InstanceShader;
+	ResourcesClass*			m_Resources;
+	TextClass*				m_Text;
+	CameraClass*			m_Camera;
+	QuadClass*				m_Background;
+	BoardClass*				m_Board;
+	TextureShaderClass*		m_TextureShader;
+	InstanceShaderClass*	m_InstanceShader;
 };

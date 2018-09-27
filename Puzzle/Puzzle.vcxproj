@@ -36,7 +36,7 @@
     <ClCompile Include="textureclass.cpp" />
     <ClCompile Include="textureshaderclass.cpp" />
     <ClCompile Include="timerclass.cpp" />
-    <ClCompile Include="triangleclass.cpp" />
+    <ClCompile Include="quadclass.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stateclass.h" />
@@ -55,7 +55,7 @@
     <ClInclude Include="textureclass.h" />
     <ClInclude Include="textureshaderclass.h" />
     <ClInclude Include="timerclass.h" />
-    <ClInclude Include="triangleclass.h" />
+    <ClInclude Include="quadclass.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="instance.ps.hlsl">

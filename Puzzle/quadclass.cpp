@@ -1,25 +1,25 @@
 ////////////////////////////////////////////////////////////////////////////////
-// Filename: triangleclass.cpp
+// Filename: quadclass.cpp
 ////////////////////////////////////////////////////////////////////////////////
-#include "triangleclass.h"
+#include "quadclass.h"
 
 
-TriangleClass::TriangleClass() : DrawableInterface()
+QuadClass::QuadClass() : DrawableInterface()
 {
 }
 
 
-TriangleClass::TriangleClass(const TriangleClass& other) : DrawableInterface(other)
+QuadClass::QuadClass(const QuadClass& other) : DrawableInterface(other)
 {
 }
 
 
-TriangleClass::~TriangleClass()
+QuadClass::~QuadClass()
 {
 }
 
 
-bool TriangleClass::Initialize(ID3D11Device* device, ID3D11DeviceContext* deviceContext)
+bool QuadClass::Initialize(ID3D11Device* device, ID3D11DeviceContext* deviceContext)
 {
 	bool result;
 	VertexType* vertices;
@@ -100,7 +100,7 @@ bool TriangleClass::Initialize(ID3D11Device* device, ID3D11DeviceContext* device
 }
 
 
-void TriangleClass::Shutdown()
+void QuadClass::Shutdown()
 {
 	// Release our texture.
 	ReleaseTexture();
@@ -112,7 +112,7 @@ void TriangleClass::Shutdown()
 }
 
 
-void TriangleClass::Render(ID3D11DeviceContext* deviceContext)
+void QuadClass::Render(ID3D11DeviceContext* deviceContext)
 {
 	// Put the vertex and index buffers on the graphics pipeline to prepare them for drawing.
 	RenderWithoutInstanceBuffer(deviceContext);
