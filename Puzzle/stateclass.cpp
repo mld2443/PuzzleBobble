@@ -22,6 +22,11 @@ StateClass::~StateClass()
 
 bool StateClass::Initialize(char* filename)
 {
+	// Set default starting values for our current piece and next piece color.
+	m_currentColor = 'r';
+	m_nextColor = 'b';
+	m_currentPosition = 0.0f;
+
 	return LoadLevel(filename);
 }
 
@@ -162,9 +167,57 @@ std::size_t StateClass::GetHeight()
 }
 
 
+char StateClass::GetCurrentColor()
+{
+	return m_currentColor;
+}
+
+
+char StateClass::GetNextColor()
+{
+	return m_nextColor;
+}
+
+
+float StateClass::GetCurrentPosition()
+{
+	return m_currentPosition;
+}
+
+
 StateClass::SpaceType* StateClass::GetTopLeft()
 {
 	return m_topLeft;
+}
+
+
+bool StateClass::moveLeft()
+{
+	// Check to see if we're currently at the leftmost position.
+	if (m_currentPosition <= 0.0f)
+	{
+		return false;
+	}
+
+	// Decrement our current position.
+	m_currentPosition -= 1.0f;
+
+	return true;
+}
+
+
+bool StateClass::moveRight()
+{
+	// Check to see if we're currently at the rightmost position.
+	if (m_currentPosition >= (m_maxWidth - (m_height % 2) - 1))
+	{
+		return false;
+	}
+
+	// Decrement our current position.
+	m_currentPosition += 1.0f;
+
+	return true;
 }
 
 

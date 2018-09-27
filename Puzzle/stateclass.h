@@ -42,8 +42,14 @@ public:
 	std::size_t GetSize();
 	std::size_t GetMaxWidth();
 	std::size_t GetHeight();
+	char GetCurrentColor();
+	char GetNextColor();
+	float GetCurrentPosition();
 
 	SpaceType* GetTopLeft();
+
+	bool moveLeft();
+	bool moveRight();
 
 private:
 	bool AllocateBoard();
@@ -51,4 +57,7 @@ private:
 private:
 	std::size_t	m_size, m_maxWidth, m_height;
 	SpaceType*	m_topLeft;
+
+	char	m_currentColor, m_nextColor;
+	float	m_currentPosition;
 };

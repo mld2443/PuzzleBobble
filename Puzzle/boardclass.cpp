@@ -158,7 +158,7 @@ bool BoardClass::LoadInstances(std::vector<InstanceType>& instances, StateClass*
 
 	// Calculate the width between centers of the farthest apart spaces.
 	boardWidth = (float)(state->GetMaxWidth() - 1) * stepX;
-	boardHeight = (float)(state->GetHeight() - 1) * stepY;
+	boardHeight = (float)(state->GetHeight()) * stepY;
 
 	// Offset the starting position so the whole board appears centered.
 	positionX = -0.5f * boardWidth;
@@ -209,6 +209,13 @@ bool BoardClass::LoadInstances(std::vector<InstanceType>& instances, StateClass*
 			traverseDown = traverseDown->lowerRightNeighbor;
 		}
 	}
+
+	positionX = -0.5f * boardWidth + (stepX * state->GetCurrentPosition());
+	positionY = -0.5f * boardHeight;
+
+	tempInstance.position =	XMFLOAT3(positionX, positionY, 0.0f);
+	tempInstance.HSV =		m_colors[state->GetCurrentColor()];
+	instances.push_back(tempInstance);
 
 	return true;
 }
