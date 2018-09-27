@@ -20,6 +20,8 @@
 //////////////
 // INCLUDES //
 //////////////
+#include <map>
+#include <functional>
 #include <dinput.h>
 
 
@@ -40,6 +42,8 @@ public:
 	void KeyDown(unsigned int);
 	void KeyUp(unsigned int);
 
+	void AddKeydownCallback(unsigned int, std::function<void()>);
+
 	bool IsKeyDown(unsigned int);
 	void GetMouseLocation(int&, int&);
 	bool IsLeftMouseButtonDown();
@@ -54,6 +58,8 @@ private:
 
 	bool			m_keys[256];
 	DIMOUSESTATE	m_mouseState;
+
+	std::map<unsigned int, std::function<void()>> m_keydownCallbacks;
 
 	int	m_screenWidth, m_screenHeight;
 	int	m_mouseX, m_mouseY;

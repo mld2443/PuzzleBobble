@@ -118,6 +118,64 @@ bool InputClass::Frame()
 }
 
 
+void InputClass::KeyDown(unsigned int input)
+{
+	// If a key is pressed then save that state in the key array.
+	m_keys[input] = true;
+
+	// If this key has a callback, call it!
+	if (m_keydownCallbacks.find(input) != m_keydownCallbacks.end())
+	{
+		m_keydownCallbacks[input]();
+	}
+
+	return;
+}
+
+
+void InputClass::KeyUp(unsigned int input)
+{
+	// If a key is released then clear that state in the key array.
+	m_keys[input] = false;
+	return;
+}
+
+
+void InputClass::AddKeydownCallback(unsigned int key, std::function<void()> callback)
+{
+	m_keydownCallbacks[key] = callback;
+
+	return;
+}
+
+
+bool InputClass::IsKeyDown(unsigned int key)
+{
+	// Return what state the key is in (pressed/not pressed).
+	return m_keys[key];
+}
+
+
+void InputClass::GetMouseLocation(int& mouseX, int& mouseY)
+{
+	mouseX = m_mouseX;
+	mouseY = m_mouseY;
+	return;
+}
+
+
+bool InputClass::IsLeftMouseButtonDown()
+{
+	// Check if the left mouse button is currently pressed.
+	if (m_mouseState.rgbButtons[0] & 0x80)
+	{
+		return true;
+	}
+
+	return false;
+}
+
+
 bool InputClass::ReadMouse()
 {
 	HRESULT result;
@@ -156,47 +214,4 @@ void InputClass::ProcessInput()
 	if (m_mouseY > m_screenHeight) { m_mouseY = m_screenHeight; }*/
 
 	return;
-}
-
-
-void InputClass::KeyDown(unsigned int input)
-{
-	// If a key is pressed then save that state in the key array.
-	m_keys[input] = true;
-	return;
-}
-
-
-void InputClass::KeyUp(unsigned int input)
-{
-	// If a key is released then clear that state in the key array.
-	m_keys[input] = false;
-	return;
-}
-
-
-bool InputClass::IsKeyDown(unsigned int key)
-{
-	// Return what state the key is in (pressed/not pressed).
-	return m_keys[key];
-}
-
-
-void InputClass::GetMouseLocation(int& mouseX, int& mouseY)
-{
-	mouseX = m_mouseX;
-	mouseY = m_mouseY;
-	return;
-}
-
-
-bool InputClass::IsLeftMouseButtonDown()
-{
-	// Check if the left mouse button is currently pressed.
-	if (m_mouseState.rgbButtons[0] & 0x80)
-	{
-		return true;
-	}
-
-	return false;
 }

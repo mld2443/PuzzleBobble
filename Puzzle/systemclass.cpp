@@ -67,6 +67,10 @@ bool SystemClass::Initialize()
 		return false;
 	}
 
+	// Add input callbacks.
+	m_Input->AddKeydownCallback('A', [=]() { m_State->moveLeft(); });
+	m_Input->AddKeydownCallback('D', [=]() { m_State->moveRight(); });
+
 	// Create the graphics object.  This object will handle rendering all the graphics for this application.
 	m_Graphics = new GraphicsClass;
 	if (!m_Graphics)
