@@ -108,13 +108,6 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd, Sta
 		return false;
 	}
 
-	// Load the board's colors from file.
-	result = m_Board->LoadColors(COLORSPATH);
-	if (!result)
-	{
-		MessageBox(hwnd, L"Could not load the board colors from file.", L"Error", MB_OK);
-		return false;
-	}
 
 	// Load the board's piece instances.
 	result = m_Board->InitializeInstances(m_Resources->GetDirect3DDevice(), state);

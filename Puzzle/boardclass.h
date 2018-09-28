@@ -13,7 +13,6 @@
 //////////////
 // INCLUDES //
 //////////////
-#include <map>
 #include <fstream>
 #include <string>
 #include <vector>
@@ -47,8 +46,6 @@ public:
 	void Shutdown() override;
 	void Render(ID3D11DeviceContext*) override;
 
-	bool LoadColors(char*);
-
 	bool InitializeInstances(ID3D11Device*, StateClass*);
 	bool UpdateInstances(ID3D11DeviceContext*, StateClass*);
 
@@ -57,6 +54,5 @@ private:
 	void CreateGeometry(std::vector<VertexType>&, std::vector<unsigned long>&);
 
 private:
-	std::map<char, XMFLOAT4>	m_colors;
 	unsigned int				m_maxPieces;
 };

@@ -93,6 +93,9 @@ bool StateClass::LoadLevel(char* filename)
 	SpaceType *traverseDown, *traverseRight;
 	std::string line;
 	std::ifstream fileReader;
+	char colorKey;
+	XMFLOAT4 colorValues;
+	unsigned int colorCount;
 	bool result;
 
 
@@ -101,6 +104,25 @@ bool StateClass::LoadLevel(char* filename)
 	if (!fileReader)
 	{
 		return false;
+	}
+
+	// Read in the first word of the line, which should state the number of colors.
+	// NOTE: This could be more safely defined. 
+	fileReader >> line >> colorCount;
+	if (line.compare("colors") != 0)
+	{
+		return false;
+	}
+
+	// Assume a default Alpha value of 1.0 for all colors.
+	colorValues.w = 1.0f;
+
+	// Read in color keys and HSV values, then store in color map.
+	for (unsigned int i = 0; i < colorCount; i++)
+	{
+		fileReader >> colorKey >> colorValues.x >> colorValues.y >> colorValues.z;
+
+		m_colors[colorKey] = colorValues;
 	}
 
 	// Read in the next line from the file, which should determine the dimensions.
@@ -177,15 +199,27 @@ std::size_t StateClass::GetHeight()
 }
 
 
-char StateClass::GetCurrentColor()
+XMFLOAT4 StateClass::GetColorHSVA(char color)
 {
-	return m_activePiece.color;
+	return m_colors[color];
+}
+
+
+XMFLOAT4 StateClass::GetCurrentColor()
+{
+	return m_colors[m_activePiece.color];
 }
 
 
 char StateClass::GetNextColor()
 {
 	return m_nextColor;
+}
+
+
+bool StateClass::IsColorValid(char color)
+{
+	return m_colors.find(color) != m_colors.end();
 }
 
 
@@ -244,6 +278,7 @@ void StateClass::ShootPiece(bool travelingLeft)
 	SpaceType* endPoint;
 
 
+	// Fire the piece to the left or right.
 	if (travelingLeft)
 	{
 		endPoint = TravelLeft(&m_activePiece);
@@ -253,6 +288,7 @@ void StateClass::ShootPiece(bool travelingLeft)
 		endPoint = TravelRight(&m_activePiece);
 	}
 
+	// Change the color of the endPoint piece to match the one we shot.
 	endPoint->color = m_activePiece.color;
 
 	return;

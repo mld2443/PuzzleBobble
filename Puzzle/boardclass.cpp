@@ -75,48 +75,6 @@ void BoardClass::Render(ID3D11DeviceContext* deviceContext)
 }
 
 
-bool BoardClass::LoadColors(char* filename)
-{
-	unsigned int colorCount;
-	char colorKey;
-	XMFLOAT4 colorValues;
-	std::ifstream fileReader;
-	std::string line;
-
-
-	// Open file for reading.
-	fileReader = std::ifstream(filename);
-	if (!fileReader)
-	{
-		return false;
-	}
-
-	// Read in the first word of the line, which should state the number of colors.
-	// NOTE: This could be more safely defined. 
-	fileReader >> line >> colorCount;
-	if (line.compare("colors") != 0)
-	{
-		return false;
-	}
-
-	// Assume a default Alpha value of 1.0 for all colors.
-	colorValues.w = 1.0f;
-
-	// Read in color keys and HSV values, then store in color map.
-	for (unsigned int i = 0; i < colorCount; i++)
-	{
-		fileReader >> colorKey >> colorValues.x >> colorValues.y >> colorValues.z;
-
-		m_colors[colorKey] = colorValues;
-	}
-
-	// Close our file now that we're done with it.
-	fileReader.close();
-
-	return true;
-}
-
-
 bool BoardClass::InitializeInstances(ID3D11Device* device, StateClass* state)
 {
 	std::vector<InstanceType> instances;
@@ -202,14 +160,14 @@ bool BoardClass::CalculateInstancePositions(std::vector<InstanceType>& instances
 			if (traverseRight->color != '_')
 			{
 				// Check to make sure the Space pointer's color is in the board's color map.
-				if (m_colors.find(traverseRight->color) == m_colors.end())
+				if (!state->IsColorValid(traverseRight->color))
 				{
 					return false;
 				}
 
 				// If the Space pointer's color is not blank, create an instance in its position.
 				tempInstance.position =	XMFLOAT3(positionX, positionY, 0.0f);
-				tempInstance.HSVA =		m_colors[traverseRight->color];
+				tempInstance.HSVA =		state->GetColorHSVA(traverseRight->color);
 				instances.push_back(tempInstance);
 			}
 
@@ -241,7 +199,7 @@ bool BoardClass::CalculateInstancePositions(std::vector<InstanceType>& instances
 
 	// Add this piece to the instance vector.
 	tempInstance.position =	XMFLOAT3(positionX, positionY, 0.0f);
-	tempInstance.HSVA =		m_colors[state->GetCurrentColor()];
+	tempInstance.HSVA =		state->GetCurrentColor();
 	instances.push_back(tempInstance);
 
 	// Create template for an empty space.

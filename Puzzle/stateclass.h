@@ -10,7 +10,10 @@
 #include <fstream>
 #include <string>
 #include <functional>
+#include <map>
+#include <directxmath.h>
 
+using namespace DirectX;
 
 ////////////////////////////////////////////////////////////////////////////////
 // Class name: StateClass
@@ -42,8 +45,13 @@ public:
 	std::size_t GetSize();
 	std::size_t GetMaxWidth();
 	std::size_t GetHeight();
-	char GetCurrentColor();
+
+	XMFLOAT4 GetColorHSVA(char);
+	XMFLOAT4 GetCurrentColor();
 	char GetNextColor();
+	bool IsColorValid(char);
+
+
 	float GetCurrentPosition();
 
 	SpaceType* GetTopLeft();
@@ -62,6 +70,8 @@ private:
 private:
 	std::size_t	m_size, m_maxWidth, m_height;
 	SpaceType*	m_topLeft, m_activePiece;
+
+	std::map<char, XMFLOAT4>	m_colors;
 
 	char	m_nextColor;
 	float	m_currentPosition;

@@ -143,9 +143,6 @@
     <Text Include="data\level.txt">
       <Filter>Data</Filter>
     </Text>
-    <Text Include="data\colors.txt">
-      <Filter>Data</Filter>
-    </Text>
   </ItemGroup>
   <ItemGroup>
     <Image Include="data\background.tga">
