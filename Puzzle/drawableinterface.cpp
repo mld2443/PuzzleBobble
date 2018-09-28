@@ -134,10 +134,10 @@ bool DrawableInterface::InitializeInstanceBuffer(ID3D11Device* device, InstanceT
 	m_instanceCount = instanceCount;
 
 	// Set up the description of the instance buffer.
-	instanceBufferDesc.Usage =					D3D11_USAGE_DEFAULT;
+	instanceBufferDesc.Usage =					D3D11_USAGE_DYNAMIC;
 	instanceBufferDesc.ByteWidth =				sizeof(InstanceType) * m_instanceCount;
 	instanceBufferDesc.BindFlags =				D3D11_BIND_VERTEX_BUFFER;
-	instanceBufferDesc.CPUAccessFlags =			0;
+	instanceBufferDesc.CPUAccessFlags =			D3D11_CPU_ACCESS_WRITE;
 	instanceBufferDesc.MiscFlags =				0;
 	instanceBufferDesc.StructureByteStride =	0;
 
@@ -152,6 +152,33 @@ bool DrawableInterface::InitializeInstanceBuffer(ID3D11Device* device, InstanceT
 	{
 		return false;
 	}
+
+	return true;
+}
+
+
+bool DrawableInterface::UpdateInstanceBuffer(ID3D11DeviceContext* deviceContext, InstanceType* instances, int instanceCount)
+{
+	HRESULT result;
+	D3D11_MAPPED_SUBRESOURCE mappedResource;
+	InstanceType* instancePtr;
+
+
+	// Lock the vertex buffer.
+	result = deviceContext->Map(m_instanceBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+	if (FAILED(result))
+	{
+		return false;
+	}
+
+	// Get a pointer to the data in the vertex buffer.
+	instancePtr = (InstanceType*)mappedResource.pData;
+
+	// Copy the data into the vertex buffer.
+	memcpy(instancePtr, (void*)instances, (sizeof(InstanceType) * instanceCount));
+
+	// Unlock the vertex buffer.
+	deviceContext->Unmap(m_instanceBuffer, 0);
 
 	return true;
 }

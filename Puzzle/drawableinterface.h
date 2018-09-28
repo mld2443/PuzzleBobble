@@ -57,6 +57,8 @@ protected:
 	bool InitializeIndexBuffer(ID3D11Device*, unsigned long*, int);
 	bool InitializeInstanceBuffer(ID3D11Device*, InstanceType*, int);
 
+	bool UpdateInstanceBuffer(ID3D11DeviceContext*, InstanceType*, int);
+
 	void ShutdownBuffers();
 	
 	void RenderWithInstanceBuffer(ID3D11DeviceContext*);

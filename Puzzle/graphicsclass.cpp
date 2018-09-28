@@ -113,6 +113,15 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd, Sta
 	if (!result)
 	{
 		MessageBox(hwnd, L"Could not load the board colors from file.", L"Error", MB_OK);
+		return false;
+	}
+
+	// Load the board's piece instances.
+	result = m_Board->InitializeInstances(m_Resources->GetDirect3DDevice(), state);
+	if (!result)
+	{
+		MessageBox(hwnd, L"Could not initialize board instances.", L"Error", MB_OK);
+		return false;
 	}
 
 	// Create the instance shader object.
@@ -223,7 +232,7 @@ bool GraphicsClass::Frame(float fps, int cpu, float frameTime, StateClass* state
 	m_Text->SetTextString(stats.GetString());
 
 	// Initialize the board object's level.
-	result = m_Board->CreateInstances(m_Resources->GetDirect3DDevice(), state);
+	result = m_Board->UpdateInstances(m_Resources->GetDirect3DDeviceContext(), state);
 	if (!result)
 	{
 		return false;

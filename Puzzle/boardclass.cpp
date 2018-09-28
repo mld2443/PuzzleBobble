@@ -114,13 +114,64 @@ bool BoardClass::LoadColors(char* filename)
 }
 
 
-bool BoardClass::CreateInstances(ID3D11Device* device, StateClass* state)
+bool BoardClass::InitializeInstances(ID3D11Device* device, StateClass* state)
 {
 	std::vector<InstanceType> instances;
+	unsigned int numSpaces, numFreePieces;
+	bool result;
+
+	numFreePieces = 2;
+
+	numSpaces = state->GetHeight() * state->GetMaxWidth() - (state->GetHeight() / 2) + numFreePieces;
+
+	// Calculate instance positions for drawing.
+	result = CalculateInstancePositions(instances, state);
+	if (!result)
+	{
+		return false;
+	}
+
+	// Finally initialize the instance buffer.
+	result = InitializeInstanceBuffer(device, instances.data(), numSpaces);
+	if (!result)
+	{
+		return false;
+	}
+
+	return true;
+}
+
+
+bool BoardClass::UpdateInstances(ID3D11DeviceContext* deviceContext, StateClass* state)
+{
+	std::vector<InstanceType> instances;
+	bool result;
+
+
+	// Calculate instance positions for drawing.
+	result = CalculateInstancePositions(instances, state);
+	if (!result)
+	{
+		return false;
+	}
+
+	// Update instance buffer with new instance positions.
+	result = UpdateInstanceBuffer(deviceContext, instances.data(), instances.size());
+	if (!result)
+	{
+		return false;
+	}
+
+
+	return true;
+}
+
+
+bool BoardClass::CalculateInstancePositions(std::vector<InstanceType>& instances, StateClass* state)
+{
 	float boardWidth, boardHeight, positionX, positionY, stepX, stepY;
 	StateClass::SpaceType *traverseDown, *traverseRight;
 	InstanceType tempInstance;
-	bool result;
 
 
 	// Set the stepping distance.
@@ -189,13 +240,6 @@ bool BoardClass::CreateInstances(ID3D11Device* device, StateClass* state)
 	tempInstance.position =	XMFLOAT3(positionX, positionY, 0.0f);
 	tempInstance.HSV =		m_colors[state->GetCurrentColor()];
 	instances.push_back(tempInstance);
-
-	// Finally initialize the instance buffer.
-	result = InitializeInstanceBuffer(device, instances.data(), (int)instances.size());
-	if (!result)
-	{
-		return false;
-	}
 
 	return true;
 }

@@ -48,9 +48,12 @@ public:
 	void Render(ID3D11DeviceContext*) override;
 
 	bool LoadColors(char*);
-	bool CreateInstances(ID3D11Device*, StateClass*);
+
+	bool InitializeInstances(ID3D11Device*, StateClass*);
+	bool UpdateInstances(ID3D11DeviceContext*, StateClass*);
 
 private:
+	bool CalculateInstancePositions(std::vector<InstanceType>&, StateClass*);
 	void CreateGeometry(std::vector<VertexType>&, std::vector<unsigned long>&);
 
 private:
