@@ -79,7 +79,7 @@ bool BoardClass::LoadColors(char* filename)
 {
 	unsigned int colorCount;
 	char colorKey;
-	XMFLOAT3 colorValues;
+	XMFLOAT4 colorValues;
 	std::ifstream fileReader;
 	std::string line;
 
@@ -99,6 +99,9 @@ bool BoardClass::LoadColors(char* filename)
 		return false;
 	}
 
+	// Assume a default Alpha value of 1.0 for all colors.
+	colorValues.w = 1.0f;
+
 	// Read in color keys and HSV values, then store in color map.
 	for (unsigned int i = 0; i < colorCount; i++)
 	{
@@ -117,12 +120,12 @@ bool BoardClass::LoadColors(char* filename)
 bool BoardClass::InitializeInstances(ID3D11Device* device, StateClass* state)
 {
 	std::vector<InstanceType> instances;
-	unsigned int numSpaces, numFreePieces;
+	unsigned int numFreePieces;
 	bool result;
 
-	numFreePieces = 2;
 
-	numSpaces = state->GetHeight() * state->GetMaxWidth() - (state->GetHeight() / 2) + numFreePieces;
+	numFreePieces = 2;
+	m_maxPieces = state->GetHeight() * state->GetMaxWidth() - (state->GetHeight() / 2) + numFreePieces;
 
 	// Calculate instance positions for drawing.
 	result = CalculateInstancePositions(instances, state);
@@ -132,7 +135,7 @@ bool BoardClass::InitializeInstances(ID3D11Device* device, StateClass* state)
 	}
 
 	// Finally initialize the instance buffer.
-	result = InitializeInstanceBuffer(device, instances.data(), numSpaces);
+	result = InitializeInstanceBuffer(device, instances.data(), m_maxPieces);
 	if (!result)
 	{
 		return false;
@@ -206,7 +209,7 @@ bool BoardClass::CalculateInstancePositions(std::vector<InstanceType>& instances
 
 				// If the Space pointer's color is not blank, create an instance in its position.
 				tempInstance.position =	XMFLOAT3(positionX, positionY, 0.0f);
-				tempInstance.HSV =		m_colors[traverseRight->color];
+				tempInstance.HSVA =		m_colors[traverseRight->color];
 				instances.push_back(tempInstance);
 			}
 
@@ -236,10 +239,20 @@ bool BoardClass::CalculateInstancePositions(std::vector<InstanceType>& instances
 	positionX = -0.5f * boardWidth + (stepX * state->GetCurrentPosition());
 	positionY = -0.5f * boardHeight;
 
-	// Add this piece to the instance buffer to be drawn.
+	// Add this piece to the instance vector.
 	tempInstance.position =	XMFLOAT3(positionX, positionY, 0.0f);
-	tempInstance.HSV =		m_colors[state->GetCurrentColor()];
+	tempInstance.HSVA =		m_colors[state->GetCurrentColor()];
 	instances.push_back(tempInstance);
+
+	// Create template for an empty space.
+	tempInstance.position =	XMFLOAT3(0.0f, 0.0f, 0.0f);
+	tempInstance.HSVA =		XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f);
+
+	// Fill rest of instance vector with empty spaces.
+	for (unsigned int i = instances.size(); i < m_maxPieces; i++)
+	{
+		instances.push_back(tempInstance);
+	}
 
 	return true;
 }

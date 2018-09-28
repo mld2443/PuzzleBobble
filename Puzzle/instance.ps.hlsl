@@ -16,7 +16,7 @@ SamplerState SampleType;
 struct PixelInputType
 {
 	float4 position : SV_POSITION;
-	float3 HSV : COLOR;
+	float4 HSVA : COLOR;
 	float2 tex : TEXCOORD0;
 };
 
@@ -57,14 +57,14 @@ float4 PSMain(PixelInputType input) : SV_TARGET
 	textureHSVA = shaderTexture.Sample(SampleType, input.tex);
 
 	// Modify the saturation and value of our pixel color using the instance input colors.
-	textureHSVA.y *= input.HSV.y;
-	textureHSVA.z *= input.HSV.z;
+	textureHSVA.y *= input.HSVA.y;
+	textureHSVA.z *= input.HSVA.z;
 
 	// Calculate the RGB values of our pixel from the input HSV
-	tempRGB = HSVtoRGB(float3(input.HSV.x, textureHSVA.yz));
+	tempRGB = HSVtoRGB(float3(input.HSVA.x, textureHSVA.yz));
 
 	// Combine the RGB we just got with our alpha channel to get the final color.
-	outputRGBA = float4(tempRGB, textureHSVA.w);
+	outputRGBA = float4(tempRGB, textureHSVA.w * input.HSVA.w);
 
 	return outputRGBA;
 }

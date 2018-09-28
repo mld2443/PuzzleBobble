@@ -57,5 +57,6 @@ private:
 	void CreateGeometry(std::vector<VertexType>&, std::vector<unsigned long>&);
 
 private:
-	std::map<char, XMFLOAT3>	m_colors;
+	std::map<char, XMFLOAT4>	m_colors;
+	unsigned int				m_maxPieces;
 };

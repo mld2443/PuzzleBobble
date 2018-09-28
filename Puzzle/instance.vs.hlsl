@@ -22,13 +22,13 @@ struct VertexInputType
 	float4 position : POSITION0;
 	float2 tex : TEXCOORD0;
 	float4 instancePosition : POSITION1;
-	float3 instanceHSV: COLOR;
+	float4 instanceHSVA : COLOR;
 };
 
 struct PixelInputType
 {
 	float4 position : SV_POSITION;
-	float3 HSV : COLOR;
+	float4 HSVA : COLOR;
 	float2 tex : TEXCOORD0;
 };
 
@@ -55,7 +55,7 @@ PixelInputType VSMain(VertexInputType input)
 	output.position = mul(output.position, projectionMatrix);
 
 	// Store the input hue for the pixel shader to use.
-	output.HSV = input.instanceHSV;
+	output.HSVA = input.instanceHSVA;
 
 	// Set the texture coordinates for the pixel shader.
 	output.tex = input.tex;
