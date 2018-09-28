@@ -239,6 +239,78 @@ bool StateClass::MoveRight()
 }
 
 
+void StateClass::ShootPiece(bool travelingLeft)
+{
+	SpaceType* endPoint;
+
+
+	if (travelingLeft)
+	{
+		endPoint = TravelLeft(&m_activePiece);
+	}
+	else
+	{
+		endPoint = TravelRight(&m_activePiece);
+	}
+
+	endPoint->color = m_activePiece.color;
+
+	return;
+}
+
+
+StateClass::SpaceType* StateClass::TravelLeft(SpaceType* entryPoint)
+{
+	// If upper left neighbor is null, check to see if there is an upper right neighbor
+	if (!entryPoint->upperLeftNeighbor)
+	{
+		// If there is not an upper right neighbor, we've hit the ceiling; return position
+		if (!entryPoint->upperRightNeighbor)
+		{
+			return entryPoint;
+		}
+
+		// Else, we've hit the left wall; ricochet by calling TravelRight
+		return TravelRight(entryPoint);
+	}
+
+	// Else if upper left neighbor is an empty space, keep moving
+	else if (entryPoint->upperLeftNeighbor->color == '_')
+	{
+		return TravelLeft(entryPoint->upperLeftNeighbor);
+	}
+
+	// Else, we've hit an occupied space; return position
+	return entryPoint;
+}
+
+
+StateClass::SpaceType* StateClass::TravelRight(SpaceType* entryPoint)
+{
+	// If upper right neighbor is null, check to see if there is an upper left neighbor
+	if (!entryPoint->upperRightNeighbor)
+	{
+		// If there is not an upper left neighbor, we've hit the ceiling; return position
+		if (!entryPoint->upperLeftNeighbor)
+		{
+			return entryPoint;
+		}
+
+		// Else, we've hit the right wall; ricochet by calling TravelLeft
+		return TravelLeft(entryPoint);
+	}
+
+	// Else if upper right neighbor is an empty space, keep moving
+	else if (entryPoint->upperRightNeighbor->color == '_')
+	{
+		return TravelRight(entryPoint->upperRightNeighbor);
+	}
+
+	// Else, we've hit an occupied space; return position
+	return entryPoint;
+}
+
+
 bool StateClass::AllocateBoard()
 {
 	SpaceType* traverseRight, *traverseDown;

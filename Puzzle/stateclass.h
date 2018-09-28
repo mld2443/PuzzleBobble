@@ -51,7 +51,12 @@ public:
 	bool MoveLeft();
 	bool MoveRight();
 
+	void ShootPiece(bool);
+
 private:
+	SpaceType* TravelLeft(SpaceType*);
+	SpaceType* TravelRight(SpaceType*);
+
 	bool AllocateBoard();
 
 private:
