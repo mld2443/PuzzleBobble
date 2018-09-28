@@ -56,8 +56,8 @@ private:
 
 private:
 	std::size_t	m_size, m_maxWidth, m_height;
-	SpaceType*	m_topLeft;
+	SpaceType*	m_topLeft, m_activePiece;
 
-	char	m_currentColor, m_nextColor;
+	char	m_nextColor;
 	float	m_currentPosition;
 };

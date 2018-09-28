@@ -33,7 +33,7 @@ bool StateClass::Initialize(char* filename)
 	}
 
 	// Set default starting values for our current piece and next piece color.
-	m_currentColor = 'r';
+	m_activePiece.color = 'r';
 	m_nextColor = 'b';
 	m_currentPosition = 0.5f * (float)(m_height % 2);
 
@@ -179,7 +179,7 @@ std::size_t StateClass::GetHeight()
 
 char StateClass::GetCurrentColor()
 {
-	return m_currentColor;
+	return m_activePiece.color;
 }
 
 
@@ -209,6 +209,10 @@ bool StateClass::MoveLeft()
 		return false;
 	}
 
+	// We aren't at the leftmost position, so update our active piece's entry points.
+	m_activePiece.upperRightNeighbor = m_activePiece.upperLeftNeighbor;
+	m_activePiece.upperLeftNeighbor = m_activePiece.upperLeftNeighbor->leftNeighbor;
+
 	// Decrement our current position.
 	m_currentPosition -= 1.0f;
 
@@ -224,6 +228,10 @@ bool StateClass::MoveRight()
 		return false;
 	}
 
+	// We aren't at the rightmost position, so update our active piece's entry points.
+	m_activePiece.upperLeftNeighbor = m_activePiece.upperRightNeighbor;
+	m_activePiece.upperRightNeighbor = m_activePiece.upperRightNeighbor->rightNeighbor;
+
 	// Decrement our current position.
 	m_currentPosition += 1.0f;
 
@@ -233,7 +241,7 @@ bool StateClass::MoveRight()
 
 bool StateClass::AllocateBoard()
 {
-	SpaceType* rowTraverse, *columnTraverse;
+	SpaceType* traverseRight, *traverseDown;
 	unsigned int rowWidth;
 
 
@@ -256,13 +264,13 @@ bool StateClass::AllocateBoard()
 	++m_size;
 
 	// Set traverseDown to the first space of the board.
-	columnTraverse = m_topLeft;
+	traverseDown = m_topLeft;
 
 	// Iterate down left side of board.
 	for (unsigned int i = 0; i < m_height; i++)
 	{
 		// Set traverseRight to the far left position in this row.
-		rowTraverse = columnTraverse;
+		traverseRight = traverseDown;
 
 		// Determine the width of the current row (maxRowWidth if an even row, maxRowWidth-1 if odd).
 		rowWidth = (unsigned int) m_maxWidth - (i % 2);
@@ -271,20 +279,20 @@ bool StateClass::AllocateBoard()
 		for (unsigned int j = 0; j < rowWidth; j++)
 		{
 			// Set the color of the current space to empty.
-			rowTraverse->color = '_';
+			traverseRight->color = '_';
 
 			// Assuming traverseRight isn't the first space in a row, link it to its upper neighbors.
 			if (i > 0 && j > 0)
 			{
 				// Assign traverseRight's upper left neighbor and back again.
-				rowTraverse->upperLeftNeighbor = rowTraverse->leftNeighbor->upperRightNeighbor;
-				rowTraverse->upperLeftNeighbor->lowerRightNeighbor = rowTraverse;
+				traverseRight->upperLeftNeighbor = traverseRight->leftNeighbor->upperRightNeighbor;
+				traverseRight->upperLeftNeighbor->lowerRightNeighbor = traverseRight;
 
 				// If there is an upper right neighbor available to assign, assign it to traverseRight and back again.
-				if (rowTraverse->upperLeftNeighbor->rightNeighbor)
+				if (traverseRight->upperLeftNeighbor->rightNeighbor)
 				{
-					rowTraverse->upperRightNeighbor = rowTraverse->upperLeftNeighbor->rightNeighbor;
-					rowTraverse->upperRightNeighbor->lowerLeftNeighbor = rowTraverse;
+					traverseRight->upperRightNeighbor = traverseRight->upperLeftNeighbor->rightNeighbor;
+					traverseRight->upperRightNeighbor->lowerLeftNeighbor = traverseRight;
 				}
 			}
 
@@ -292,15 +300,15 @@ bool StateClass::AllocateBoard()
 			if (j < rowWidth - 1)
 			{
 				// Create a new space to the right of traverseRight and link the two.
-				rowTraverse->rightNeighbor = new SpaceType;
-				if (!rowTraverse->rightNeighbor)
+				traverseRight->rightNeighbor = new SpaceType;
+				if (!traverseRight->rightNeighbor)
 				{
 					return false;
 				}
-				rowTraverse->rightNeighbor->leftNeighbor = rowTraverse;
+				traverseRight->rightNeighbor->leftNeighbor = traverseRight;
 
 				// Move traverseRight to the next space.
-				rowTraverse = rowTraverse->rightNeighbor;
+				traverseRight = traverseRight->rightNeighbor;
 
 				++m_size;
 			}
@@ -313,15 +321,15 @@ bool StateClass::AllocateBoard()
 			if (i % 2)
 			{
 				// Create a new space to the lower left of traverseDown and link the two.
-				columnTraverse->lowerLeftNeighbor = new SpaceType;
-				if (!columnTraverse->lowerLeftNeighbor)
+				traverseDown->lowerLeftNeighbor = new SpaceType;
+				if (!traverseDown->lowerLeftNeighbor)
 				{
 					return false;
 				}
-				columnTraverse->lowerLeftNeighbor->upperRightNeighbor = columnTraverse;
+				traverseDown->lowerLeftNeighbor->upperRightNeighbor = traverseDown;
 
 				// Move traverseDown down to the next row.
-				columnTraverse = columnTraverse->lowerLeftNeighbor;
+				traverseDown = traverseDown->lowerLeftNeighbor;
 
 				++m_size;
 			}
@@ -329,21 +337,38 @@ bool StateClass::AllocateBoard()
 			else
 			{
 				// Create a new space to the lower right of traverseDown and link the two.
-				columnTraverse->lowerRightNeighbor = new SpaceType;
-				if (!columnTraverse->lowerRightNeighbor)
+				traverseDown->lowerRightNeighbor = new SpaceType;
+				if (!traverseDown->lowerRightNeighbor)
 				{
 					return false;
 				}
-				columnTraverse->lowerRightNeighbor->upperLeftNeighbor = columnTraverse;
+				traverseDown->lowerRightNeighbor->upperLeftNeighbor = traverseDown;
 
 				// Link that new space to traverseDown's right neighbor.
-				columnTraverse->rightNeighbor->lowerLeftNeighbor = columnTraverse->lowerRightNeighbor;
-				columnTraverse->lowerRightNeighbor->upperRightNeighbor = columnTraverse->rightNeighbor;
+				traverseDown->rightNeighbor->lowerLeftNeighbor = traverseDown->lowerRightNeighbor;
+				traverseDown->lowerRightNeighbor->upperRightNeighbor = traverseDown->rightNeighbor;
 
 				// Move traverseDown down to next row.
-				columnTraverse = columnTraverse->lowerRightNeighbor;
+				traverseDown = traverseDown->lowerRightNeighbor;
 
 				++m_size;
+			}
+		}
+
+		// We are on the last row; let's establish entry points into the bottom of the board.
+		else
+		{
+			// The bottom row is an even numbered row; it would only have one entry point, and the other would be null.
+			if (i % 2)
+			{
+				m_activePiece.upperLeftNeighbor = nullptr;
+				m_activePiece.upperRightNeighbor = traverseDown;
+			}
+			// The bottom row is an odd numbered row; entry points would be the two bottom left pieces.
+			else
+			{
+				m_activePiece.upperLeftNeighbor = traverseDown;
+				m_activePiece.upperRightNeighbor = traverseDown->rightNeighbor;
 			}
 		}
 	}
