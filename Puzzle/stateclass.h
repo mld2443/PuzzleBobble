@@ -11,6 +11,8 @@
 #include <string>
 #include <functional>
 #include <map>
+#include <stdlib.h>
+#include <time.h>
 #include <directxmath.h>
 
 using namespace DirectX;
@@ -62,6 +64,8 @@ public:
 	void ShootPiece(bool);
 
 private:
+	char GenerateColor();
+
 	SpaceType* TravelLeft(SpaceType*);
 	SpaceType* TravelRight(SpaceType*);
 

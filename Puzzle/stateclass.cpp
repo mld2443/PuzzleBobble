@@ -32,9 +32,12 @@ bool StateClass::Initialize(char* filename)
 		return false;
 	}
 
+	// Set the random seed for user piece colors.
+	srand(time(NULL));
+
 	// Set default starting values for our current piece and next piece color.
-	m_activePiece.color = 'r';
-	m_nextColor = 'b';
+	m_activePiece.color = GenerateColor();
+	m_nextColor = GenerateColor();
 	m_currentPosition = 0.5f * (float)(m_height % 2);
 
 	return true;
@@ -291,7 +294,20 @@ void StateClass::ShootPiece(bool travelingLeft)
 	// Change the color of the endPoint piece to match the one we shot.
 	endPoint->color = m_activePiece.color;
 
+	// Update active piece's color.
+	m_activePiece.color = m_nextColor;
+
+	// Determine next piece color.
+	m_nextColor = GenerateColor();
+
 	return;
+}
+
+char StateClass::GenerateColor()
+{
+	auto randomKey = m_colors.begin();
+	std::advance(randomKey, (rand() % m_colors.size()));
+	return randomKey->first;
 }
 
 
